@@ -1,0 +1,97 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.0.RELEASE'
+        classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.2.0'
+    }
+}
+
+apply plugin: 'application'                  // http://www.gradle.org/docs/current/userguide/application_plugin.html
+apply plugin: 'java'                         // http://www.gradle.org/docs/current/userguide/java_plugin.html
+apply plugin: 'org.unbroken-dome.test-sets'  // https://github.com/unbroken-dome/gradle-testsets-plugin
+apply plugin: 'spring-boot'                  // http://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html
+
+def javaVersion = '1.8'
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+def springLoadedVersion = '1.2.4.RELEASE'
+mainClassName = 'au.gov.dto.dibp.appointments.Application'
+applicationDefaultJvmArgs = ["-javaagent:agents/springloaded-${springLoadedVersion}.jar", '-noverify']
+
+group = 'au.gov.dto.dibp'
+version = '0.0.1'
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
+
+configurations {
+    all*.exclude group: 'commons-logging'              // Never include commons-logging (use SLF4J instead)
+    all*.exclude group: 'log4j'                        // Never include log4j (use SLF4J instead)
+    all*.exclude module: 'jetty-jsp'                   // No need for JSP support
+    all*.exclude module: 'slf4j-simple'                // Use logback
+    all*.exclude module: 'spring-boot-starter-tomcat'  // Never include Tomcat (use Jetty instead)
+
+    springloaded
+}
+
+testSets {
+    integrationTest { dirName = 'integration-test' }
+}
+
+tasks.integrationTest.group = 'Verification'
+tasks.integrationTest.description = 'Runs the integration tests.'
+//tasks.integrationTest.outputs.upToDateWhen { false }  // Run all integration tests every time, even if no changes have been made
+
+check.dependsOn integrationTest      // The check task fails the build if there are failing integration tests
+integrationTest.shouldRunAfter test  // Run unit tests before integration tests
+
+// Ensure that the HTML reports of unit and integration tests are written to different directories
+tasks.withType(Test) {
+    reports.html.destination = file("${reporting.baseDir}/${name}")
+}
+
+repositories {
+    mavenCentral()
+}
+
+def hamcrestVersion = '1.3'
+def jettyVersion = '9.3.6.v20151106'
+def jmustacheVersion = '1.11'
+def junitVersion = '4.12'
+def springBootVersion = '1.3.0.RELEASE'
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
+            "org.eclipse.jetty:jetty-webapp:${jettyVersion}",
+            "com.samskivert:jmustache:${jmustacheVersion}"
+
+    testCompile "junit:junit:${junitVersion}",
+            "org.hamcrest:hamcrest-library:${hamcrestVersion}",
+            "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+
+    springloaded "org.springframework:springloaded:${springLoadedVersion}"
+}
+
+task copySpringLoaded(type: Copy,
+        description: 'Make Spring Loaded available for IDE and CLI use.',
+        group: 'Build Setup') {
+    from {
+        configurations.springloaded
+    }
+    into "agents/"
+}
+run.dependsOn copySpringLoaded
+bootRun.dependsOn copySpringLoaded
+
+task wrapper(type: Wrapper,
+        description: 'Create Gradle wrapper scripts.',
+        group: 'Build Setup') {
+    gradleVersion = '2.9'
+}
