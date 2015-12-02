@@ -1,0 +1,7 @@
+---
+applications:
+- name: citizenship-appointment-beta
+  memory: 512M
+  instances: 1
+  path: build/libs/citizenship-appointments-0.0.1.jar
+
