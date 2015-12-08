@@ -1,3 +1,2 @@
 #!/bin/bash
-
-echo "Passing..."
+./gradlew clean build
