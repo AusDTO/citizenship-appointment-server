@@ -116,7 +116,7 @@ task copyServerTempl(type: Copy,
 run.dependsOn copySpringLoaded
 bootRun.dependsOn copySpringLoaded
 
-copyServerTempl.dependsOn npm_install
+copyServerTempl.dependsOn npmInstall
 processResources.finalizedBy copyServerTempl
 
 task wrapper(type: Wrapper,
