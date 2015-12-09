@@ -16,6 +16,20 @@ apply plugin: 'org.unbroken-dome.test-sets'  // https://github.com/unbroken-dome
 apply plugin: 'spring-boot'                  // http://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html
 apply plugin: 'com.moowork.node'
 
+node {
+    version = '4.2.3'
+    npmVersion = '2.14.7'
+    // Base URL for fetching node distributions (change if you have a mirror).
+    distBaseUrl = 'https://nodejs.org/dist'
+    // If true, it will download node using above parameters.
+    // If false, it will try to use globally installed node.
+    download = false
+    // Set the work directory for unpacking node
+    workDir = file("${project.buildDir}/nodejs")
+    // Set the work directory where node_modules should be located
+    nodeModulesDir = file("${project.projectDir}")
+}
+
 def javaVersion = '1.8'
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
