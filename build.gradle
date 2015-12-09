@@ -6,6 +6,7 @@ buildscript {
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.0.RELEASE'
         classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.2.0'
+        classpath "com.moowork.gradle:gradle-node-plugin:0.11"
     }
 }
 
@@ -13,6 +14,7 @@ apply plugin: 'application'                  // http://www.gradle.org/docs/curre
 apply plugin: 'java'                         // http://www.gradle.org/docs/current/userguide/java_plugin.html
 apply plugin: 'org.unbroken-dome.test-sets'  // https://github.com/unbroken-dome/gradle-testsets-plugin
 apply plugin: 'spring-boot'                  // http://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html
+apply plugin: 'com.moowork.node'
 
 def javaVersion = '1.8'
 sourceCompatibility = javaVersion
@@ -87,8 +89,21 @@ task copySpringLoaded(type: Copy,
     }
     into "agents/"
 }
+
+task copyServerTempl(type: Copy,
+    description: 'Copy server templates from the client',
+    group: 'Build Setup'){
+    from{
+        "node_modules/citizenship-appointment-client/views/server"
+    }
+    into "src/main/resources/templates/client"
+}
+
 run.dependsOn copySpringLoaded
 bootRun.dependsOn copySpringLoaded
+
+copyServerTempl.dependsOn npm_install
+processResources.finalizedBy copyServerTempl
 
 task wrapper(type: Wrapper,
         description: 'Create Gradle wrapper scripts.',

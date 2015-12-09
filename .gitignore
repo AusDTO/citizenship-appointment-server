@@ -30,3 +30,6 @@ tmp
 *.iws
 *.log
 *.swp
+
+node_modules/
+src/main/resources/templates/client/
