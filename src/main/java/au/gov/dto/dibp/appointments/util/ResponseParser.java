@@ -27,6 +27,12 @@ public class ResponseParser {
         XPathExpression expr = getXpath().compile(thepath);
         return (String) expr.evaluate(this.responseBody, XPathConstants.STRING);
     }
+
+    public int getIntegerAttribute(String thepath) throws XPathExpressionException {
+        XPathExpression expr = getXpath().compile(thepath);
+        return ((Double)expr.evaluate(this.responseBody, XPathConstants.NUMBER)).intValue();
+    }
+
     public NodeList getNodeListAttribute(String thepath) throws XPathExpressionException {
         XPathExpression expr = getXpath().compile(thepath);
         return (NodeList) expr.evaluate(this.responseBody, XPathConstants.NODESET);

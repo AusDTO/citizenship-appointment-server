@@ -34,7 +34,8 @@ public class Customer extends User {
     }
 
     public String getServiceId() {
-        return serviceId;
+        // FIXME(Marz)
+        return "5";
     }
 
     public void setServiceId(String serviceId) {
