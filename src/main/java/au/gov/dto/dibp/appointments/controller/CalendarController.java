@@ -19,8 +19,7 @@ public class CalendarController {
     private CalendarService calendarService;
 
     @RequestMapping(value = "/getAvailableDates", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody
-    Map<String, CalendarEntry> getAvailableDates() {
+    public Map<String, CalendarEntry> getAvailableDates() {
         return calendarService.getAvailabilityForNextYear().stream().collect(Collectors.toMap(CalendarEntry::getCalendarDate,
                 Function.identity()));
     }

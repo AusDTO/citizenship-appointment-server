@@ -25,7 +25,7 @@ public class GetByExternalReferenceService {
     private String SERVICE_ADDRESS_CUSTOMER;
 
     private class GetByExtRef {
-        static final String REQUEST_TEMPLATE_PATH = "src/main/resources/templates/request/GetByExtRef.mustache";
+        static final String REQUEST_TEMPLATE_PATH = "src/main/resources/request_templates/GetByExtRef.mustache";
 
         static final String CUSTOMER_ID = "//GetByExtRefResponse/GetByExtRefResult/Customer/Id";
         static final String CUSTOMER_LAST_NAME = "//GetByExtRefResponse/GetByExtRefResult/Customer/LastName";

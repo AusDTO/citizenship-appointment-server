@@ -32,4 +32,4 @@ tmp
 *.swp
 
 node_modules/
-src/main/resources/templates/client/
+src/main/resources/templates/

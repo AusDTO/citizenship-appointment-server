@@ -113,17 +113,19 @@ task copySpringLoaded(type: Copy,
 task copyServerTempl(type: Copy,
     description: 'Copy server templates from the client',
     group: 'Build Setup'){
-    from{
-        "node_modules/citizenship-appointment-client/views/server"
-    }
-    into "src/main/resources/templates/client"
+    from fileTree("node_modules/citizenship-appointment-client/views/server").files
+    into "src/main/resources/templates"
+}
+
+clean.doFirst {
+    delete "${projectDir}/src/main/resources/templates"
 }
 
 run.dependsOn copySpringLoaded
 bootRun.dependsOn copySpringLoaded
 
-copyServerTempl.dependsOn npmInstall
-processResources.finalizedBy copyServerTempl
+copyServerTempl.dependsOn npm_update
+processResources.dependsOn copyServerTempl
 
 task wrapper(type: Wrapper,
         description: 'Create Gradle wrapper scripts.',

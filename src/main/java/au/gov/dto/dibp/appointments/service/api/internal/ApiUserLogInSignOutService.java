@@ -36,12 +36,12 @@ public class ApiUserLogInSignOutService {
     }
 
     private class FormsSignIn {
-        public static final String REQUEST_TEMPLATE_PATH = "src/main/resources/templates/request/FormsSignIn.mustache";
+        public static final String REQUEST_TEMPLATE_PATH = "src/main/resources/request_templates/FormsSignIn.mustache";
         public static final String API_SESSION_ID = "//FormsSignInResponse/FormsSignInResult";
     }
 
     private class SignOut {
-        public static final String REQUEST_TEMPLATE_PATH = "src/main/resources/templates/request/SignOut.mustache";
+        public static final String REQUEST_TEMPLATE_PATH = "src/main/resources/request_templates/SignOut.mustache";
     }
 
     public String getApiSessionId() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {

@@ -42,7 +42,7 @@ public class ApiCallsSenderServiceTest {
     @InjectMocks
     private ApiCallsSenderService service;
 
-    private final String requestTemplate = "src/main/resources/templates/request/GetByExtRef.mustache";
+    private final String requestTemplate = "src/main/resources/request_templates/GetByExtRef.mustache";
 
 
     @Before
