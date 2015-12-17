@@ -64,7 +64,7 @@ public class GetByExternalReferenceServiceTest {
 
         Map<String, String> capturedData = dataArgumentCaptor.getValue();
         assertThat(capturedData.size(), is(1));
-        assertThat(templatePathArgumentCaptor.getValue(), endsWith("/GetByExtRef.mustache"));
+        assertThat(templatePathArgumentCaptor.getValue(), endsWith("GetByExtRef.mustache"));
         assertThat(serviceAddressArgumentCaptor.getValue(), is("http://someurl"));
     }
 
