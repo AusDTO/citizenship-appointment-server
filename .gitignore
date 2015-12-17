@@ -33,3 +33,4 @@ tmp
 
 node_modules/
 src/main/resources/templates/
+src/main/resources/public/

@@ -117,15 +117,31 @@ task copyServerTempl(type: Copy,
     into "src/main/resources/templates"
 }
 
+task copyImageAssets(type: Copy,
+        description: 'Copy image assets from the client',
+        group: 'Build Setup'){
+    from fileTree("node_modules/citizenship-appointment-client/images/").files
+    into "src/main/resources/public/images"
+}
+
+task copyBundledAssets(type: Copy,
+        description: 'Copy bundled assets from the client',
+        group: 'Build Setup'){
+    from fileTree("node_modules/citizenship-appointment-client/dist/").files
+    into "src/main/resources/public/static"
+}
+
+
 clean.doFirst {
     delete "${projectDir}/src/main/resources/templates"
+    delete "${projectDir}/src/main/resources/public"
 }
 
 run.dependsOn copySpringLoaded
 bootRun.dependsOn copySpringLoaded
 
 copyServerTempl.dependsOn npm_update
-processResources.dependsOn copyServerTempl
+processResources.dependsOn copyServerTempl, copyImageAssets, copyBundledAssets
 
 task wrapper(type: Wrapper,
         description: 'Create Gradle wrapper scripts.',

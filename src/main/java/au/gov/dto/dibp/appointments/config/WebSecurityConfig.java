@@ -21,13 +21,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
-                .antMatchers("/", "/hello.txt").permitAll()  // no authentication on endpoints '/' and '/hello*'
+                .antMatchers("/", "/images/*", "/static/*").permitAll()  // no authentication on endpoints '/' and public assets
                 .anyRequest().authenticated()  // all other endpoints require authentication
                 .and()
             .formLogin()
                 .loginPage("/login") // custom login page
                 .passwordParameter("familyName") // form element name
-                .defaultSuccessUrl("/hello.txt")
+                .defaultSuccessUrl("/getAvailableDates")
                 .failureUrl("/login?error")
                 .permitAll()  // no authentication on login endpoint
                 .and()
