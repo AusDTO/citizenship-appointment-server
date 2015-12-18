@@ -23,7 +23,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 @Service
-public class GetCalendarsService {
+public class CalendarService {
 
     @Autowired
     private ApiCallsSenderService senderService;

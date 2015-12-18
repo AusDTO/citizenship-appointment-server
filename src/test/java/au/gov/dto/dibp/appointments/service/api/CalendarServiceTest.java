@@ -27,13 +27,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetCalendarsServiceTest {
+public class CalendarServiceTest {
 
     @Mock
     ApiCallsSenderService senderService;
 
     @InjectMocks
-    GetCalendarsService service;
+    CalendarService service;
 
     @Before
     public void setup() {
