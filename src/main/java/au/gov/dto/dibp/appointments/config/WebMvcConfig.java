@@ -14,6 +14,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addViewController("/").setViewName("redirect:/login");
     }
 
+    /**
+     * PWS requires this override to resolve mustache views,
+     * otherwise it produces the following error:
+     * "Circular view path [login]: would dispatch back to the current handler URL [/login] again"
+     */
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.viewResolver(new MustacheViewResolver());
