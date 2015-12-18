@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class GetByExternalReferenceService implements UserDetailsService {
+public class ClientService implements UserDetailsService {
 
     static final String REQUEST_TEMPLATE_PATH = "GetByExtRef.mustache";
     private static final String CUSTOMER_EMAIL = "//GetByExtRefResponse/GetByExtRefResult/Customer/EMail";

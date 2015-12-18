@@ -26,13 +26,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetByExternalReferenceServiceTest {
+public class ClientServiceTest {
 
     @Mock
     ApiCallsSenderService senderService;
 
     @InjectMocks
-    GetByExternalReferenceService service;
+    ClientService service;
 
     @Before
     public void setup() {

@@ -1,6 +1,6 @@
 package au.gov.dto.dibp.appointments.config;
 
-import au.gov.dto.dibp.appointments.service.api.GetByExternalReferenceService;
+import au.gov.dto.dibp.appointments.service.api.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new GetByExternalReferenceService();
+        return new ClientService();
     }
 
     @Autowired

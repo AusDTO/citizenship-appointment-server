@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -57,7 +56,7 @@ public class ApiCallsSenderServiceTest {
     @Test
     public void sendRequest_shouldRequestApiKey() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
 
-        service.sendRequest(GetByExternalReferenceService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
+        service.sendRequest(ClientService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
         verify(apiUserService, times(1)).getApiSessionId();
     }
 
@@ -69,7 +68,7 @@ public class ApiCallsSenderServiceTest {
         when(mockTemplate.execute(mapArgumentCaptor.capture())).thenReturn("Sample Message");
         when(mustache.compile(any(Reader.class))).thenReturn(mockTemplate);
 
-        service.sendRequest(GetByExternalReferenceService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
+        service.sendRequest(ClientService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
         assertThat(mapArgumentCaptor.getValue().get("apiSessionId"), is("someSessionId"));
     }
 
@@ -83,7 +82,7 @@ public class ApiCallsSenderServiceTest {
         when(apiUserService.getApiSessionId()).thenReturn("someSessionId");
         when(mustache.compile(any(Reader.class))).thenReturn(mockTemplate);
 
-        service.sendRequest(GetByExternalReferenceService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), serviceAddress);
+        service.sendRequest(ClientService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), serviceAddress);
         assertThat(mapArgumentCaptor.getValue().get("serviceAddress"), is(serviceAddress));
     }
 
@@ -96,21 +95,21 @@ public class ApiCallsSenderServiceTest {
         when(apiUserService.getApiSessionId()).thenReturn("someSessionId");
         when(mustache.compile(any(Reader.class))).thenReturn(mockTemplate);
 
-        service.sendRequest(GetByExternalReferenceService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
+        service.sendRequest(ClientService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
         assertThat(UUID.fromString((String)mapArgumentCaptor.getValue().get("messageUUID")).toString(), is(notNullValue()));
     }
 
     @Test
     public void sendRequest_shouldDelegateHttpCallToHttpClientHandler() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
 
-        service.sendRequest(GetByExternalReferenceService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
+        service.sendRequest(ClientService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
         verify(httpClient, times(1)).post(anyString(), anyString());
     }
 
     @Test
     public void sendRequest_shouldReleaseApiKeyWhenAllOk() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
 
-        service.sendRequest(GetByExternalReferenceService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
+        service.sendRequest(ClientService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
         verify(apiUserService, times(1)).releaseApiSessionId("someSessionId");
     }
 
@@ -121,7 +120,7 @@ public class ApiCallsSenderServiceTest {
         when(mustache.compile(any(Reader.class))).thenReturn(mockTemplate);
 
         try {
-            service.sendRequest(GetByExternalReferenceService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
+            service.sendRequest(ClientService.REQUEST_TEMPLATE_PATH, new HashMap<String, String>(), "");
         }catch(RuntimeException e){}
 
         verify(apiUserService, times(1)).releaseApiSessionId("someSessionId");
