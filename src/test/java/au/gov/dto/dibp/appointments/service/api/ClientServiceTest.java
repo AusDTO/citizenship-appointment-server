@@ -1,6 +1,6 @@
 package au.gov.dto.dibp.appointments.service.api;
 
-import au.gov.dto.dibp.appointments.model.Customer;
+import au.gov.dto.dibp.appointments.model.Client;
 import com.squareup.okhttp.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,16 +72,16 @@ public class ClientServiceTest {
     public void getCustomerByExternalReference_shouldConvertResponseIntoCustomerObject() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
         String clientId = "123";
         when(senderService.sendRequest(anyString(), Matchers.<Map<String, String>>any(), anyString())).thenReturn(getStandardResponse());
-        Customer customer = service.getCustomerByExternalReference(clientId);
+        Client client = service.getCustomerByExternalReference(clientId);
 
-        assertThat(customer.isEnabled(), is(true));
-        assertThat(customer.getCustomerClientId(), is("919191"));
-        assertThat(customer.getId(), is("6"));
-        assertThat(customer.isWithEmailAddress(), is(true));
-        assertThat(customer.getPassword(), is("Smith"));
-        assertThat(customer.getUsername(), is("919191"));
-        assertThat(customer.getAuthorities().size(), is(1));
-        assertThat(customer.getAuthorities().contains(new SimpleGrantedAuthority("USER")), is(true));
+        assertThat(client.isEnabled(), is(true));
+        assertThat(client.getCustomerClientId(), is("919191"));
+        assertThat(client.getId(), is("6"));
+        assertThat(client.isWithEmailAddress(), is(true));
+        assertThat(client.getPassword(), is("Smith"));
+        assertThat(client.getUsername(), is("919191"));
+        assertThat(client.getAuthorities().size(), is(1));
+        assertThat(client.getAuthorities().contains(new SimpleGrantedAuthority("USER")), is(true));
     }
 
     private Response getStandardResponse(){

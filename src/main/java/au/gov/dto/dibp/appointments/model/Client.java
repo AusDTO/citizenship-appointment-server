@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.Collections;
 
-public class Customer extends User {
+public class Client extends User {
 
     private final String customerClientId;
 
@@ -14,7 +14,7 @@ public class Customer extends User {
     private String serviceId;
     private String appointmentTypeId;
 
-    public Customer(String username, String familyName, String id, boolean withEmail, boolean active) {
+    public Client(String username, String familyName, String id, boolean withEmail, boolean active) {
         super(username, familyName, active, true, true, true, Collections.singletonList(new SimpleGrantedAuthority("USER")));
         this.customerClientId = username;
         this.id = id;

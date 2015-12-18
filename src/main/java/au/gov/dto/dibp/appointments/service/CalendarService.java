@@ -1,7 +1,7 @@
 package au.gov.dto.dibp.appointments.service;
 
 import au.gov.dto.dibp.appointments.model.CalendarEntry;
-import au.gov.dto.dibp.appointments.model.Customer;
+import au.gov.dto.dibp.appointments.model.Client;
 import au.gov.dto.dibp.appointments.service.api.GetCalendarsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +22,7 @@ public class CalendarService {
     private GetCalendarsService getCalendarsService;
 
     public List<CalendarEntry> getAvailabilityForNextYear() {
-        Customer principal = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client principal = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         //TODO: Dates according to the timezone of the unit!
         LocalDate today = LocalDate.now();

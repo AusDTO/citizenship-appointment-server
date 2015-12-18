@@ -1,6 +1,6 @@
 package au.gov.dto.dibp.appointments.service.api;
 
-import au.gov.dto.dibp.appointments.model.Customer;
+import au.gov.dto.dibp.appointments.model.Client;
 import au.gov.dto.dibp.appointments.util.ResponseParser;
 import com.squareup.okhttp.Response;
 import org.eclipse.jetty.util.StringUtil;
@@ -48,7 +48,7 @@ public class ClientService implements UserDetailsService {
         return user;
     }
 
-    public Customer getCustomerByExternalReference(String clientId) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public Client getCustomerByExternalReference(String clientId) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
         Map<String, String> data = new HashMap<>();
         data.put("externalReference", clientId);
 
@@ -56,7 +56,7 @@ public class ClientService implements UserDetailsService {
         return parseGetCustomerByClientIdResponse(response);
     }
 
-    private Customer parseGetCustomerByClientIdResponse(Response response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    private Client parseGetCustomerByClientIdResponse(Response response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         ResponseParser parser = new ResponseParser(response.body().byteStream());
 
         String clientId = parser.getStringAttribute(CUSTOMER_CLIENT_ID);
@@ -65,7 +65,7 @@ public class ClientService implements UserDetailsService {
         String id = parser.getStringAttribute(CUSTOMER_ID);
         boolean isWithEmail = StringUtil.isNotBlank(parser.getStringAttribute(CUSTOMER_EMAIL));
 
-        return new Customer(clientId, lastName, id, isWithEmail, isActive);
+        return new Client(clientId, lastName, id, isWithEmail, isActive);
     }
 
 }
