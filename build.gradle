@@ -84,10 +84,16 @@ def junitVersion = '4.12'
 def springBootVersion = '1.3.0.RELEASE'
 def okhttpVersion = '2.6.0'
 def mockwebserverVersion = '2.5.0'
+def metricsVersion = '3.0.2'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
+            "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}",
+            "com.codahale.metrics:metrics-jetty9:${metricsVersion}",
+            "com.codahale.metrics:metrics-logback:${metricsVersion}",
+            "com.codahale.metrics:metrics-servlet:${metricsVersion}",
+            "com.codahale.metrics:metrics-servlets:${metricsVersion}",
             "org.eclipse.jetty:jetty-webapp:${jettyVersion}",
             "org.eclipse.jetty:jetty-servlets:${jettyVersion}",
             "com.samskivert:jmustache:${jmustacheVersion}",
