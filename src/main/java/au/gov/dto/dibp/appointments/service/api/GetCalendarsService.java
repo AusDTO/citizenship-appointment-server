@@ -17,10 +17,10 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Service
 public class GetCalendarsService {
@@ -44,7 +44,7 @@ public class GetCalendarsService {
         static final String VACANT_SLOTS_NOON = "VacantSlotsNoon";
     }
 
-    public List<CalendarEntry> getAvailabilityForNextYear(Client client) {
+    public SortedMap<String, CalendarEntry> getAvailabilityForNextYear(Client client) {
         //TODO: Dates according to the timezone of the unit!
         LocalDate today =  LocalDate.now(ZoneId.of("Australia/Sydney"));
         LocalDate endDate = today.plusYears(1L);
@@ -56,7 +56,7 @@ public class GetCalendarsService {
         }
     }
 
-    public List<CalendarEntry> getCalendars(String serviceId, LocalDate startDate, LocalDate endDate) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public SortedMap<String, CalendarEntry> getCalendars(String serviceId, LocalDate startDate, LocalDate endDate) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
         Map<String, String> data = new HashMap<>();
         data.put("serviceId", serviceId);
         data.put("startDate", startDate.toString()+"T00:00:00");
@@ -66,14 +66,15 @@ public class GetCalendarsService {
         return parseGetCalendarsResponse(response);
     }
 
-    private List<CalendarEntry> parseGetCalendarsResponse(Response response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    private SortedMap<String, CalendarEntry> parseGetCalendarsResponse(Response response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         ResponseParser parser = new ResponseParser(response.body().byteStream());
-        List<CalendarEntry> calendarEntries = new ArrayList<>();
+        SortedMap<String, CalendarEntry> calendarEntries = new TreeMap<>();
 
         NodeList calendarNodes = parser.getNodeListAttribute(GetCalendars.CALENDARS);
 
         for(int i=0; i < calendarNodes.getLength(); i++) {
-            calendarEntries.add(getCalendarEntryDetails(calendarNodes.item(i)));
+            CalendarEntry newCalendarEntry = getCalendarEntryDetails(calendarNodes.item(i));
+            calendarEntries.put(newCalendarEntry.getCalendarDate(), newCalendarEntry);
         }
 
         return calendarEntries;

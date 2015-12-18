@@ -17,8 +17,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.core.Is.is;
@@ -101,9 +101,9 @@ public class GetCalendarsServiceTest {
     @Test
     public void getCalendars_shouldConvertResponseIntoCalendarEntryObject() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
         when(senderService.sendRequest(anyString(), Matchers.<Map<String, String>>any(), anyString())).thenReturn(getStandardResponse());
-        List<CalendarEntry> calendarEntries = service.getCalendars("", LocalDate.now(), LocalDate.now());
+        SortedMap<String, CalendarEntry> calendarEntries = service.getCalendars("", LocalDate.now(), LocalDate.now());
 
-        CalendarEntry calendarEntry = calendarEntries.get(0);
+        CalendarEntry calendarEntry = calendarEntries.get(calendarEntries.firstKey());
 
         assertThat(calendarEntries.size(), is(1));
         assertThat(calendarEntry.getId(), is("192"));
