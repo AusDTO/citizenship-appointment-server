@@ -94,7 +94,7 @@ public class GetCalendarsServiceTest {
 
         Map<String, String> capturedData = dataArgumentCaptor.getValue();
         assertThat(capturedData.size(), is(3));
-        assertThat(templatePathArgumentCaptor.getValue(), endsWith("/GetCalendars.mustache"));
+        assertThat(templatePathArgumentCaptor.getValue(), endsWith("GetCalendars.mustache"));
         assertThat(serviceAddressArgumentCaptor.getValue(), is("http://someurl"));
     }
 

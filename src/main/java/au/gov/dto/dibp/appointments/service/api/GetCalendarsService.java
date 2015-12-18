@@ -30,7 +30,7 @@ public class GetCalendarsService {
     private String SERVICE_ADDRESS_SERVICE;
 
     private class GetCalendars {
-        static final String REQUEST_TEMPLATE_PATH = "src/main/resources/request_templates/GetCalendars.mustache";
+        static final String REQUEST_TEMPLATE_PATH = "GetCalendars.mustache";
 
         static final String CALENDARS = "//GetCalendarsResponse/GetCalendarsResult/Calendar";
         static final String CALENDAR_DATE = "CalendarDate";
