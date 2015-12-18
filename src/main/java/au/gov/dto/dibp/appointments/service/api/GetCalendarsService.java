@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.service.api;
 
 import au.gov.dto.dibp.appointments.model.CalendarEntry;
+import au.gov.dto.dibp.appointments.model.Client;
 import au.gov.dto.dibp.appointments.util.NodeParser;
 import au.gov.dto.dibp.appointments.util.ResponseParser;
 import com.squareup.okhttp.Response;
@@ -15,6 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,18 @@ public class GetCalendarsService {
         static final String VACANT_SLOTS_MORNING = "VacantSlotsMorning";
         static final String VACANT_SLOTS_NIGHT = "VacantSlotsNight";
         static final String VACANT_SLOTS_NOON = "VacantSlotsNoon";
+    }
+
+    public List<CalendarEntry> getAvailabilityForNextYear(Client client) {
+        //TODO: Dates according to the timezone of the unit!
+        LocalDate today =  LocalDate.now(ZoneId.of("Australia/Sydney"));
+        LocalDate endDate = today.plusYears(1L);
+
+        try {
+            return this.getCalendars(client.getServiceId(), today, endDate);
+        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
+            throw new RuntimeException("Error when retrieving calendar for serviceId " + client.getServiceId(), e);
+        }
     }
 
     public List<CalendarEntry> getCalendars(String serviceId, LocalDate startDate, LocalDate endDate) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
@@ -80,5 +94,4 @@ public class GetCalendarsService {
 
         return new CalendarEntry(id, calendarDate.substring(0, calendarDate.indexOf('T')), vacantSlotsTotal);
     }
-
 }
