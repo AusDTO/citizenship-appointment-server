@@ -1,6 +1,6 @@
 package au.gov.dto.dibp.appointments.config;
 
-import au.gov.dto.dibp.appointments.security.CustomUserDetailsService;
+import au.gov.dto.dibp.appointments.service.api.GetByExternalReferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public UserDetailsService customUserDetailsService() {
-        return new CustomUserDetailsService();
+    public UserDetailsService userDetailsService() {
+        return new GetByExternalReferenceService();
     }
 
     @Autowired
@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         passwordEncoder.setIgnorePasswordCase(true);
 
         auth
-            .userDetailsService(customUserDetailsService())
+            .userDetailsService(userDetailsService())
             .passwordEncoder(passwordEncoder);
     }
 }

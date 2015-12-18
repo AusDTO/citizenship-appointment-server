@@ -6,6 +6,9 @@ import com.squareup.okhttp.Response;
 import org.eclipse.jetty.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -16,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class GetByExternalReferenceService {
+public class GetByExternalReferenceService implements UserDetailsService {
 
     static final String REQUEST_TEMPLATE_PATH = "GetByExtRef.mustache";
     private static final String CUSTOMER_EMAIL = "//GetByExtRefResponse/GetByExtRefResult/Customer/EMail";
@@ -30,6 +33,20 @@ public class GetByExternalReferenceService {
 
     @Value("${SERVICE.ADDRESS.CUSTOMER}")
     private String SERVICE_ADDRESS_CUSTOMER;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserDetails user = null;
+        try {
+            user = this.getCustomerByExternalReference(username);
+        } catch (ParserConfigurationException|SAXException|XPathExpressionException|IOException e){
+            throw new RuntimeException("Error when retrieving client with clientId=[" + username + "]", e);
+        }
+        if (user == null) {
+            throw new UsernameNotFoundException(username);
+        }
+        return user;
+    }
 
     public Customer getCustomerByExternalReference(String clientId) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
         Map<String, String> data = new HashMap<>();
