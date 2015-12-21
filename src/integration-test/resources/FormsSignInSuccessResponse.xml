@@ -1,0 +1,11 @@
+<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://www.w3.org/2005/08/addressing">
+    <s:Header>
+        <a:Action s:mustUnderstand="1">http://www.qnomy.com/Services/IsvcAppUser/FormsSignInResponse</a:Action>
+        <a:RelatesTo>uuid:b406d7f4-7ca1-46cf-b42b-9a2b81b386c6</a:RelatesTo>
+    </s:Header>
+    <s:Body>
+        <FormsSignInResponse xmlns="http://www.qnomy.com/Services">
+            <FormsSignInResult>52dc780a02cb4e769c216984930739b1</FormsSignInResult>
+        </FormsSignInResponse>
+    </s:Body>
+</s:Envelope>

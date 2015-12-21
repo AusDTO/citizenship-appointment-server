@@ -82,9 +82,9 @@ def jettyVersion = '9.2.14.v20151106'
 def jmustacheVersion = '1.11'
 def junitVersion = '4.12'
 def springBootVersion = '1.3.0.RELEASE'
-def okhttpVersion = '2.6.0'
-def mockwebserverVersion = '2.5.0'
+def okhttpVersion = '2.7.0'
 def metricsVersion = '3.0.2'
+def commonsIoVersion = '2.4'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
@@ -102,7 +102,8 @@ dependencies {
     testCompile "junit:junit:${junitVersion}",
             "org.hamcrest:hamcrest-library:${hamcrestVersion}",
             "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
-            "com.squareup.okhttp:mockwebserver:${mockwebserverVersion}"
+            "com.squareup.okhttp:mockwebserver:${okhttpVersion}",
+            "commons-io:commons-io:${commonsIoVersion}"
 
     springloaded "org.springframework:springloaded:${springLoadedVersion}"
 }

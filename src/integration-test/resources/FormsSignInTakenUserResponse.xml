@@ -1,0 +1,21 @@
+<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://www.w3.org/2005/08/addressing">
+    <s:Header>
+        <a:Action s:mustUnderstand="1">http://www.qnomy.com/Services/IsvcAppUser/FormsSignInQFlowAPIApplicationExceptionFault</a:Action>
+        <a:RelatesTo>uuid:23207a2a-85bb-4e4c-9c84-0abc5d4c78ba</a:RelatesTo>
+    </s:Header>
+    <s:Body>
+        <s:Fault>
+            <s:Code>
+                <s:Value>s:Sender</s:Value>
+            </s:Code>
+            <s:Reason>
+                <s:Text xml:lang="en-US">You are already signed in on another computer.&lt;br /> If you choose to continue, the original session will be disconnected</s:Text>
+            </s:Reason>
+            <s:Detail>
+                <QFlowAPIApplicationException xmlns="http://schemas.datacontract.org/2004/07/QFlow.Web.API" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                    <ErrorNumber>55026</ErrorNumber>
+                </QFlowAPIApplicationException>
+            </s:Detail>
+        </s:Fault>
+    </s:Body>
+</s:Envelope>
