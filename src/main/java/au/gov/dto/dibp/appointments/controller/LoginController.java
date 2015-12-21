@@ -27,7 +27,7 @@ public class LoginController {
         if (error != null) {
             model.put("error", true);
         }
-        return new ModelAndView("login", model);
+        return new ModelAndView("login_page", model);
     }
 
 }

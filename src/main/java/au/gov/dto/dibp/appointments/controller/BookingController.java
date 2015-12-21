@@ -21,7 +21,7 @@ public class BookingController {
         model.put("location", "Ground Floor, 26 Lee St");
         model.put("todayDate", LocalDate.now(ZoneId.of("Australia/Sydney")));
 
-        return new ModelAndView("booking", model);
+        return new ModelAndView("booking_page", model);
     }
 
 }
