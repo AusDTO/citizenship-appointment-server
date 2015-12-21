@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.service.api.internal;
+package au.gov.dto.dibp.appointments.service.api;
 
 import com.squareup.okhttp.*;
 import org.springframework.stereotype.Component;

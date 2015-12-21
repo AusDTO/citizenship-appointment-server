@@ -1,7 +1,5 @@
 package au.gov.dto.dibp.appointments.service.api;
 
-import au.gov.dto.dibp.appointments.service.api.internal.ApiUserLogInSignOutService;
-import au.gov.dto.dibp.appointments.service.api.internal.HttpClientHandler;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import com.squareup.okhttp.Response;

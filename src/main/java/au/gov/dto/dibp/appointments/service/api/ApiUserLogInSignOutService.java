@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.service.api.internal;
+package au.gov.dto.dibp.appointments.service.api;
 
 import au.gov.dto.dibp.appointments.util.ResponseParser;
 import com.samskivert.mustache.Mustache;
@@ -28,20 +28,22 @@ public class ApiUserLogInSignOutService {
     static final String SIGN_OUT_TEMPLATE_PATH = "SignOut.mustache";
     private static final String API_SESSION_ID = "//FormsSignInResponse/FormsSignInResult";
 
-    @Autowired
-    HttpClientHandler httpClient;
 
     private final String SERVICE_ADDRESS_USER;
     private final String FORCE_LOGIN;
-    private List<ApiUser> apiUsers;
+    private final List<ApiUser> apiUsers;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final HttpClientHandler httpClient;
 
-    public ApiUserLogInSignOutService(){
-        initializeApiUsers();
+    private final ResourceLoader resourceLoader;
+
+    @Autowired
+    public ApiUserLogInSignOutService(HttpClientHandler httpClient, ResourceLoader resourceLoader, ApiUserService apiUserService){
+        this.httpClient = httpClient;
+        this.resourceLoader = resourceLoader;
+        this.apiUsers = Collections.unmodifiableList(apiUserService.initializeApiUsers());
         SERVICE_ADDRESS_USER = getEnvironmentVariable("SERVICE_ADDRESS_USER");
         FORCE_LOGIN = getEnvironmentVariable("USER_FORCE_LOGIN");
     }
@@ -53,8 +55,8 @@ public class ApiUserLogInSignOutService {
         Template tmpl = Mustache.compiler().compile(inputStreamReader);
 
         Map<String, String> messageParams = new HashMap<>();
-        messageParams.put("username", apiUsers.get(0).username);
-        messageParams.put("password", apiUsers.get(0).password);
+        messageParams.put("username", apiUsers.get(0).getUsername());
+        messageParams.put("password", apiUsers.get(0).getPassword());
         messageParams.put("forceSignIn", FORCE_LOGIN);
         messageParams.put("messageUUID", UUID.randomUUID().toString());
         messageParams.put("serviceAddress", SERVICE_ADDRESS_USER);
@@ -77,26 +79,6 @@ public class ApiUserLogInSignOutService {
         String messageBody = tmpl.execute(messageParams);
 
         httpClient.post(SERVICE_ADDRESS_USER, messageBody);
-    }
-
-    private void initializeApiUsers(){
-        int userCount = Integer.parseInt(getEnvironmentVariable("USER_COUNT"));
-        apiUsers = new ArrayList<>();
-
-        for(int i = 1; i<=userCount; i++){
-            String username = getEnvironmentVariable("USER_USERNAME_"+i);
-            String password = getEnvironmentVariable("USER_PASSWORD_"+i);
-            apiUsers.add(new ApiUser(username, password));
-        }
-    }
-
-    private class ApiUser {
-        ApiUser(String username, String password){
-            this.username = username;
-            this.password = password;
-        }
-        private String username;
-        private String password;
     }
 
     String getEnvironmentVariable(String name){
