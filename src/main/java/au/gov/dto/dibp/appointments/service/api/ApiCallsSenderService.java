@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ApiCallsSenderService {
 
     @Autowired
-    private ApiUserLogInSignOutService apiUserService;
+    private ApiUserLogInSignOutService apiSessionService;
 
     @Autowired
     private HttpClientHandler httpClient;
@@ -33,24 +33,19 @@ public class ApiCallsSenderService {
     @Autowired
     ResourceLoader resourceLoader;
 
-    public Response sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public Response sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
         Resource resource = resourceLoader.getResource("classpath:request_templates/" + requestTemplatePath);
         InputStream inputStream = resource.getInputStream();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         Template tmpl = mustacheCompiler.compile(inputStreamReader);
 
-        String apiSessionId = apiUserService.getApiSessionId();
-
-        try {
-            messageParams.put("apiSessionId", apiSessionId);
+        try (ApiUserLogInSignOutService.ApiSession apiSession = apiSessionService.login()) {
+            messageParams.put("apiSessionId", apiSession.getApiSessionId());
             messageParams.put("serviceAddress", serviceAddress);
             messageParams.put("messageUUID", UUID.randomUUID().toString());
             String messageBody = tmpl.execute(messageParams);
             System.out.println(messageBody);
             return httpClient.post(serviceAddress, messageBody);
-        }
-        finally {
-            apiUserService.releaseApiSessionId(apiSessionId);
         }
     }
 }
