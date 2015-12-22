@@ -17,7 +17,7 @@ public class CalendarController {
     @Autowired
     private CalendarService calendarService;
 
-    @RequestMapping(value = "/getAvailableDates", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/get_available_dates.json", method = RequestMethod.GET, produces = "application/json")
     public Map<String, CalendarEntry> getAvailableDates(@AuthenticationPrincipal Client client) {
         return calendarService.getAvailabilityForNextYear(client);
     }
