@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ApiCallsSenderService {
 
     @Autowired
-    private ApiUserLogInSignOutService apiSessionService;
+    private ApiSessionService apiSessionService;
 
     @Autowired
     private HttpClientHandler httpClient;
@@ -39,7 +39,7 @@ public class ApiCallsSenderService {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         Template tmpl = mustacheCompiler.compile(inputStreamReader);
 
-        try (ApiUserLogInSignOutService.ApiSession apiSession = apiSessionService.login()) {
+        try (ApiSessionService.ApiSession apiSession = apiSessionService.createSession()) {
             messageParams.put("apiSessionId", apiSession.getApiSessionId());
             messageParams.put("serviceAddress", serviceAddress);
             messageParams.put("messageUUID", UUID.randomUUID().toString());

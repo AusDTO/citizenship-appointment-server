@@ -9,28 +9,20 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 
 @Service
-public class ApiUserLogInSignOutService {
+public class ApiSessionService {
 
     private final ApiLoginService apiLoginService;
     private final ApiLogoutService apiLogoutService;
 
     @Autowired
-    public ApiUserLogInSignOutService(ApiLoginService apiLoginService, ApiLogoutService apiLogoutService){
+    public ApiSessionService(ApiLoginService apiLoginService, ApiLogoutService apiLogoutService){
         this.apiLoginService = apiLoginService;
         this.apiLogoutService = apiLogoutService;
     }
 
-    public String getApiSessionId() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
-        return this.apiLoginService.login();
-    }
-
-    public void releaseApiSessionId(String apiSessionId) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
-        this.apiLogoutService.logout(apiSessionId);
-    }
-
-    public ApiSession login() {
+    public ApiSession createSession() {
         try {
-            return new ApiSession(getApiSessionId());
+            return new ApiSession(apiLoginService.login());
         } catch (ParserConfigurationException|SAXException|XPathExpressionException|IOException e) {
             throw new RuntimeException("Error on login to Q-Flow API", e);
         }
@@ -46,7 +38,7 @@ public class ApiUserLogInSignOutService {
         @Override
         public void close() {
             try {
-                releaseApiSessionId(apiSessionId);
+                apiLogoutService.logout(apiSessionId);
             } catch (ParserConfigurationException|SAXException|XPathExpressionException|IOException e) {
                 throw new RuntimeException("Error on logout of Q-Flow API", e);
             }
