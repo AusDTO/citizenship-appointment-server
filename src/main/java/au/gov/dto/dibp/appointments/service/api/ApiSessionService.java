@@ -2,11 +2,6 @@ package au.gov.dto.dibp.appointments.service.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 
 @Service
 public class ApiSessionService {
@@ -21,11 +16,7 @@ public class ApiSessionService {
     }
 
     public ApiSession createSession() {
-        try {
-            return new ApiSession(apiLoginService.login());
-        } catch (ParserConfigurationException|SAXException|XPathExpressionException|IOException e) {
-            throw new RuntimeException("Error on login to Q-Flow API", e);
-        }
+        return new ApiSession(apiLoginService.login());
     }
 
     public class ApiSession implements AutoCloseable {
@@ -37,11 +28,7 @@ public class ApiSessionService {
 
         @Override
         public void close() {
-            try {
-                apiLogoutService.logout(apiSessionId);
-            } catch (ParserConfigurationException|SAXException|XPathExpressionException|IOException e) {
-                throw new RuntimeException("Error on logout of Q-Flow API", e);
-            }
+            apiLogoutService.logout(apiSessionId);
         }
 
         public String getApiSessionId() {

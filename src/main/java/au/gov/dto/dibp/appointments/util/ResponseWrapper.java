@@ -17,26 +17,42 @@ public class ResponseWrapper {
     private final int code;
     private Document responseBody;
 
-    public ResponseWrapper(int code, InputStream stream) throws ParserConfigurationException, IOException, SAXException {
+    public ResponseWrapper(int code, InputStream stream) {
         this.code = code;
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = domFactory.newDocumentBuilder();
-        responseBody = builder.parse(stream);
+        try {
+            DocumentBuilder builder = domFactory.newDocumentBuilder();
+            responseBody = builder.parse(stream);
+        } catch (ParserConfigurationException|SAXException|IOException e) {
+            throw new RuntimeException("Error parsing SOAP response", e);
+        }
     }
 
-    public String getStringAttribute(String thepath) throws XPathExpressionException {
-        XPathExpression expr = getXpath().compile(thepath);
-        return (String) expr.evaluate(this.responseBody, XPathConstants.STRING);
+    public String getStringAttribute(String thepath) {
+        try {
+            XPathExpression expr = getXpath().compile(thepath);
+            return (String) expr.evaluate(this.responseBody, XPathConstants.STRING);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error evaluating Xpath: " + thepath, e);
+        }
     }
 
-    public NodeList getNodeListAttribute(String thepath) throws XPathExpressionException {
-        XPathExpression expr = getXpath().compile(thepath);
-        return (NodeList) expr.evaluate(this.responseBody, XPathConstants.NODESET);
+    public NodeList getNodeListAttribute(String thepath) {
+        try {
+            XPathExpression expr = getXpath().compile(thepath);
+            return (NodeList) expr.evaluate(this.responseBody, XPathConstants.NODESET);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error evaluating Xpath: " + thepath, e);
+        }
     }
 
-    public Node getNodeAttribute(String thepath) throws XPathExpressionException {
-        XPathExpression expr = getXpath().compile(thepath);
-        return (Node) expr.evaluate(this.responseBody, XPathConstants.NODE);
+    public Node getNodeAttribute(String thepath) {
+        try {
+            XPathExpression expr = getXpath().compile(thepath);
+            return (Node) expr.evaluate(this.responseBody, XPathConstants.NODE);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error evaluating Xpath: " + thepath, e);
+        }
     }
 
     private XPath getXpath(){

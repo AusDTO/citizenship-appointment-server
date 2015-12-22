@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,9 +38,14 @@ public class ApiLoginService {
         this.userForceLogin = userForceLogin;
     }
 
-    public String login() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
+    public String login() {
         Resource resource = resourceLoader.getResource("classpath:request_templates/" + SIGN_IN_TEMPLATE_PATH);
-        InputStream inputStream = resource.getInputStream();
+        InputStream inputStream = null;
+        try {
+            inputStream = resource.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException("Problem reading request template: " + SIGN_IN_TEMPLATE_PATH, e);
+        }
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         Template tmpl = Mustache.compiler().compile(inputStreamReader);
 
@@ -56,7 +58,7 @@ public class ApiLoginService {
         throw new ApiLoginException("Failed to authenticate to Q-Flow API. Exceeded max FormsSignIn attempts: " + MAX_ATTEMPTS);
     }
 
-    private ResponseWrapper sendLoginRequest(Template tmpl) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    private ResponseWrapper sendLoginRequest(Template tmpl) {
         Map<String, String> messageParams = new HashMap<>();
         int index = new Random().nextInt(apiUsers.size());
         messageParams.put("username", apiUsers.get(index).getUsername());

@@ -5,15 +5,10 @@ import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.eclipse.jetty.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,28 +29,15 @@ public class ClientService implements UserDetailsService {
     private String SERVICE_ADDRESS_CUSTOMER;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserDetails user = null;
-        try {
-            user = this.getCustomerByExternalReference(username);
-        } catch (ParserConfigurationException|SAXException|XPathExpressionException|IOException e){
-            throw new RuntimeException("Error when retrieving client with clientId=[" + username + "]", e);
-        }
-        if (user == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return user;
-    }
-
-    public Client getCustomerByExternalReference(String clientId) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public Client loadUserByUsername(String username) throws UsernameNotFoundException {
         Map<String, String> data = new HashMap<>();
-        data.put("externalReference", clientId);
+        data.put("externalReference", username);
 
         ResponseWrapper response = senderService.sendRequest(REQUEST_TEMPLATE_PATH, data, SERVICE_ADDRESS_CUSTOMER);
         return parseGetCustomerByClientIdResponse(response);
     }
 
-    private Client parseGetCustomerByClientIdResponse(ResponseWrapper response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    private Client parseGetCustomerByClientIdResponse(ResponseWrapper response) {
         String clientId = response.getStringAttribute(CUSTOMER_CLIENT_ID);
         String lastName = response.getStringAttribute(CUSTOMER_LAST_NAME);
         boolean isActive = "true".equals(response.getStringAttribute(CUSTOMER_ACTIVE));

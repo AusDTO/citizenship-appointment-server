@@ -12,11 +12,15 @@ public class NodeParser {
         this.node = node;
     }
 
-    public String getStringAttribute(String thepath) throws XPathExpressionException {
-        return getXpath().evaluate(thepath, this.node);
+    public String getStringAttribute(String thepath) {
+        try {
+            return getXpath().evaluate(thepath, this.node);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error evaluating Xpath: " + thepath, e);
+        }
     }
 
-    public int getIntegerAttribute(String thepath) throws XPathExpressionException {
+    public int getIntegerAttribute(String thepath) {
        return Integer.parseInt(getStringAttribute(thepath));
     }
 

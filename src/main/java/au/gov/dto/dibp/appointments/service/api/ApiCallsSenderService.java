@@ -30,9 +30,14 @@ public class ApiCallsSenderService {
     @Autowired
     ResourceLoader resourceLoader;
 
-    public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) throws IOException {
+    public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
         Resource resource = resourceLoader.getResource("classpath:request_templates/" + requestTemplatePath);
-        InputStream inputStream = resource.getInputStream();
+        InputStream inputStream = null;
+        try {
+            inputStream = resource.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException("Problem reading request template: " + requestTemplatePath, e);
+        }
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         Template tmpl = mustacheCompiler.compile(inputStreamReader);
 

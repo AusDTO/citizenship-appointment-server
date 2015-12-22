@@ -9,11 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -48,14 +44,10 @@ public class CalendarService {
         LocalDate today =  LocalDate.now(ZoneId.of("Australia/Sydney"));
         LocalDate endDate = today.plusYears(1L);
 
-        try {
-            return this.getCalendars(client.getServiceId(), today, endDate);
-        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
-            throw new RuntimeException("Error when retrieving calendar for serviceId " + client.getServiceId(), e);
-        }
+        return this.getCalendars(client.getServiceId(), today, endDate);
     }
 
-    public SortedMap<String, CalendarEntry> getCalendars(String serviceId, LocalDate startDate, LocalDate endDate) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public SortedMap<String, CalendarEntry> getCalendars(String serviceId, LocalDate startDate, LocalDate endDate) {
         Map<String, String> data = new HashMap<>();
         data.put("serviceId", serviceId);
         data.put("startDate", startDate.toString()+"T00:00:00");
@@ -65,7 +57,7 @@ public class CalendarService {
         return parseGetCalendarsResponse(response);
     }
 
-    private SortedMap<String, CalendarEntry> parseGetCalendarsResponse(ResponseWrapper response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    private SortedMap<String, CalendarEntry> parseGetCalendarsResponse(ResponseWrapper response) {
         SortedMap<String, CalendarEntry> calendarEntries = new TreeMap<>();
 
         NodeList calendarNodes = response.getNodeListAttribute(GetCalendars.CALENDARS);
@@ -78,7 +70,7 @@ public class CalendarService {
         return calendarEntries;
     }
 
-    private CalendarEntry getCalendarEntryDetails(Node calendarNode) throws XPathExpressionException {
+    private CalendarEntry getCalendarEntryDetails(Node calendarNode) {
         NodeParser nodeParser = new NodeParser(calendarNode);
 
         String calendarDate = nodeParser.getStringAttribute(GetCalendars.CALENDAR_DATE);

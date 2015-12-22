@@ -42,7 +42,7 @@ public class ClientServiceTest {
         ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
 
         when(senderService.sendRequest(anyString(), dataArgumentCaptor.capture(), anyString())).thenReturn(getStandardResponse());
-        service.getCustomerByExternalReference(clientId);
+        service.loadUserByUsername(clientId);
 
         Map<String, String> capturedData = dataArgumentCaptor.getValue();
         assertThat(capturedData.size(), is(1));
@@ -57,7 +57,7 @@ public class ClientServiceTest {
         ArgumentCaptor<String> serviceAddressArgumentCaptor = ArgumentCaptor.forClass(String.class);
 
         when(senderService.sendRequest(templatePathArgumentCaptor.capture(), dataArgumentCaptor.capture(), serviceAddressArgumentCaptor.capture())).thenReturn(getStandardResponse());
-        service.getCustomerByExternalReference(clientId);
+        service.loadUserByUsername(clientId);
 
         Map<String, String> capturedData = dataArgumentCaptor.getValue();
         assertThat(capturedData.size(), is(1));
@@ -69,7 +69,7 @@ public class ClientServiceTest {
     public void getCustomerByExternalReference_shouldConvertResponseIntoCustomerObject() throws Exception {
         String clientId = "123";
         when(senderService.sendRequest(anyString(), Matchers.<Map<String, String>>any(), anyString())).thenReturn(getStandardResponse());
-        Client client = service.getCustomerByExternalReference(clientId);
+        Client client = service.loadUserByUsername(clientId);
 
         assertThat(client.isEnabled(), is(true));
         assertThat(client.getCustomerClientId(), is("919191"));
