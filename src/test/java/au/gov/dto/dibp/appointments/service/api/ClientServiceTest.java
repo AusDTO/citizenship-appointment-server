@@ -15,12 +15,12 @@ public class ClientServiceTest {
 
     @Test
     public void getCustomerByExternalReference_shouldConvertResponseIntoCustomerObject() throws Exception {
-        ClientService service = new ClientService(new ApiCallsSenderService(null, null, null, null) {
+        ClientService service = new ClientService(new ApiCallsSenderService() {
             @Override
             public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
                 return getStandardResponse();
             }
-        }, "");
+        }, "serviceUrl");
 
         Client client = service.loadUserByUsername("919191");
 

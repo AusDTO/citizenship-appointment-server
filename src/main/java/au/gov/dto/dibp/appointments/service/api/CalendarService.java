@@ -20,11 +20,14 @@ import java.util.TreeMap;
 @Service
 public class CalendarService {
 
-    @Autowired
-    private ApiCallsSenderService senderService;
+    private final ApiCallsSenderService senderService;
+    private final String serviceAddressService;
 
-    @Value("${SERVICE.ADDRESS.SERVICE}")
-    private String SERVICE_ADDRESS_SERVICE;
+    @Autowired
+    public CalendarService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddressService) {
+        this.senderService = senderService;
+        this.serviceAddressService = serviceAddressService;
+    }
 
     private class GetCalendars {
         static final String REQUEST_TEMPLATE_PATH = "GetCalendars.mustache";
@@ -53,7 +56,7 @@ public class CalendarService {
         data.put("startDate", startDate.toString()+"T00:00:00");
         data.put("endDate", endDate.toString()+"T00:00:00");
 
-        ResponseWrapper response = senderService.sendRequest(GetCalendars.REQUEST_TEMPLATE_PATH, data, SERVICE_ADDRESS_SERVICE);
+        ResponseWrapper response = senderService.sendRequest(GetCalendars.REQUEST_TEMPLATE_PATH, data, serviceAddressService);
         return parseGetCalendarsResponse(response);
     }
 

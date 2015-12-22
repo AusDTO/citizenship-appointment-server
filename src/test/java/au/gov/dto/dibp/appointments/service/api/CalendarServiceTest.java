@@ -2,103 +2,29 @@ package au.gov.dto.dibp.appointments.service.api;
 
 import au.gov.dto.dibp.appointments.model.CalendarEntry;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
-import com.squareup.okhttp.*;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.SortedMap;
 
-import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class CalendarServiceTest {
-
-    @Mock
-    ApiCallsSenderService senderService;
-
-    @InjectMocks
-    CalendarService service;
-
-    @Before
-    public void setup() {
-        ReflectionTestUtils.setField(service, "SERVICE_ADDRESS_SERVICE", "http://someurl");
-    }
-
-    @Test
-    public void getCalendars_shouldPutServiceIdIntoData() throws Exception {
-        String serviceId = "123";
-        ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
-
-        when(senderService.sendRequest(anyString(), dataArgumentCaptor.capture(), anyString())).thenReturn(getStandardResponse());
-        service.getCalendars(serviceId, LocalDate.now(), LocalDate.now());
-
-        Map<String, String> capturedData = dataArgumentCaptor.getValue();
-        assertThat(capturedData.size(), is(3));
-        assertThat(capturedData.get("serviceId"), is(serviceId));
-    }
-
-    @Test
-    public void getCalendars_shouldPutStartDateIntoData() throws Exception {
-        LocalDate startDate = LocalDate.of(2015, 12, 16);
-        ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
-
-        when(senderService.sendRequest(anyString(), dataArgumentCaptor.capture(), anyString())).thenReturn(getStandardResponse());
-        service.getCalendars("", startDate, LocalDate.now());
-
-        Map<String, String> capturedData = dataArgumentCaptor.getValue();
-        assertThat(capturedData.size(), is(3));
-        assertThat(capturedData.get("startDate"), is(startDate.toString()+"T00:00:00"));
-    }
-
-    @Test
-    public void getCalendars_shouldPutEndDateIntoData() throws Exception {
-        LocalDate endDate = LocalDate.of(2018, 12, 16);
-        ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
-
-        when(senderService.sendRequest(anyString(), dataArgumentCaptor.capture(), anyString())).thenReturn(getStandardResponse());
-        service.getCalendars("", LocalDate.now(), endDate);
-
-        Map<String, String> capturedData = dataArgumentCaptor.getValue();
-        assertThat(capturedData.size(), is(3));
-        assertThat(capturedData.get("endDate"), is(endDate.toString()+"T00:00:00"));
-    }
-
-    @Test
-    public void getCalendars_shouldCallSendServiceWithCorrectArguments() throws Exception {
-        String serviceId = "123";
-        LocalDate startDate = LocalDate.of(2015, 12, 16);
-        LocalDate endDate = LocalDate.of(2018, 12, 16);
-
-        ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
-        ArgumentCaptor<String> templatePathArgumentCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> serviceAddressArgumentCaptor = ArgumentCaptor.forClass(String.class);
-
-        when(senderService.sendRequest(templatePathArgumentCaptor.capture(), dataArgumentCaptor.capture(), serviceAddressArgumentCaptor.capture())).thenReturn(getStandardResponse());
-        service.getCalendars(serviceId, startDate, endDate);
-
-        Map<String, String> capturedData = dataArgumentCaptor.getValue();
-        assertThat(capturedData.size(), is(3));
-        assertThat(templatePathArgumentCaptor.getValue(), endsWith("GetCalendars.mustache"));
-        assertThat(serviceAddressArgumentCaptor.getValue(), is("http://someurl"));
-    }
 
     @Test
     public void getCalendars_shouldConvertResponseIntoCalendarEntryObject() throws Exception {
-        when(senderService.sendRequest(anyString(), Matchers.<Map<String, String>>any(), anyString())).thenReturn(getStandardResponse());
-        SortedMap<String, CalendarEntry> calendarEntries = service.getCalendars("", LocalDate.now(), LocalDate.now());
+        CalendarService service = new CalendarService(new ApiCallsSenderService() {
+            @Override
+            public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
+                return getStandardResponse();
+            }
+        }, "serviceUrl");
+
+        SortedMap<String, CalendarEntry> calendarEntries = service.getCalendars("serviceId", LocalDate.now(), LocalDate.now());
 
         CalendarEntry calendarEntry = calendarEntries.get(calendarEntries.firstKey());
 
@@ -110,7 +36,7 @@ public class CalendarServiceTest {
 
     // FIXME(Emily) test inactive entries are not included in response
 
-    private ResponseWrapper getStandardResponse() throws Exception {
+    private ResponseWrapper getStandardResponse() {
         String response =
             "<s:Body>\n" +
             "      <GetCalendarsResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
@@ -128,18 +54,7 @@ public class CalendarServiceTest {
             "         </GetCalendarsResult>\n" +
             "      </GetCalendarsResponse>\n" +
             "   </s:Body>";
-
-        Response.Builder responseBuilder = new Response.Builder();
-        responseBuilder.code(200);
-        responseBuilder.protocol(Protocol.HTTP_1_1);
-
-        ResponseBody body = ResponseBody.create(MediaType.parse("application/soap+xml; charset=utf-8"), response);
-        responseBuilder.body(body);
-
-        Request.Builder requestBuilder = new Request.Builder();
-        requestBuilder.url("http://test.test.com");
-        responseBuilder.request(requestBuilder.build());
-        return new ResponseWrapper(200, responseBuilder.build().body().byteStream());
+        return new ResponseWrapper(200, new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8)));
     }
 
 }
