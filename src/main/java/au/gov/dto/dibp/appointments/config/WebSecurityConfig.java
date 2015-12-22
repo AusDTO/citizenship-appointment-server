@@ -16,6 +16,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private ClientService clientService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -39,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new ClientService();
+        return clientService;
     }
 
     @Autowired

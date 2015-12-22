@@ -7,30 +7,27 @@ import java.util.Collections;
 
 public class Client extends User {
 
-    private final String customerClientId;
-
-    private String id;
-    private boolean withEmailAddress;
+    private final String customerId;
+    private final boolean hasEmail;
     private String serviceId;
     private String appointmentTypeId;
 
-    public Client(String username, String familyName, String id, boolean withEmail, boolean active) {
-        super(username, familyName, active, true, true, true, Collections.singletonList(new SimpleGrantedAuthority("USER")));
-        this.customerClientId = username;
-        this.id = id;
-        this.withEmailAddress = withEmail;
+    public Client(String clientId, String familyName, String customerId, boolean hasEmail, boolean active) {
+        super(clientId, familyName, active, true, true, true, Collections.singletonList(new SimpleGrantedAuthority("USER")));
+        this.customerId = customerId;
+        this.hasEmail = hasEmail;
     }
 
-    public String getCustomerClientId() {
-        return customerClientId;
+    public String getClientId() {
+        return getUsername();
     }
 
-    public String getId() {
-        return id;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public boolean isWithEmailAddress() {
-        return withEmailAddress;
+    public boolean hasEmail() {
+        return hasEmail;
     }
 
     public String getServiceId() {

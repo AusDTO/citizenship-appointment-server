@@ -22,29 +22,32 @@ public class ClientService implements UserDetailsService {
     private static final String CUSTOMER_LAST_NAME = "//GetByExtRefResponse/GetByExtRefResult/Customer/LastName";
     private static final String CUSTOMER_ID = "//GetByExtRefResponse/GetByExtRefResult/Customer/Id";
 
-    @Autowired
-    private ApiCallsSenderService senderService;
+    private final ApiCallsSenderService senderService;
+    private final String serviceAddressCustomer;
 
-    @Value("${SERVICE.ADDRESS.CUSTOMER}")
-    private String SERVICE_ADDRESS_CUSTOMER;
+    @Autowired
+    public ClientService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.CUSTOMER}") String serviceAddressCustomer) {
+        this.senderService = senderService;
+        this.serviceAddressCustomer = serviceAddressCustomer;
+    }
 
     @Override
     public Client loadUserByUsername(String username) throws UsernameNotFoundException {
         Map<String, String> data = new HashMap<>();
         data.put("externalReference", username);
 
-        ResponseWrapper response = senderService.sendRequest(REQUEST_TEMPLATE_PATH, data, SERVICE_ADDRESS_CUSTOMER);
+        ResponseWrapper response = senderService.sendRequest(REQUEST_TEMPLATE_PATH, data, serviceAddressCustomer);
         return parseGetCustomerByClientIdResponse(response);
     }
 
     private Client parseGetCustomerByClientIdResponse(ResponseWrapper response) {
         String clientId = response.getStringAttribute(CUSTOMER_CLIENT_ID);
         String lastName = response.getStringAttribute(CUSTOMER_LAST_NAME);
+        String customerId = response.getStringAttribute(CUSTOMER_ID);
+        boolean hasEmail = StringUtil.isNotBlank(response.getStringAttribute(CUSTOMER_EMAIL));
         boolean isActive = "true".equals(response.getStringAttribute(CUSTOMER_ACTIVE));
-        String id = response.getStringAttribute(CUSTOMER_ID);
-        boolean isWithEmail = StringUtil.isNotBlank(response.getStringAttribute(CUSTOMER_EMAIL));
 
-        return new Client(clientId, lastName, id, isWithEmail, isActive);
+        return new Client(clientId, lastName, customerId, hasEmail, isActive);
     }
 
 }

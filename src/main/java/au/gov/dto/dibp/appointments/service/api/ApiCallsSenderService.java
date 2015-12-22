@@ -18,17 +18,18 @@ import java.util.UUID;
 @Service
 public class ApiCallsSenderService {
 
-    @Autowired
-    private ApiSessionService apiSessionService;
+    private final ApiSessionService apiSessionService;
+    private final HttpClient httpClient;
+    private final Mustache.Compiler mustacheCompiler;
+    private final ResourceLoader resourceLoader;
 
     @Autowired
-    private HttpClient httpClient;
-
-    @Autowired
-    private Mustache.Compiler mustacheCompiler;
-
-    @Autowired
-    ResourceLoader resourceLoader;
+    public ApiCallsSenderService(ApiSessionService apiSessionService, HttpClient httpClient, Mustache.Compiler mustacheCompiler, ResourceLoader resourceLoader) {
+        this.apiSessionService = apiSessionService;
+        this.httpClient = httpClient;
+        this.mustacheCompiler = mustacheCompiler;
+        this.resourceLoader = resourceLoader;
+    }
 
     public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
         Resource resource = resourceLoader.getResource("classpath:request_templates/" + requestTemplatePath);
