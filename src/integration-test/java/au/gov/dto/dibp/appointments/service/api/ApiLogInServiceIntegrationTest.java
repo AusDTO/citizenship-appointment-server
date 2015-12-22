@@ -16,14 +16,24 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.fail;
 
 public class ApiLogInServiceIntegrationTest {
 
-    private final DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
     private MockWebServer mockWebServer;
 
     @Before
     public void setup() {
+        mockWebServer = new MockWebServer();
+    }
+
+    @After
+    public void teardown() throws IOException {
+        mockWebServer.shutdown();
+    }
+
+    @Test
+    public void testSuccessfulApiLogin() throws Exception {
         Dispatcher dispatcher = new Dispatcher() {
             @Override
             public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
@@ -48,19 +58,41 @@ public class ApiLogInServiceIntegrationTest {
                 }
             }
         };
-        mockWebServer = new MockWebServer();
         mockWebServer.setDispatcher(dispatcher);
-    }
 
-    @After
-    public void teardown() throws IOException {
-        mockWebServer.shutdown();
-    }
-
-    @Test
-    public void testSuccessfulApiLogin() throws Exception {
         ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password")), new HttpClientHandler(), "http://localhost:"+this.mockWebServer.getPort(), "false");
         String apiSessionId = apiLoginService.login();
         assertThat(apiSessionId, not(isEmptyOrNullString()));
+    }
+
+    @Test
+    public void successfulApiLoginOnLastRetry() throws Exception {
+        String takenUserResponse = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInTakenUserResponse.xml"));
+        String successResponse = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInSuccessResponse.xml"));
+        for (int i = 0; i < ApiLoginService.MAX_ATTEMPTS - 1; i++) {
+            this.mockWebServer.enqueue(new MockResponse().setResponseCode(500).setBody(takenUserResponse));
+        }
+        this.mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(successResponse));
+
+        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password")), new HttpClientHandler(), "http://localhost:"+this.mockWebServer.getPort(), "false");
+        String apiSessionId = apiLoginService.login();
+
+        assertThat(apiSessionId, not(isEmptyOrNullString()));
+    }
+
+    @Test
+    public void failApiLoginAfterFailedRetries() throws Exception {
+        String takenUserResponse = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInTakenUserResponse.xml"));
+        for (int i = 0; i < ApiLoginService.MAX_ATTEMPTS; i++) {
+            this.mockWebServer.enqueue(new MockResponse().setResponseCode(500).setBody(takenUserResponse));
+        }
+
+        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password")), new HttpClientHandler(), "http://localhost:"+this.mockWebServer.getPort(), "false");
+        try {
+            apiLoginService.login();
+            fail("Expected Runtime exception");
+        } catch (ApiLoginException expected) {
+            // expected
+        }
     }
 }

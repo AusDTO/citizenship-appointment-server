@@ -24,6 +24,8 @@ public class ApiLoginService {
     private static final String SIGN_IN_TEMPLATE_PATH = "FormsSignIn.mustache";
     private static final String API_SESSION_ID = "//FormsSignInResponse/FormsSignInResult";
 
+    static final int MAX_ATTEMPTS = 7;
+
     private String serviceAddressUser;
     private String userForceLogin;
 
@@ -46,16 +48,28 @@ public class ApiLoginService {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         Template tmpl = Mustache.compiler().compile(inputStreamReader);
 
+        for (int attempts = 0 ; attempts < MAX_ATTEMPTS; attempts++) {
+            Response response = sendLoginRequest(tmpl);
+            if (response.code() == 200) {
+                try (InputStream responseBodyStream = response.body().byteStream()) {
+                    return new ResponseParser(responseBodyStream).getStringAttribute(API_SESSION_ID);
+                }
+            }
+        }
+        throw new ApiLoginException("Failed to authenticate to Q-Flow API. Exceeded max FormsSignIn attempts: " + MAX_ATTEMPTS);
+    }
+
+    private Response sendLoginRequest(Template tmpl) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         Map<String, String> messageParams = new HashMap<>();
-        messageParams.put("username", apiUsers.get(0).getUsername());
-        messageParams.put("password", apiUsers.get(0).getPassword());
+        int index = new Random().nextInt(apiUsers.size());
+        messageParams.put("username", apiUsers.get(index).getUsername());
+        messageParams.put("password", apiUsers.get(index).getPassword());
         messageParams.put("forceSignIn", userForceLogin);
         messageParams.put("messageUUID", UUID.randomUUID().toString());
         messageParams.put("serviceAddress", serviceAddressUser);
         String messageBody = tmpl.execute(messageParams);
 
-        Response r = httpClient.post(serviceAddressUser, messageBody);
-        return new ResponseParser(r.body().byteStream()).getStringAttribute(API_SESSION_ID);
+        return httpClient.post(serviceAddressUser, messageBody);
     }
 
 }
