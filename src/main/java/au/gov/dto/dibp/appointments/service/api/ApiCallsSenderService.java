@@ -1,16 +1,13 @@
 package au.gov.dto.dibp.appointments.service.api;
 
+import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
-import com.squareup.okhttp.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,7 +22,7 @@ public class ApiCallsSenderService {
     private ApiSessionService apiSessionService;
 
     @Autowired
-    private HttpClientHandler httpClient;
+    private HttpClient httpClient;
 
     @Autowired
     private Mustache.Compiler mustacheCompiler;
@@ -33,7 +30,7 @@ public class ApiCallsSenderService {
     @Autowired
     ResourceLoader resourceLoader;
 
-    public Response sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
+    public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) throws IOException {
         Resource resource = resourceLoader.getResource("classpath:request_templates/" + requestTemplatePath);
         InputStream inputStream = resource.getInputStream();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);

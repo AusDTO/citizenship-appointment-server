@@ -19,12 +19,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ResponseParserTest {
+public class ResponseWrapperTest {
 
     @Test
     public void getStringAttribute_shouldReturnStringValueOfXpath(){
         try {
-            ResponseParser parser = new ResponseParser(getBasicResponseBody());
+            ResponseWrapper parser = new ResponseWrapper(0, getBasicResponseBody());
             assertThat(parser.getStringAttribute("//c"), is("Some C Node text here"));
         } catch (ParserConfigurationException | IOException | SAXException e) {
             fail(e.getMessage());
@@ -37,7 +37,7 @@ public class ResponseParserTest {
     public void getNodeAttribute_shouldReturnNodeMatchingXpath(){
         try {
 
-            ResponseParser parser = new ResponseParser(getBasicResponseBody());
+            ResponseWrapper parser = new ResponseWrapper(0, getBasicResponseBody());
             Node nodeB = parser.getNodeAttribute("//b");
             assertThat(nodeB.getNodeName(), is("b"));
             assertThat(nodeB.getChildNodes().getLength(), is(1));
@@ -53,7 +53,7 @@ public class ResponseParserTest {
     public void getNodeListAttribute_shouldReturnNodesListMatchingXpath(){
         try {
 
-            ResponseParser parser = new ResponseParser(getBasicResponseBody());
+            ResponseWrapper parser = new ResponseWrapper(0, getBasicResponseBody());
             NodeList nodeList = parser.getNodeListAttribute("//d/e");
             assertThat(nodeList.getLength(), is(3));
             assertThat(nodeList.item(0).getTextContent(), is("List Elem 1"));

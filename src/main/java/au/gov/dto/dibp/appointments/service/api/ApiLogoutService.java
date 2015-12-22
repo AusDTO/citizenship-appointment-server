@@ -25,10 +25,10 @@ public class ApiLogoutService {
 
     private final ResourceLoader resourceLoader;
     private final String serviceAddressUser;
-    private final HttpClientHandler httpClient;
+    private final HttpClient httpClient;
 
     @Autowired
-    public ApiLogoutService(ResourceLoader resourceLoader, @Value("${SERVICE.ADDRESS.USER}") String serviceAddressUser, HttpClientHandler httpClient) {
+    public ApiLogoutService(ResourceLoader resourceLoader, @Value("${SERVICE.ADDRESS.USER}") String serviceAddressUser, HttpClient httpClient) {
         this.resourceLoader = resourceLoader;
         this.serviceAddressUser = serviceAddressUser;
         this.httpClient = httpClient;

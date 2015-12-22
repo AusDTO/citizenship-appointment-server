@@ -3,8 +3,7 @@ package au.gov.dto.dibp.appointments.service.api;
 import au.gov.dto.dibp.appointments.model.CalendarEntry;
 import au.gov.dto.dibp.appointments.model.Client;
 import au.gov.dto.dibp.appointments.util.NodeParser;
-import au.gov.dto.dibp.appointments.util.ResponseParser;
-import com.squareup.okhttp.Response;
+import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,15 +61,14 @@ public class CalendarService {
         data.put("startDate", startDate.toString()+"T00:00:00");
         data.put("endDate", endDate.toString()+"T00:00:00");
 
-        Response response = senderService.sendRequest(GetCalendars.REQUEST_TEMPLATE_PATH, data, SERVICE_ADDRESS_SERVICE);
+        ResponseWrapper response = senderService.sendRequest(GetCalendars.REQUEST_TEMPLATE_PATH, data, SERVICE_ADDRESS_SERVICE);
         return parseGetCalendarsResponse(response);
     }
 
-    private SortedMap<String, CalendarEntry> parseGetCalendarsResponse(Response response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
-        ResponseParser parser = new ResponseParser(response.body().byteStream());
+    private SortedMap<String, CalendarEntry> parseGetCalendarsResponse(ResponseWrapper response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         SortedMap<String, CalendarEntry> calendarEntries = new TreeMap<>();
 
-        NodeList calendarNodes = parser.getNodeListAttribute(GetCalendars.CALENDARS);
+        NodeList calendarNodes = response.getNodeListAttribute(GetCalendars.CALENDARS);
 
         for(int i=0; i < calendarNodes.getLength(); i++) {
             CalendarEntry newCalendarEntry = getCalendarEntryDetails(calendarNodes.item(i));

@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.service.api;
 
 import au.gov.dto.dibp.appointments.model.CalendarEntry;
+import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import com.squareup.okhttp.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,11 +12,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.SortedMap;
@@ -41,7 +38,7 @@ public class CalendarServiceTest {
     }
 
     @Test
-    public void getCalendars_shouldPutServiceIdIntoData() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public void getCalendars_shouldPutServiceIdIntoData() throws Exception {
         String serviceId = "123";
         ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
 
@@ -54,7 +51,7 @@ public class CalendarServiceTest {
     }
 
     @Test
-    public void getCalendars_shouldPutStartDateIntoData() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public void getCalendars_shouldPutStartDateIntoData() throws Exception {
         LocalDate startDate = LocalDate.of(2015, 12, 16);
         ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
 
@@ -67,7 +64,7 @@ public class CalendarServiceTest {
     }
 
     @Test
-    public void getCalendars_shouldPutEndDateIntoData() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public void getCalendars_shouldPutEndDateIntoData() throws Exception {
         LocalDate endDate = LocalDate.of(2018, 12, 16);
         ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
 
@@ -80,7 +77,7 @@ public class CalendarServiceTest {
     }
 
     @Test
-    public void getCalendars_shouldCallSendServiceWithCorrectArguments() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public void getCalendars_shouldCallSendServiceWithCorrectArguments() throws Exception {
         String serviceId = "123";
         LocalDate startDate = LocalDate.of(2015, 12, 16);
         LocalDate endDate = LocalDate.of(2018, 12, 16);
@@ -99,7 +96,7 @@ public class CalendarServiceTest {
     }
 
     @Test
-    public void getCalendars_shouldConvertResponseIntoCalendarEntryObject() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public void getCalendars_shouldConvertResponseIntoCalendarEntryObject() throws Exception {
         when(senderService.sendRequest(anyString(), Matchers.<Map<String, String>>any(), anyString())).thenReturn(getStandardResponse());
         SortedMap<String, CalendarEntry> calendarEntries = service.getCalendars("", LocalDate.now(), LocalDate.now());
 
@@ -113,7 +110,7 @@ public class CalendarServiceTest {
 
     // FIXME(Emily) test inactive entries are not included in response
 
-    private Response getStandardResponse(){
+    private ResponseWrapper getStandardResponse() throws Exception {
         String response =
             "<s:Body>\n" +
             "      <GetCalendarsResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
@@ -142,7 +139,7 @@ public class CalendarServiceTest {
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.url("http://test.test.com");
         responseBuilder.request(requestBuilder.build());
-        return responseBuilder.build();
+        return new ResponseWrapper(200, responseBuilder.build().body().byteStream());
     }
 
 }

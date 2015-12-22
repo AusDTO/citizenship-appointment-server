@@ -1,8 +1,7 @@
 package au.gov.dto.dibp.appointments.service.api;
 
 import au.gov.dto.dibp.appointments.model.Client;
-import au.gov.dto.dibp.appointments.util.ResponseParser;
-import com.squareup.okhttp.Response;
+import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.eclipse.jetty.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,18 +51,16 @@ public class ClientService implements UserDetailsService {
         Map<String, String> data = new HashMap<>();
         data.put("externalReference", clientId);
 
-        Response response = senderService.sendRequest(REQUEST_TEMPLATE_PATH, data, SERVICE_ADDRESS_CUSTOMER);
+        ResponseWrapper response = senderService.sendRequest(REQUEST_TEMPLATE_PATH, data, SERVICE_ADDRESS_CUSTOMER);
         return parseGetCustomerByClientIdResponse(response);
     }
 
-    private Client parseGetCustomerByClientIdResponse(Response response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
-        ResponseParser parser = new ResponseParser(response.body().byteStream());
-
-        String clientId = parser.getStringAttribute(CUSTOMER_CLIENT_ID);
-        String lastName = parser.getStringAttribute(CUSTOMER_LAST_NAME);
-        boolean isActive = "true".equals(parser.getStringAttribute(CUSTOMER_ACTIVE));
-        String id = parser.getStringAttribute(CUSTOMER_ID);
-        boolean isWithEmail = StringUtil.isNotBlank(parser.getStringAttribute(CUSTOMER_EMAIL));
+    private Client parseGetCustomerByClientIdResponse(ResponseWrapper response) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+        String clientId = response.getStringAttribute(CUSTOMER_CLIENT_ID);
+        String lastName = response.getStringAttribute(CUSTOMER_LAST_NAME);
+        boolean isActive = "true".equals(response.getStringAttribute(CUSTOMER_ACTIVE));
+        String id = response.getStringAttribute(CUSTOMER_ID);
+        boolean isWithEmail = StringUtil.isNotBlank(response.getStringAttribute(CUSTOMER_EMAIL));
 
         return new Client(clientId, lastName, id, isWithEmail, isActive);
     }

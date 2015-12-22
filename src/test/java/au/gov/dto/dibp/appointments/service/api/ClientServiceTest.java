@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.service.api;
 
 import au.gov.dto.dibp.appointments.model.Client;
+import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import com.squareup.okhttp.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,11 +13,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.endsWith;
@@ -40,7 +37,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    public void getCustomerByExternalReference_shouldPutClientIdIntoData() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public void getCustomerByExternalReference_shouldPutClientIdIntoData() throws Exception {
         String clientId = "123";
         ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
 
@@ -53,7 +50,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    public void getCustomerByExternalReference_shouldCallSendServiceWithCorrectArguments() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public void getCustomerByExternalReference_shouldCallSendServiceWithCorrectArguments() throws Exception {
         String clientId = "123";
         ArgumentCaptor<Map> dataArgumentCaptor = ArgumentCaptor.forClass(Map.class);
         ArgumentCaptor<String> templatePathArgumentCaptor = ArgumentCaptor.forClass(String.class);
@@ -69,7 +66,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    public void getCustomerByExternalReference_shouldConvertResponseIntoCustomerObject() throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+    public void getCustomerByExternalReference_shouldConvertResponseIntoCustomerObject() throws Exception {
         String clientId = "123";
         when(senderService.sendRequest(anyString(), Matchers.<Map<String, String>>any(), anyString())).thenReturn(getStandardResponse());
         Client client = service.getCustomerByExternalReference(clientId);
@@ -84,7 +81,7 @@ public class ClientServiceTest {
         assertThat(client.getAuthorities().contains(new SimpleGrantedAuthority("USER")), is(true));
     }
 
-    private Response getStandardResponse(){
+    private ResponseWrapper getStandardResponse() throws Exception {
         String response =
             "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://www.w3.org/2005/08/addressing\">\n" +
             "   <s:Header/>\n" +
@@ -115,7 +112,7 @@ public class ClientServiceTest {
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.url("http://test.test.com");
         responseBuilder.request(requestBuilder.build());
-        return responseBuilder.build();
+        return new ResponseWrapper(200, responseBuilder.build().body().byteStream());
     }
 
 }

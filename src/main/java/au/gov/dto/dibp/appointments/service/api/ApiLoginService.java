@@ -1,9 +1,8 @@
 package au.gov.dto.dibp.appointments.service.api;
 
-import au.gov.dto.dibp.appointments.util.ResponseParser;
+import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
-import com.squareup.okhttp.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -31,10 +30,10 @@ public class ApiLoginService {
 
     private final List<ApiUser> apiUsers;
     private final ResourceLoader resourceLoader;
-    private final HttpClientHandler httpClient;
+    private final HttpClient httpClient;
 
     @Autowired
-    public ApiLoginService(ResourceLoader resourceLoader, ApiUserService apiUserService, HttpClientHandler httpClient, @Value("${SERVICE.ADDRESS.USER}") String serviceAddressUser, @Value("${USER.FORCE.LOGIN}") String userForceLogin) {
+    public ApiLoginService(ResourceLoader resourceLoader, ApiUserService apiUserService, HttpClient httpClient, @Value("${SERVICE.ADDRESS.USER}") String serviceAddressUser, @Value("${USER.FORCE.LOGIN}") String userForceLogin) {
         this.resourceLoader = resourceLoader;
         this.apiUsers = Collections.unmodifiableList(apiUserService.initializeApiUsers());
         this.httpClient = httpClient;
@@ -49,17 +48,15 @@ public class ApiLoginService {
         Template tmpl = Mustache.compiler().compile(inputStreamReader);
 
         for (int attempts = 0 ; attempts < MAX_ATTEMPTS; attempts++) {
-            Response response = sendLoginRequest(tmpl);
-            if (response.code() == 200) {
-                try (InputStream responseBodyStream = response.body().byteStream()) {
-                    return new ResponseParser(responseBodyStream).getStringAttribute(API_SESSION_ID);
-                }
+            ResponseWrapper response = sendLoginRequest(tmpl);
+            if (response.getCode() == 200) {
+                return response.getStringAttribute(API_SESSION_ID);
             }
         }
         throw new ApiLoginException("Failed to authenticate to Q-Flow API. Exceeded max FormsSignIn attempts: " + MAX_ATTEMPTS);
     }
 
-    private Response sendLoginRequest(Template tmpl) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    private ResponseWrapper sendLoginRequest(Template tmpl) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         Map<String, String> messageParams = new HashMap<>();
         int index = new Random().nextInt(apiUsers.size());
         messageParams.put("username", apiUsers.get(index).getUsername());
