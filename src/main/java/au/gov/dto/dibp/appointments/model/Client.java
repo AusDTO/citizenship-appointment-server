@@ -1,6 +1,5 @@
 package au.gov.dto.dibp.appointments.model;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collections;
@@ -13,7 +12,7 @@ public class Client extends User {
     private String appointmentTypeId;
 
     public Client(String clientId, String familyName, String customerId, boolean hasEmail, boolean active) {
-        super(clientId, familyName, active, true, true, true, Collections.singletonList(new SimpleGrantedAuthority("USER")));
+        super(clientId, familyName, active, true, true, true, Collections.emptyList());
         this.customerId = customerId;
         this.hasEmail = hasEmail;
     }

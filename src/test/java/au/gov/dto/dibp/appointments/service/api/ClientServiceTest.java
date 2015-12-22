@@ -3,7 +3,6 @@ package au.gov.dto.dibp.appointments.service.api;
 import au.gov.dto.dibp.appointments.model.Client;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -31,8 +30,6 @@ public class ClientServiceTest {
         assertThat(client.getPassword(), is("Smith"));
         assertThat(client.getCustomerId(), is("6"));
         assertThat(client.hasEmail(), is(true));
-        assertThat(client.getAuthorities().size(), is(1));
-        assertThat(client.getAuthorities().contains(new SimpleGrantedAuthority("USER")), is(true));
     }
 
     private ResponseWrapper getStandardResponse() {
