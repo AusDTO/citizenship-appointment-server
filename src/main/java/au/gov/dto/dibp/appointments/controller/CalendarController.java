@@ -19,7 +19,7 @@ public class CalendarController {
 
     @RequestMapping(value = "/get_available_dates.json", method = RequestMethod.GET, produces = "application/json")
     public Map<String, CalendarEntry> getAvailableDates(@AuthenticationPrincipal Client client) {
-        return calendarService.getAvailabilityForNextYear(client);
+        return calendarService.getAvailabilityForNextYear(client.getServiceId());
     }
 
 }

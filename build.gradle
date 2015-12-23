@@ -140,6 +140,7 @@ task copyBundledAssets(type: Copy,
 
 
 clean.doFirst {
+    delete "${projectDir}/node_modules"
     delete "${projectDir}/src/main/resources/templates"
     delete "${projectDir}/src/main/resources/public"
 }
@@ -147,6 +148,8 @@ clean.doFirst {
 run.dependsOn copySpringLoaded
 bootRun.dependsOn copySpringLoaded
 
+copyBundledAssets.dependsOn npm_update
+copyImageAssets.dependsOn npm_update
 copyServerTempl.dependsOn npm_update
 processResources.dependsOn copyServerTempl, copyImageAssets, copyBundledAssets
 

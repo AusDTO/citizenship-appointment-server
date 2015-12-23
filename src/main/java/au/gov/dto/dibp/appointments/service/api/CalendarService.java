@@ -1,7 +1,6 @@
 package au.gov.dto.dibp.appointments.service.api;
 
 import au.gov.dto.dibp.appointments.model.CalendarEntry;
-import au.gov.dto.dibp.appointments.model.Client;
 import au.gov.dto.dibp.appointments.util.NodeParser;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +41,12 @@ public class CalendarService {
         static final String VACANT_SLOTS_NOON = "VacantSlotsNoon";
     }
 
-    public SortedMap<String, CalendarEntry> getAvailabilityForNextYear(Client client) {
+    public SortedMap<String, CalendarEntry> getAvailabilityForNextYear(String serviceId) {
         //TODO: Dates according to the timezone of the unit!
         LocalDate today =  LocalDate.now(ZoneId.of("Australia/Sydney"));
         LocalDate endDate = today.plusYears(1L);
 
-        return this.getCalendars(client.getServiceId(), today, endDate);
+        return this.getCalendars(serviceId, today, endDate);
     }
 
     public SortedMap<String, CalendarEntry> getCalendars(String serviceId, LocalDate startDate, LocalDate endDate) {

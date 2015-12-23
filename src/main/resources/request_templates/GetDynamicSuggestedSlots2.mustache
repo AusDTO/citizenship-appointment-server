@@ -1,0 +1,26 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+               xmlns:a="http://www.w3.org/2005/08/addressing"
+               xmlns:ser="http://www.qnomy.com/Services">
+    <soap:Header>
+        <a:Action>http://www.qnomy.com/Services/IsvcCalendar/GetDynamicSuggestedSlots2</a:Action>
+        <a:MessageID>urn:uuid:{{messageUUID}}</a:MessageID>
+        <a:ReplyTo>
+            <a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
+        </a:ReplyTo>
+        <a:To>
+            {{serviceAddress}}
+        </a:To>
+    </soap:Header>
+    <soap:Body>
+        <ser:GetDynamicSuggestedSlots2>
+            <ser:apiSessionId>{{apiSessionId}}</ser:apiSessionId>
+            <ser:calendarId>{{calendarId}}</ser:calendarId>
+            <ser:currentUserId>{{currentUserId}}</ser:currentUserId>
+            <ser:includeVacantTime>true</ser:includeVacantTime>
+            <ser:includeReservedTime>false</ser:includeReservedTime>
+            <ser:appointmentTypeId>{{appointmentTypeId}}</ser:appointmentTypeId>
+            <ser:includeSegmentStartTime>true</ser:includeSegmentStartTime>
+            <ser:includeUnselectableSlots>false</ser:includeUnselectableSlots>
+        </ser:GetDynamicSuggestedSlots2>
+    </soap:Body>
+</soap:Envelope>
