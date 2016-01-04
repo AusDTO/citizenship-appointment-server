@@ -1,6 +1,8 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.availabledates;
 
-import au.gov.dto.dibp.appointments.model.CalendarEntry;
+import au.gov.dto.dibp.appointments.availabledates.AvailableDate;
+import au.gov.dto.dibp.appointments.availabledates.AvailableDatesService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
 
@@ -13,25 +15,25 @@ import java.util.SortedMap;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class CalendarServiceTest {
+public class AvailableDatesServiceTest {
 
     @Test
     public void getCalendars_shouldConvertResponseIntoCalendarEntryObject() throws Exception {
-        CalendarService service = new CalendarService(new ApiCallsSenderService() {
+        AvailableDatesService service = new AvailableDatesService(new ApiCallsSenderService() {
             @Override
             public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
                 return getStandardResponse();
             }
         }, "serviceUrl");
 
-        SortedMap<String, CalendarEntry> calendarEntries = service.getCalendars("serviceId", LocalDate.now(), LocalDate.now());
+        SortedMap<String, AvailableDate> calendarEntries = service.getAvailabilityForDateRange("serviceId", LocalDate.now(), LocalDate.now());
 
-        CalendarEntry calendarEntry = calendarEntries.get(calendarEntries.firstKey());
+        AvailableDate availableDate = calendarEntries.get(calendarEntries.firstKey());
 
         assertThat(calendarEntries.size(), is(1));
-        assertThat(calendarEntry.getId(), is("192"));
-        assertThat(calendarEntry.getCalendarDate(), is("2015-12-16"));
-        assertThat(calendarEntry.getAvailableSlotsCount(), is(12));
+        assertThat(availableDate.getId(), is("192"));
+        assertThat(availableDate.getCalendarDate(), is("2015-12-16"));
+        assertThat(availableDate.getAvailableSlotsCount(), is(12));
     }
 
     // FIXME(Emily) test inactive entries are not included in response
@@ -54,7 +56,7 @@ public class CalendarServiceTest {
             "         </GetCalendarsResult>\n" +
             "      </GetCalendarsResponse>\n" +
             "   </s:Body>";
-        return new ResponseWrapper(200, new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8)));
+        return new ResponseWrapper(200, response);
     }
 
 }

@@ -9,8 +9,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class ResponseWrapper {
 
@@ -23,6 +25,17 @@ public class ResponseWrapper {
         try {
             DocumentBuilder builder = domFactory.newDocumentBuilder();
             responseBody = builder.parse(stream);
+        } catch (ParserConfigurationException|SAXException|IOException e) {
+            throw new RuntimeException("Error parsing SOAP response", e);
+        }
+    }
+
+    public ResponseWrapper(int code, String stringMessage) {
+        this.code = code;
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder builder = domFactory.newDocumentBuilder();
+            responseBody = builder.parse(new ByteArrayInputStream(stringMessage.getBytes(StandardCharsets.UTF_8)));
         } catch (ParserConfigurationException|SAXException|IOException e) {
             throw new RuntimeException("Error parsing SOAP response", e);
         }

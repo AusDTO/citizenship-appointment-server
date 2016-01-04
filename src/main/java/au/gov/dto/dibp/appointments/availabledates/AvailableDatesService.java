@@ -1,6 +1,6 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.availabledates;
 
-import au.gov.dto.dibp.appointments.model.CalendarEntry;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.NodeParser;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 @Service
-public class CalendarService {
+class AvailableDatesService {
 
     private final ApiCallsSenderService senderService;
     private final String serviceAddressService;
 
     @Autowired
-    public CalendarService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddressService) {
+    public AvailableDatesService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddressService) {
         this.senderService = senderService;
         this.serviceAddressService = serviceAddressService;
     }
@@ -41,15 +41,15 @@ public class CalendarService {
         static final String VACANT_SLOTS_NOON = "VacantSlotsNoon";
     }
 
-    public SortedMap<String, CalendarEntry> getAvailabilityForNextYear(String serviceId) {
+    public SortedMap<String, AvailableDate> getAvailabilityForNextYear(String serviceId) {
         //TODO: Dates according to the timezone of the unit!
         LocalDate today =  LocalDate.now(ZoneId.of("Australia/Sydney"));
         LocalDate endDate = today.plusYears(1L);
 
-        return this.getCalendars(serviceId, today, endDate);
+        return this.getAvailabilityForDateRange(serviceId, today, endDate);
     }
 
-    public SortedMap<String, CalendarEntry> getCalendars(String serviceId, LocalDate startDate, LocalDate endDate) {
+    public SortedMap<String, AvailableDate> getAvailabilityForDateRange(String serviceId, LocalDate startDate, LocalDate endDate) {
         Map<String, String> data = new HashMap<>();
         data.put("serviceId", serviceId);
         data.put("startDate", startDate.toString()+"T00:00:00");
@@ -59,20 +59,20 @@ public class CalendarService {
         return parseGetCalendarsResponse(response);
     }
 
-    private SortedMap<String, CalendarEntry> parseGetCalendarsResponse(ResponseWrapper response) {
-        SortedMap<String, CalendarEntry> calendarEntries = new TreeMap<>();
+    private SortedMap<String, AvailableDate> parseGetCalendarsResponse(ResponseWrapper response) {
+        SortedMap<String, AvailableDate> availableDates = new TreeMap<>();
 
         NodeList calendarNodes = response.getNodeListAttribute(GetCalendars.CALENDARS);
 
         for(int i=0; i < calendarNodes.getLength(); i++) {
-            CalendarEntry newCalendarEntry = getCalendarEntryDetails(calendarNodes.item(i));
-            calendarEntries.put(newCalendarEntry.getCalendarDate(), newCalendarEntry);
+            AvailableDate newAvailableDate = getAvailableDateDetails(calendarNodes.item(i));
+            availableDates.put(newAvailableDate.getCalendarDate(), newAvailableDate);
         }
 
-        return calendarEntries;
+        return availableDates;
     }
 
-    private CalendarEntry getCalendarEntryDetails(Node calendarNode) {
+    private AvailableDate getAvailableDateDetails(Node calendarNode) {
         NodeParser nodeParser = new NodeParser(calendarNode);
 
         String calendarDate = nodeParser.getStringAttribute(GetCalendars.CALENDAR_DATE);
@@ -85,6 +85,6 @@ public class CalendarService {
 
         int vacantSlotsTotal = vacantSlotsAfternoon + vacantSlotsEvening + vacantSlotsMorning + vacantSlotsNight + vacantSlotsNoon;
 
-        return new CalendarEntry(id, calendarDate.substring(0, calendarDate.indexOf('T')), vacantSlotsTotal);
+        return new AvailableDate(id, calendarDate.substring(0, calendarDate.indexOf('T')), vacantSlotsTotal);
     }
 }

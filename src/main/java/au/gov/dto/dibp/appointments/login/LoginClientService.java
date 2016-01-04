@@ -1,6 +1,7 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.login;
 
-import au.gov.dto.dibp.appointments.model.Client;
+import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.eclipse.jetty.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class ClientService implements UserDetailsService {
+public class LoginClientService implements UserDetailsService {
 
     static final String REQUEST_TEMPLATE_PATH = "GetByExtRef.mustache";
     private static final String CUSTOMER_EMAIL = "//GetByExtRefResponse/GetByExtRefResult/Customer/EMail";
@@ -26,7 +27,7 @@ public class ClientService implements UserDetailsService {
     private final String serviceAddressCustomer;
 
     @Autowired
-    public ClientService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.CUSTOMER}") String serviceAddressCustomer) {
+    public LoginClientService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.CUSTOMER}") String serviceAddressCustomer) {
         this.senderService = senderService;
         this.serviceAddressCustomer = serviceAddressCustomer;
     }

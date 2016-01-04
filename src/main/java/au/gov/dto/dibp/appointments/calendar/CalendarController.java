@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.controller;
+package au.gov.dto.dibp.appointments.calendar;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-public class BookingController {
+public class CalendarController {
 
     @RequestMapping(value = "/booking", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView bookingHtml() {

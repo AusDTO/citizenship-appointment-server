@@ -1,21 +1,20 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.login;
 
-import au.gov.dto.dibp.appointments.model.Client;
+import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ClientServiceTest {
+public class LoginClientServiceTest {
 
     @Test
     public void getCustomerByExternalReference_shouldConvertResponseIntoCustomerObject() throws Exception {
-        ClientService service = new ClientService(new ApiCallsSenderService() {
+        LoginClientService service = new LoginClientService(new ApiCallsSenderService() {
             @Override
             public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
                 return getStandardResponse();
@@ -52,7 +51,7 @@ public class ClientServiceTest {
             "      </GetByExtRefResponse>\n" +
             "   </s:Body>\n" +
             "</s:Envelope>";
-        return new ResponseWrapper(200, new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8)));
+        return new ResponseWrapper(200, response);
     }
 
 }

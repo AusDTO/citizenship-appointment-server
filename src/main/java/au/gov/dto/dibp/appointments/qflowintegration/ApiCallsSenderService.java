@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.qflowintegration;
 
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import com.samskivert.mustache.Mustache;
@@ -27,6 +27,8 @@ class DefaultApiCallsSenderService implements ApiCallsSenderService {
     private final Mustache.Compiler mustacheCompiler;
     private final ResourceLoader resourceLoader;
 
+
+
     @Autowired
     public DefaultApiCallsSenderService(ApiSessionService apiSessionService, HttpClient httpClient, Mustache.Compiler mustacheCompiler, ResourceLoader resourceLoader) {
         this.apiSessionService = apiSessionService;
@@ -52,7 +54,6 @@ class DefaultApiCallsSenderService implements ApiCallsSenderService {
             messageParams.put("serviceAddress", serviceAddress);
             messageParams.put("messageUUID", UUID.randomUUID().toString());
             String messageBody = tmpl.execute(messageParams);
-            System.out.println(messageBody);
             return httpClient.post(serviceAddress, messageBody);
         }
     }

@@ -1,6 +1,6 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.qflowintegration;
 
-public class ApiUser {
+class ApiUser {
     ApiUser(String username, String password) {
         this.username = username;
         this.password = password;

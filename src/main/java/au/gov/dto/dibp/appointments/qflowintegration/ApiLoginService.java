@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.qflowintegration;
 
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import com.samskivert.mustache.Mustache;
@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
-public class ApiLoginService {
+class ApiLoginService {
     private static final String SIGN_IN_TEMPLATE_PATH = "FormsSignIn.mustache";
     private static final String API_SESSION_ID = "//FormsSignInResponse/FormsSignInResult";
 
@@ -51,7 +51,7 @@ public class ApiLoginService {
 
         for (int attempts = 0 ; attempts < MAX_ATTEMPTS; attempts++) {
             ResponseWrapper response = sendLoginRequest(tmpl);
-            if (response.getCode() == 200) {
+            if (response!=null && response.getCode() == 200) {
                 return response.getStringAttribute(API_SESSION_ID);
             }
         }
@@ -68,7 +68,12 @@ public class ApiLoginService {
         messageParams.put("serviceAddress", serviceAddressUser);
         String messageBody = tmpl.execute(messageParams);
 
-        return httpClient.post(serviceAddressUser, messageBody);
+        try{
+            return httpClient.post(serviceAddressUser, messageBody);
+        }catch(RuntimeException e){
+            //do nothing, retries
+            return null;
+        }
     }
 
 }

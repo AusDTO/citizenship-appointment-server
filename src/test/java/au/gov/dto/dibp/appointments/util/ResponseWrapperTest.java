@@ -38,8 +38,8 @@ public class ResponseWrapperTest {
         assertThat(nodeList.item(0).getTextContent(), is("List Elem 1"));
     }
 
-    private InputStream getBasicResponseBody(){
-        String document =
+    private String getBasicResponseBody(){
+       return
             "<a>" +
                 "<b>"+
                     "<b1>B1 node text</b1>" +
@@ -51,6 +51,5 @@ public class ResponseWrapperTest {
                     "<e>List Elem 3</e>"+
                 "</d>" +
             "</a>";
-        return new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8));
     }
 }

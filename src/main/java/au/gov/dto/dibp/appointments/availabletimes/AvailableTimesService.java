@@ -1,6 +1,7 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.availabletimes;
 
-import au.gov.dto.dibp.appointments.model.Client;
+import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class AvailableTimesService {
+class AvailableTimesService {
 
     private static final String REQUEST_TEMPLATE_PATH = "GetDynamicSuggestedSlots2.mustache";
     private static final String START_TIME = "//GetDynamicSuggestedSlots2Response/GetDynamicSuggestedSlots2Result/SuggestedSlots/DynamicCalendarSuggestedSlotItem/StartTime";

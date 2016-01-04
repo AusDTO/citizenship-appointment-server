@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.controller;
+package au.gov.dto.dibp.appointments.login;
 
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.RequestMapping;

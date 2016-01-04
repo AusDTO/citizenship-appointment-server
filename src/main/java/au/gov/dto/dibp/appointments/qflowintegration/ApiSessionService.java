@@ -1,10 +1,10 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.qflowintegration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApiSessionService {
+class ApiSessionService {
 
     private final ApiLoginService apiLoginService;
     private final ApiLogoutService apiLogoutService;

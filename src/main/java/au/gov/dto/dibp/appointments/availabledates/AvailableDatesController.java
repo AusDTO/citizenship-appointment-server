@@ -1,8 +1,6 @@
-package au.gov.dto.dibp.appointments.controller;
+package au.gov.dto.dibp.appointments.availabledates;
 
-import au.gov.dto.dibp.appointments.model.CalendarEntry;
-import au.gov.dto.dibp.appointments.model.Client;
-import au.gov.dto.dibp.appointments.service.api.CalendarService;
+import au.gov.dto.dibp.appointments.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,14 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-public class CalendarController {
+public class AvailableDatesController {
 
     @Autowired
-    private CalendarService calendarService;
+    private AvailableDatesService availableDatesService;
 
     @RequestMapping(value = "/get_available_dates.json", method = RequestMethod.GET, produces = "application/json")
-    public Map<String, CalendarEntry> getAvailableDates(@AuthenticationPrincipal Client client) {
-        return calendarService.getAvailabilityForNextYear(client.getServiceId());
+    public Map<String, AvailableDate> getAvailableDates(@AuthenticationPrincipal Client client) {
+        return availableDatesService.getAvailabilityForNextYear(client.getServiceId());
     }
 
 }

@@ -1,9 +1,9 @@
-package au.gov.dto.dibp.appointments.model;
+package au.gov.dto.dibp.appointments.availabledates;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CalendarEntry {
+class AvailableDate {
 
     @JsonProperty("calendar_id")
     private final String id;
@@ -14,7 +14,7 @@ public class CalendarEntry {
     @JsonProperty("available_slots_count")
     private final int availableSlotsCount;
 
-    public CalendarEntry(String id, String calendarDate, int availableSlotsCount) {
+    public AvailableDate(String id, String calendarDate, int availableSlotsCount) {
         this.id = id;
         this.calendarDate = calendarDate;
         this.availableSlotsCount = availableSlotsCount;

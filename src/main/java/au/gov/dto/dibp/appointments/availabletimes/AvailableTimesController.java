@@ -1,7 +1,6 @@
-package au.gov.dto.dibp.appointments.controller;
+package au.gov.dto.dibp.appointments.availabletimes;
 
-import au.gov.dto.dibp.appointments.model.Client;
-import au.gov.dto.dibp.appointments.service.api.AvailableTimesService;
+import au.gov.dto.dibp.appointments.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;

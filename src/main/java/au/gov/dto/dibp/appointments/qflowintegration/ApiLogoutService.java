@@ -1,5 +1,6 @@
-package au.gov.dto.dibp.appointments.service.api;
+package au.gov.dto.dibp.appointments.qflowintegration;
 
+import au.gov.dto.dibp.appointments.qflowintegration.HttpClient;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class ApiLogoutService {
+class ApiLogoutService {
     private static final String SIGN_OUT_TEMPLATE_PATH = "SignOut.mustache";
 
     private final ResourceLoader resourceLoader;

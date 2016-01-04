@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.model;
+package au.gov.dto.dibp.appointments.client;
 
 import org.springframework.security.core.userdetails.User;
 
