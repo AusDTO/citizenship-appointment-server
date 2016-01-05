@@ -3,6 +3,8 @@ package au.gov.dto.dibp.appointments.qflowintegration;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -19,11 +21,12 @@ import java.util.*;
 class ApiLoginService {
     private static final String SIGN_IN_TEMPLATE_PATH = "FormsSignIn.mustache";
     private static final String API_SESSION_ID = "//FormsSignInResponse/FormsSignInResult";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiLoginService.class);
 
-    static final int MAX_ATTEMPTS = 7;
+    static final int MAX_ATTEMPTS = 10;
 
-    private String serviceAddressUser;
-    private String userForceLogin;
+    private final String serviceAddressUser;
+    private final String userForceLogin;
 
     private final List<ApiUser> apiUsers;
     private final ResourceLoader resourceLoader;
@@ -49,10 +52,13 @@ class ApiLoginService {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         Template tmpl = Mustache.compiler().compile(inputStreamReader);
 
-        for (int attempts = 0 ; attempts < MAX_ATTEMPTS; attempts++) {
+        for (int attempts = 1 ; attempts <= MAX_ATTEMPTS; attempts++) {
             ResponseWrapper response = sendLoginRequest(tmpl);
             if (response!=null && response.getCode() == 200) {
                 return response.getStringAttribute(API_SESSION_ID);
+            }
+            if (attempts >= MAX_ATTEMPTS*.8) {
+                LOGGER.warn("Reached {} of {} max FormsSignIn attempts", attempts, MAX_ATTEMPTS);
             }
         }
         throw new ApiLoginException("Failed to authenticate to Q-Flow API. Exceeded max FormsSignIn attempts: " + MAX_ATTEMPTS);
@@ -66,6 +72,7 @@ class ApiLoginService {
         messageParams.put("forceSignIn", userForceLogin);
         messageParams.put("messageUUID", UUID.randomUUID().toString());
         messageParams.put("serviceAddress", serviceAddressUser);
+        messageParams.put("ipAddressUUID", UUID.randomUUID().toString());
         String messageBody = tmpl.execute(messageParams);
 
         try{
