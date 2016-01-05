@@ -1,0 +1,22 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+               xmlns:ser="http://www.qnomy.com/Services"
+               xmlns:a="http://www.w3.org/2005/08/addressing">
+    <soap:Header>
+        <a:Action>http://www.qnomy.com/Services/IsvcCustomer/GetExpectedAppointments</a:Action>
+        <a:MessageID>urn:uuid:{{messageUUID}}</a:MessageID>
+        <a:ReplyTo>
+            <a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
+        </a:ReplyTo>
+        <a:To>
+            {{serviceAddress}}
+        </a:To>
+    </soap:Header>
+    <soap:Body>
+        <ser:GetExpectedAppointments>
+            <ser:apiSessionId>{{apiSessionId}}</ser:apiSessionId>
+            <ser:customerId>{{customerId}}</ser:customerId>
+            <ser:fromDate>{{startDate}}</ser:fromDate>
+            <ser:toDate>{{endDate}}</ser:toDate>
+        </ser:GetExpectedAppointments>
+    </soap:Body>
+</soap:Envelope>

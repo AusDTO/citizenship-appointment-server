@@ -2,15 +2,14 @@ package au.gov.dto.dibp.appointments.booking;
 
 import au.gov.dto.dibp.appointments.client.Client;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class BookingControllerTest {
 
@@ -26,7 +25,7 @@ public class BookingControllerTest {
 
         ModelAndView modelViewResult = controller.bookAnAppointment(getStandardClient(), "2015-12-30T13:00:00");
         assertThat(modelViewResult.getViewName(), is("redirect:/confirmation"));
-        assertThat(modelViewResult.getModel().get("bookedDateTime"), is(bookedDate));
+        assertThat(modelViewResult.getModel(), is(Collections.emptyMap()));
     }
 
     private Client getStandardClient (){

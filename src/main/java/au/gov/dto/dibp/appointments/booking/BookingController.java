@@ -32,12 +32,10 @@ public class BookingController {
         try {
             LocalDateTime selectedAppointment = LocalDateTime.parse(dateTime);
 
-            String bookedDate = bookingService.bookAnAppointment(client, selectedAppointment);
+            bookingService.bookAnAppointment(client, selectedAppointment);
             logger.info("Appointment booked for "+ client.getClientId() + " on "+ selectedAppointment);
 
-            HashMap<String, Object> model = new HashMap<>();
-            model.put("bookedDateTime", bookedDate);
-            return new ModelAndView("redirect:/confirmation",  model);
+            return new ModelAndView("redirect:/confirmation",  new HashMap<>());
 
         } catch( RuntimeException e ){
             logger.error("Appointment not booked for "+ client.getClientId()+". Exception: "+ e);
