@@ -48,17 +48,17 @@ public class AppointmentDetailsService {
     public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
 
         //TODO: Dates according to the timezone of the unit!
-        LocalDate today =  LocalDate.now(ZoneId.of("Australia/Sydney"));
-        LocalDate endDate = today.plusYears(1L);
+        LocalDateTime today =  LocalDateTime.now(ZoneId.of("Australia/Sydney"));
+        LocalDateTime endDate = today.plusYears(1L);
 
         return this.getExpectedAppointmentForClient(client, today, endDate);
     }
 
-    public AppointmentDetails getExpectedAppointmentForClient(Client client, LocalDate startDate, LocalDate endDate){
+    public AppointmentDetails getExpectedAppointmentForClient(Client client, LocalDateTime startDate, LocalDateTime endDate){
         Map<String, String> data = new HashMap<>();
         data.put("customerId", client.getCustomerId());
-        data.put("startDate", startDate.toString()+"T00:00:00");
-        data.put("endDate", endDate.toString()+"T00:00:00");
+        data.put("startDate", startDate.toString());
+        data.put("endDate", endDate.toString());
 
         ResponseWrapper response = senderService.sendRequest(GetExpectedAppointments.REQUEST_TEMPLATE_PATH, data, serviceAddressCustomer);
         return parseGetExpectedAppointmentsResponse(response, client);

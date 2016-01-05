@@ -6,7 +6,6 @@ import au.gov.dto.dibp.appointments.unit.UnitDetailsService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public class AppointmentDetailsServiceTest {
                 getApiCallsSenderServiceReturningNoAppointments(),
                 getUnitDetailsServiceReturningCorrectAddress(), "Service Address");
 
-        final AppointmentDetails appointmentDetails = service.getExpectedAppointmentForClient(getStandardClient(), LocalDate.parse("2016-01-01"), LocalDate.parse("2016-01-30"));
+        final AppointmentDetails appointmentDetails = service.getExpectedAppointmentForClient(getStandardClient(), LocalDateTime.parse("2016-01-01T13:00:00"), LocalDateTime.parse("2016-01-30T13:00:00"));
         assertThat(appointmentDetails, is(nullValue()));
     }
 
@@ -37,7 +36,7 @@ public class AppointmentDetailsServiceTest {
                 getApiCallsSenderServiceReturningAppointmentWithWrongCustomerId(),
                 getUnitDetailsServiceReturningCorrectAddress(), "Service Address");
 
-        service.getExpectedAppointmentForClient(getStandardClient(), LocalDate.parse("2016-01-01"), LocalDate.parse("2016-01-30"));
+        service.getExpectedAppointmentForClient(getStandardClient(), LocalDateTime.parse("2016-01-01T13:00:00"), LocalDateTime.parse("2016-01-30T13:00:00"));
         assertTrue(false);
     }
 
@@ -48,7 +47,7 @@ public class AppointmentDetailsServiceTest {
                 getApiCallsSenderServiceReturningCorrectAppointment(),
                 getUnitDetailsServiceReturningCorrectAddress(), "Service Address");
 
-        final AppointmentDetails appointmentDetails = service.getExpectedAppointmentForClient(getStandardClient(), LocalDate.parse("2016-01-01"), LocalDate.parse("2016-01-30"));
+        final AppointmentDetails appointmentDetails = service.getExpectedAppointmentForClient(getStandardClient(), LocalDateTime.parse("2016-01-01T13:00:00"), LocalDateTime.parse("2016-01-30T13:00:00"));
 
         assertThat(appointmentDetails.getAppointmentDate(), is(LocalDateTime.parse("2016-02-06T13:00:00")));
         assertThat(appointmentDetails.getAppointmentDuration(), is(20));
