@@ -11,27 +11,17 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class ResponseWrapper {
 
     private final int code;
+    private final String message;
     private Document responseBody;
-
-    public ResponseWrapper(int code, InputStream stream) {
-        this.code = code;
-        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder builder = domFactory.newDocumentBuilder();
-            responseBody = builder.parse(stream);
-        } catch (ParserConfigurationException|SAXException|IOException e) {
-            throw new RuntimeException("Error parsing SOAP response", e);
-        }
-    }
 
     public ResponseWrapper(int code, String stringMessage) {
         this.code = code;
+        this.message = stringMessage;
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -74,5 +64,9 @@ public class ResponseWrapper {
 
     public int getCode() {
         return code;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 @RestController
@@ -30,10 +28,9 @@ public class BookingController {
 
     @RequestMapping(value = "/book_appointment", method = RequestMethod.POST)
     public ModelAndView bookAnAppointment(@AuthenticationPrincipal Client client,
-                                    @RequestParam(value="appointment_date", required=true) String date,
-                                    @RequestParam(value="appointment_time", required=true) String time){
+                                    @RequestParam(value="selected_appointment", required=true) String dateTime){
         try {
-            LocalDateTime selectedAppointment = LocalDateTime.parse(date+time, DateTimeFormatter.ofPattern("yyyy-MM-ddh:mma"));
+            LocalDateTime selectedAppointment = LocalDateTime.parse(dateTime);
 
             String bookedDate = bookingService.bookAnAppointment(client, selectedAppointment);
             logger.info("Appointment booked for "+ client.getClientId() + " on "+ selectedAppointment);

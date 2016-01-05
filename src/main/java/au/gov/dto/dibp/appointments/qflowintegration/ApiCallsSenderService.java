@@ -27,8 +27,6 @@ class DefaultApiCallsSenderService implements ApiCallsSenderService {
     private final Mustache.Compiler mustacheCompiler;
     private final ResourceLoader resourceLoader;
 
-
-
     @Autowired
     public DefaultApiCallsSenderService(ApiSessionService apiSessionService, HttpClient httpClient, Mustache.Compiler mustacheCompiler, ResourceLoader resourceLoader) {
         this.apiSessionService = apiSessionService;
@@ -40,7 +38,7 @@ class DefaultApiCallsSenderService implements ApiCallsSenderService {
     @Override
     public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
         Resource resource = resourceLoader.getResource("classpath:request_templates/" + requestTemplatePath);
-        InputStream inputStream = null;
+        InputStream inputStream;
         try {
             inputStream = resource.getInputStream();
         } catch (IOException e) {
@@ -53,8 +51,12 @@ class DefaultApiCallsSenderService implements ApiCallsSenderService {
             messageParams.put("apiSessionId", apiSession.getApiSessionId());
             messageParams.put("serviceAddress", serviceAddress);
             messageParams.put("messageUUID", UUID.randomUUID().toString());
-            String messageBody = tmpl.execute(messageParams);
-            return httpClient.post(serviceAddress, messageBody);
+            String requestBody = tmpl.execute(messageParams);
+            ResponseWrapper response = httpClient.post(serviceAddress, requestBody);
+            if (response.getCode() != 200){
+                throw new RuntimeException("Invalid server response with code "+ response.getCode() + ": " + response.getMessage());
+            }
+            return response;
         }
     }
 }

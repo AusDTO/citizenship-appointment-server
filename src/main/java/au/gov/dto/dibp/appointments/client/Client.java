@@ -40,7 +40,7 @@ public class Client extends User {
 
     public String getAppointmentTypeId() {
         // FIXME(Marz)
-        return "2";
+        return "3";
     }
 
     public void setAppointmentTypeId(String appointmentTypeId) {
