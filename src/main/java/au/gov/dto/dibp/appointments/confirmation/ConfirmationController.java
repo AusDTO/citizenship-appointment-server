@@ -37,8 +37,6 @@ public class ConfirmationController {
         Map<String, Object> model = new HashMap<>();
 
         model.put("location", appointmentDetails.getUnitAddress());
-        model.put("level", "Level 4"); // TODO how to get it?
-
         model.put("clientId", client.getClientId());
         model.put("hasEmail", client.hasEmail());
 

@@ -41,13 +41,6 @@ public class ConfirmationControllerTest {
     }
 
     @Test
-    public void test_getConfirmationPage_should_passTheOfficeLevelToTheModel(){
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
-
-        assertThat(result.getModel().get("level"), is("Level 4"));
-    }
-
-    @Test
     public void test_getConfirmationPage_should_passTheClientIdToTheModel(){
         final ModelAndView result = controller.getConfirmationPage(getStandardClient());
 
