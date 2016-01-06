@@ -132,7 +132,7 @@ public class AppointmentDetailsServiceTest {
     }
 
     private UnitDetailsService getUnitDetailsServiceReturningCorrectAddress(){
-        return new UnitDetailsService(){
+        return new UnitDetailsService(null, null, null){
             @Override
             public String getUnitAddressByServiceId(String serviceId){
                 return "Some address 23";

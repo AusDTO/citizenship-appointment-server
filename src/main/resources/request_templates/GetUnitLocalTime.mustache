@@ -1,0 +1,20 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+               xmlns:a="http://www.w3.org/2005/08/addressing"
+               xmlns:ser="http://www.qnomy.com/Services">
+    <soap:Header>
+        <a:Action>http://www.qnomy.com/Services/IsvcUnit/Get</a:Action>
+        <a:MessageID>urn:uuid:{{messageUUID}}</a:MessageID>
+        <a:ReplyTo>
+            <a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
+        </a:ReplyTo>
+        <a:To>
+            {{serviceAddress}}
+        </a:To>
+    </soap:Header>
+    <soap:Body>
+        <ser:GetLocalTime>
+            <ser:apiSessionId>{{apiSessionId}}</ser:apiSessionId>
+            <ser:unitId>{{unitId}}</ser:unitId>
+        </ser:GetLocalTime>
+    </soap:Body>
+</soap:Envelope>
