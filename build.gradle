@@ -114,28 +114,43 @@ task copySpringLoaded(type: Copy,
     from {
         configurations.springloaded
     }
-    into "agents/"
+    into {
+        "agents/"
+    }
 }
 
 task copyServerTempl(type: Copy,
     description: 'Copy server templates from the client',
     group: 'Build Setup'){
-    from fileTree("node_modules/citizenship-appointment-client/views/server").files
-    into "src/main/resources/templates"
+    from {
+        fileTree("node_modules/citizenship-appointment-client/views/server").files
+    }
+    into {
+        "src/main/resources/templates"
+    }
 }
 
 task copyImageAssets(type: Copy,
         description: 'Copy image assets from the client',
         group: 'Build Setup'){
-    from fileTree("node_modules/citizenship-appointment-client/images/").files
-    into "src/main/resources/public/images"
+        from {
+            fileTree("node_modules/citizenship-appointment-client/images/").files
+        }
+        into {
+            "src/main/resources/public/images"
+        }
+
 }
 
 task copyBundledAssets(type: Copy,
         description: 'Copy bundled assets from the client',
         group: 'Build Setup'){
-    from fileTree("node_modules/citizenship-appointment-client/dist/").files
-    into "src/main/resources/public/static"
+    from {
+        fileTree("node_modules/citizenship-appointment-client/dist/").files
+    }
+    into {
+        "src/main/resources/public/static"
+    }
 }
 
 
