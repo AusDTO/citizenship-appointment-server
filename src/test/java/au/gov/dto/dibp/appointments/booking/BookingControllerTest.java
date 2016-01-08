@@ -17,7 +17,7 @@ public class BookingControllerTest {
     public void test_bookAnAppointment_should_redirectToConfirmationPageIfBookedSuccessfully(){
         final String bookedDate = "2015-12-30T13:00:00";
 
-        BookingController controller = new BookingController(new BookingService(null, null){
+        BookingController controller = new BookingController(new BookingService(null, null, null, null){
             public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
                 return bookedDate;
             }
@@ -34,7 +34,7 @@ public class BookingControllerTest {
 
     @Test
     public void test_bookAnAppointment_should_redirectToBookingPageIfBookingFailed(){
-        BookingController controller = new BookingController(new BookingService(null, null){
+        BookingController controller = new BookingController(new BookingService(null, null, null, null){
             public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
                 throw new RuntimeException("Something failed");
             }

@@ -1,39 +1,90 @@
 package au.gov.dto.dibp.appointments.booking;
 
+import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
+import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class BookingServiceTest {
 
+    private BookingService service;
+
     @Test
-    public void test_bookAnAppointment_should_returnAppointmentDateIfBookingSuccessful(){
-        BookingService service = new BookingService(new ApiCallsSenderService() {
-            @Override
-            public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
-                return getSuccessfulResponse();
-            }
-        }, "serviceUrl");
+    public void test_bookAnAppointment_when_userHasNoAppointmentsYet_should_returnAppointmentDateIfBookingSuccessful(){
+        service = new BookingService( getApiCallsSenderService(),
+                getAppointmentDetailsServiceRespondingWithNoAppointment(),
+                "serviceUrl", "processUrl");
 
         LocalDateTime apptTime = LocalDateTime.of(2015, 12, 30, 13, 20, 0);
         String bookedDate = service.bookAnAppointment(getStandardClient(), apptTime);
         assertThat(bookedDate, is("2015-12-30T13:20:00"));
     }
 
+    @Test
+    public void test_bookAnAppointment_when_userHasAnAppointmentSet_should_returnNewAppointmentDateIfBookingSuccessful(){
+        service = new BookingService( getApiCallsSenderService(),
+                getAppointmentDetailsServiceRespondingWithAppointmentDetails(),
+                "serviceUrl", "processUrl");
+
+        LocalDateTime apptTime = LocalDateTime.of(2016, 1, 22, 13, 20, 0);
+        String bookedDate = service.bookAnAppointment(getStandardClient(), apptTime);
+        assertThat(bookedDate, is("2016-01-22T13:20:00"));
+    }
+
+    private AppointmentDetailsService getAppointmentDetailsServiceRespondingWithNoAppointment(){
+        return new AppointmentDetailsService(null, null, null){
+
+            @Override
+            public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
+                return null;
+            }
+        };
+    }
+
+    private AppointmentDetailsService getAppointmentDetailsServiceRespondingWithAppointmentDetails(){
+        return new AppointmentDetailsService(null, null, null){
+
+            @Override
+            public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
+                return getBasicAppointmentDetails();
+            }
+        };
+    }
+
+    private ApiCallsSenderService getApiCallsSenderService(){
+        return (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> {
+            if(requestTemplatePath.startsWith("SetAppointment")){
+                return getSuccessfulInitialBookingResponse();
+            } else if(requestTemplatePath.startsWith("RescheduleAppointment")){
+                return getSuccessfulRescheduleBookingResponse();
+            }
+            return null;
+        };
+    }
+
+    private static final String BOOKED_DATE = "2016-01-18T13:20:00";
+    private static final String CUSTOMER_ID = "3333";
+    private static final String PROCESS_ID = "121";
+    private static final String SERVICE_ID = "AAA";
+    private static final String UNTI_ADDRESS = "Some Street 12";
+
+    private AppointmentDetails getBasicAppointmentDetails(){
+        return new AppointmentDetails(LocalDateTime.parse(BOOKED_DATE), 20, PROCESS_ID, SERVICE_ID, CUSTOMER_ID, "Sydney", UNTI_ADDRESS);
+    }
+
     private Client getStandardClient (){
         return new Client("123", "Surname", "40404", false, true);
     }
 
-    private ResponseWrapper getSuccessfulResponse(){
+    private ResponseWrapper getSuccessfulInitialBookingResponse(){
         String response =
                 "<s:Body>\n" +
                 "  <SetAppointmentResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
@@ -52,6 +103,37 @@ public class BookingServiceTest {
                 "         </SetAppointmentResult>\n" +
                 "      </SetAppointmentResponse>" +
                 "</s:Body>";
+        return new ResponseWrapper(200, response);
+    }
+
+    private ResponseWrapper getSuccessfulRescheduleBookingResponse(){
+        String response =
+        "<s:Body>\n" +
+        "      <RescheduleAppointmentResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
+        "         <RescheduleAppointmentResult xmlns:b=\"http://schemas.datacontract.org/2004/07/QFlow.Library\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+        "            <b:AppointmentId>199</b:AppointmentId>\n" +
+        "            <b:CalendarId>1242</b:CalendarId>\n" +
+        "            <b:CaseId>105</b:CaseId>\n" +
+        "            <b:CustomerId>6</b:CustomerId>\n" +
+        "            <b:ProcessId>121</b:ProcessId>\n" +
+        "            <b:QCode>C</b:QCode>\n" +
+        "            <b:QNumber>0</b:QNumber>\n" +
+        "            <b:RescheduleAppointmentData>\n" +
+        "               <b:AppointmentTypeId>2</b:AppointmentTypeId>\n" +
+        "               <b:DateAndTime>2016-01-22T13:20:00</b:DateAndTime>\n" +
+        "               <b:ExtRef i:nil=\"true\"/>\n" +
+        "               <b:Notes>Citizenship Appt</b:Notes>\n" +
+        "               <b:OriginalProcessId>213</b:OriginalProcessId>\n" +
+        "               <b:PreventAutoQueue>false</b:PreventAutoQueue>\n" +
+        "               <b:Resources i:nil=\"true\"/>\n" +
+        "               <b:ServiceId>5</b:ServiceId>\n" +
+        "               <b:Subject>Citizenship Reschedule SOAP</b:Subject>\n" +
+        "               <b:UserId>3</b:UserId>\n" +
+        "            </b:RescheduleAppointmentData>\n" +
+        "            <b:SetAppointmentData i:nil=\"true\"/>\n" +
+        "         </RescheduleAppointmentResult>\n" +
+        "      </RescheduleAppointmentResponse>\n" +
+        "   </s:Body>";
         return new ResponseWrapper(200, response);
     }
 }

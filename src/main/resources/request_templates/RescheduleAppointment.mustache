@@ -1,0 +1,31 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+               xmlns:ser="http://www.qnomy.com/Services"
+               xmlns:a="http://www.w3.org/2005/08/addressing">
+    <soap:Header>
+        <a:Action>http://www.qnomy.com/Services/IsvcProcess/RescheduleAppointment</a:Action>
+        <a:MessageID>urn:uuid:{{messageUUID}}</a:MessageID>
+        <a:ReplyTo>
+            <a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
+        </a:ReplyTo>
+        <a:To>
+            {{serviceAddress}}
+        </a:To>
+    </soap:Header>
+    <soap:Body>
+        <ser:RescheduleAppointment>
+            <ser:apiSessionId>{{apiSessionId}}</ser:apiSessionId>
+            <ser:originalProcessId>{{processId}}</ser:originalProcessId>
+            <ser:serviceId>{{serviceId}}</ser:serviceId>
+            <ser:dateAndTime>{{appointmentDateTime}}</ser:dateAndTime>
+            <ser:appointmentTypeId>{{appointmentTypeId}}</ser:appointmentTypeId>
+            <ser:subject>Citizenship Appointment for {{clientId}}</ser:subject>
+            <ser:notes>Appointment rescheduled by Online Scheduling System</ser:notes>
+            <ser:preventAutoQueue>false</ser:preventAutoQueue>
+            <ser:languageCode>en</ser:languageCode>
+            <ser:isWalkIn>false</ser:isWalkIn>
+            <ser:forceSimultaneousAppointment>true</ser:forceSimultaneousAppointment>
+            <ser:forceWastedDuration>true</ser:forceWastedDuration>
+            <ser:autoFreeUp>true</ser:autoFreeUp>
+        </ser:RescheduleAppointment>
+    </soap:Body>
+</soap:Envelope>

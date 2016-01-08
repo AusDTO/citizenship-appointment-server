@@ -30,6 +30,7 @@ public class AppointmentDetailsService {
         static final String APPOINTMENTS = "//GetExpectedAppointmentsResponse/GetExpectedAppointmentsResult/CustomerGetExpectedAppointmentsResults";
         static final String APPOINTMENT_DATE = "AppointmentDate";
         static final String APPOINTMENT_DURATION = "AppointmentDuration";
+        static final String PROCESS_ID = "ProcessId";
         static final String SERVICE_ID = "ServiceId";
         static final String CUSTOMER_ID = "CustomerId";
         static final String UNIT_NAME = "UnitName";
@@ -79,6 +80,7 @@ public class AppointmentDetailsService {
         LocalDateTime appointmentDate = LocalDateTime.parse(appointmentDateString);
 
         int appointmentDuration = nodeParser.getIntegerAttribute(GetExpectedAppointments.APPOINTMENT_DURATION);
+        String processId = nodeParser.getStringAttribute(GetExpectedAppointments.PROCESS_ID);
         String serviceId = nodeParser.getStringAttribute(GetExpectedAppointments.SERVICE_ID);
 
         String customerId = nodeParser.getStringAttribute(GetExpectedAppointments.CUSTOMER_ID);
@@ -90,7 +92,7 @@ public class AppointmentDetailsService {
         String unitAddress = unitDetailsService.getUnitAddressByServiceId(serviceId);
 
 
-        return new AppointmentDetails(appointmentDate, appointmentDuration, serviceId, customerId, unitName, unitAddress);
+        return new AppointmentDetails(appointmentDate, appointmentDuration, processId, serviceId, customerId, unitName, unitAddress);
     }
 
 }

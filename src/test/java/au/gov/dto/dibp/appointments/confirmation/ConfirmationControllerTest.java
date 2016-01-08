@@ -19,6 +19,7 @@ public class ConfirmationControllerTest {
     private static final String BOOKED_DATE = "2016-01-18T13:20:00";
     private static final String CLIENT_ID = "123";
     private static final String CUSTOMER_ID = "3333";
+    private static final String PROCESS_ID = "121212";
     private static final String SERVICE_ID = "AAA";
     private static final String UNTI_ADDRESS = "Some Street 12";
     private static final boolean HAS_EMAIL = true;
@@ -87,6 +88,6 @@ public class ConfirmationControllerTest {
     }
 
     private AppointmentDetails getBasicAppointmentDetails(){
-        return new AppointmentDetails(LocalDateTime.parse(BOOKED_DATE), 20, SERVICE_ID, CUSTOMER_ID, "Sydney", UNTI_ADDRESS);
+        return new AppointmentDetails(LocalDateTime.parse(BOOKED_DATE), 20, PROCESS_ID, SERVICE_ID, CUSTOMER_ID, "Sydney", UNTI_ADDRESS);
     }
 }

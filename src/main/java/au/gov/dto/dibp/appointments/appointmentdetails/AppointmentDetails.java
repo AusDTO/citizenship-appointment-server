@@ -7,13 +7,15 @@ public class AppointmentDetails {
     private LocalDateTime appointmentDate;
     private int appointmentDuration;
     private String serviceId;
+    private String processId;
     private String customerId;
     private String unitName;
     private String unitAddress;
 
-    public AppointmentDetails(LocalDateTime appointmentDate, int appointmentDuration, String serviceId, String customerId, String unitName, String unitAddress){
+    public AppointmentDetails(LocalDateTime appointmentDate, int appointmentDuration, String processId, String serviceId, String customerId, String unitName, String unitAddress){
         this.appointmentDate = appointmentDate;
         this.appointmentDuration = appointmentDuration;
+        this.processId = processId;
         this.serviceId = serviceId;
         this.customerId = customerId;
         this.unitName = unitName;
@@ -42,5 +44,9 @@ public class AppointmentDetails {
 
     public String getUnitAddress() {
         return unitAddress;
+    }
+
+    public String getProcessId() {
+        return processId;
     }
 }

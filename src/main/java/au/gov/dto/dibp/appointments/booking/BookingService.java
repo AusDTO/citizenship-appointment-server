@@ -1,8 +1,12 @@
 package au.gov.dto.dibp.appointments.booking;
 
+import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
+import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,19 +18,54 @@ import java.util.Map;
 
 @Service
 public class BookingService {
-    public static final String REQUEST_TEMPLATE_PATH = "SetAppointment.mustache";
-    public static final String APPOINTMENT_DATE = "//SetAppointmentResponse/SetAppointmentResult/SetAppointmentData/DateAndTime";
 
     private final ApiCallsSenderService senderService;
+    private final AppointmentDetailsService appointmentDetailsService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
+
     private final String serviceAddress;
+    private final String serviceAddressProcess;
 
     @Autowired
-    public BookingService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddress) {
+    public BookingService(ApiCallsSenderService senderService,
+                          AppointmentDetailsService appointmentDetailsService,
+                          @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddress,
+                          @Value("${SERVICE.ADDRESS.PROCESS}") String serviceAddressProcess) {
         this.senderService = senderService;
+        this.appointmentDetailsService = appointmentDetailsService;
         this.serviceAddress = serviceAddress;
+        this.serviceAddressProcess = serviceAddressProcess;
     }
 
     public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
+        final AppointmentDetails appointment = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
+
+        if(appointment!=null){
+            LOGGER.info("Client "+ client.getClientId()+ " has an appointment set for "+ appointment.getAppointmentDate().toString()
+                    +" \nRescheduling the appointment to "+ appointmentTime.toString());
+            return rescheduleAppointment(client, appointmentTime, appointment);
+        }
+        else{
+            LOGGER.info("Client "+ client.getClientId()+ " has no appointment set"
+                    +" \nBooking the appointment for "+ appointmentTime.toString());
+            return bookInitialAppointment(client, appointmentTime);
+        }
+    }
+
+    private String rescheduleAppointment(Client client, LocalDateTime newAppointmentTime, AppointmentDetails appointment) {
+        Map<String, String> data = new HashMap<>();
+        data.put("processId", appointment.getProcessId());
+        data.put("serviceId", client.getServiceId());
+        data.put("appointmentDateTime", newAppointmentTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        data.put("appointmentTypeId", client.getAppointmentTypeId());
+        data.put("clientId", client.getClientId());
+
+        ResponseWrapper response = senderService.sendRequest(RescheduleAppointment.REQUEST_TEMPLATE_PATH, data, serviceAddressProcess);
+        return getScheduledAppointmentTime(response, RescheduleAppointment.APPOINTMENT_DATE);
+    }
+
+    private String bookInitialAppointment(Client client, LocalDateTime appointmentTime) {
         Map<String, String> data = new HashMap<>();
         data.put("dateAndTime", appointmentTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         data.put("customerId", client.getCustomerId());
@@ -34,11 +73,22 @@ public class BookingService {
         data.put("serviceId", client.getServiceId());
         data.put("appointmentTypeId", client.getAppointmentTypeId());
 
-        ResponseWrapper response = senderService.sendRequest(REQUEST_TEMPLATE_PATH, data, serviceAddress);
-        return getScheduledAppointmentTime(response);
+        ResponseWrapper response = senderService.sendRequest(SetAppointment.REQUEST_TEMPLATE_PATH, data, serviceAddress);
+        return getScheduledAppointmentTime(response, SetAppointment.APPOINTMENT_DATE);
     }
 
-    private String getScheduledAppointmentTime(ResponseWrapper response){
-        return response.getStringAttribute(APPOINTMENT_DATE);
+    private String getScheduledAppointmentTime(ResponseWrapper response, String appointmentDatePath){
+        return response.getStringAttribute(appointmentDatePath);
     }
+
+    private class SetAppointment {
+        public static final String REQUEST_TEMPLATE_PATH = "SetAppointment.mustache";
+        public static final String APPOINTMENT_DATE = "//SetAppointmentResponse/SetAppointmentResult/SetAppointmentData/DateAndTime";
+    }
+
+    private class RescheduleAppointment {
+        public static final String REQUEST_TEMPLATE_PATH = "RescheduleAppointment.mustache";
+        public static final String APPOINTMENT_DATE = "//RescheduleAppointmentResponse/RescheduleAppointmentResult/RescheduleAppointmentData/DateAndTime";
+    }
+
 }
