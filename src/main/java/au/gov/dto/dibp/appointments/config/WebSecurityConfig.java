@@ -36,6 +36,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf()
                 .csrfTokenRepository(cookieBasedCsrfTokenRepository)
                 .and()
+            .requestCache()
+                .disable()
             .authorizeRequests()
                 .antMatchers("/", "/images/*", "/static/*").permitAll()  // no authentication on endpoints '/' and public assets
                 .anyRequest().authenticated()  // all other endpoints require authentication
