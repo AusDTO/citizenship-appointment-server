@@ -85,6 +85,8 @@ def springBootVersion = '1.3.0.RELEASE'
 def okhttpVersion = '2.7.0'
 def metricsVersion = '3.0.2'
 def commonsIoVersion = '2.4'
+def springCookieSessionVersion = '1.0'
+def commonsCodecVersion = '1.10'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
@@ -97,7 +99,9 @@ dependencies {
             "org.eclipse.jetty:jetty-webapp:${jettyVersion}",
             "org.eclipse.jetty:jetty-servlets:${jettyVersion}",
             "com.samskivert:jmustache:${jmustacheVersion}",
-            "com.squareup.okhttp:okhttp:${okhttpVersion}"
+            "com.squareup.okhttp:okhttp:${okhttpVersion}",
+            "com.oakfusion:spring-cookie-session:${springCookieSessionVersion}",
+            "commons-codec:commons-codec:${commonsCodecVersion}"
 
     testCompile "junit:junit:${junitVersion}",
             "org.hamcrest:hamcrest-library:${hamcrestVersion}",
