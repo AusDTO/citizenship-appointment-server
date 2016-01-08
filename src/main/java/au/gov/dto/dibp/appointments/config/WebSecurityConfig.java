@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.config;
 
 import au.gov.dto.dibp.appointments.login.LoginClientService;
+import au.gov.dto.dibp.appointments.security.csrf.CookieBasedCsrfTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private LoginClientService loginClientService;
 
+    @Autowired
+    private CookieBasedCsrfTokenRepository cookieBasedCsrfTokenRepository;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http
+            .csrf()
+                .csrfTokenRepository(cookieBasedCsrfTokenRepository)
+                .and()
             .authorizeRequests()
                 .antMatchers("/", "/images/*", "/static/*").permitAll()  // no authentication on endpoints '/' and public assets
                 .anyRequest().authenticated()  // all other endpoints require authentication
@@ -49,7 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         PlaintextPasswordEncoder passwordEncoder = new PlaintextPasswordEncoder();
         passwordEncoder.setIgnorePasswordCase(true);
-
         auth
             .userDetailsService(userDetailsService())
             .passwordEncoder(passwordEncoder);
