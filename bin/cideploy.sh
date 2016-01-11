@@ -14,11 +14,11 @@ set -x
 # the site, we change the blue application, then change the green.
 
 # Update the blue app
-cf unmap-route citizenship-appointment-beta-blue cfapps.io -n citizenship-appointment-beta.cfapps.io
+cf unmap-route citizenship-appointment-beta-blue cfapps.io -n citizenship-appointment-beta
 cf push citizenship-appointment-beta-blue --no-hostname --no-manifest --no-route -p build/libs/citizenship-appointments-0.0.1.jar -i 1 -m 512M
-cf map-route citizenship-appointment-beta-blue cfapps.io -n citizenship-appointment-beta.cfapps.io
+cf map-route citizenship-appointment-beta-blue cfapps.io -n citizenship-appointment-beta
 
 # Update the green app
-cf unmap-route citizenship-appointment-beta-green cfapps.io -n citizenship-appointment-beta.cfapps.io
+cf unmap-route citizenship-appointment-beta-green cfapps.io -n citizenship-appointment-beta
 cf push citizenship-appointment-beta-green --no-hostname --no-manifest --no-route -p build/libs/citizenship-appointments-0.0.1.jar -i 1 -m 512M
-cf map-route citizenship-appointment-beta-green cfapps.io -n citizenship-appointment-beta.cfapps.io
+cf map-route citizenship-appointment-beta-green cfapps.io -n citizenship-appointment-beta
