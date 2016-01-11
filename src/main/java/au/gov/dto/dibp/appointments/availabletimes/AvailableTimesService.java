@@ -53,7 +53,7 @@ class AvailableTimesService {
         int timeInMinutes = Integer.parseInt(minutesString);
         int minutes = timeInMinutes % 60;
         int hours = (timeInMinutes-minutes) / 60;
-        return String.format("%1$d:%2$02d", hours, minutes);
+        return String.format("%1$02d:%2$02d", hours, minutes);
     }
 
 }
