@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.login;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.client.ClientIdValidator;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.eclipse.jetty.util.StringUtil;
@@ -25,15 +26,24 @@ public class LoginClientService implements UserDetailsService {
 
     private final ApiCallsSenderService senderService;
     private final String serviceAddressCustomer;
+    private ClientIdValidator clientIdValidator;
+
 
     @Autowired
-    public LoginClientService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.CUSTOMER}") String serviceAddressCustomer) {
+    public LoginClientService(ApiCallsSenderService senderService,
+                              ClientIdValidator clientIdValidator,
+                              @Value("${SERVICE.ADDRESS.CUSTOMER}") String serviceAddressCustomer) {
         this.senderService = senderService;
+        this.clientIdValidator = clientIdValidator;
         this.serviceAddressCustomer = serviceAddressCustomer;
     }
 
     @Override
     public Client loadUserByUsername(String username) throws UsernameNotFoundException {
+        if(!clientIdValidator.isClientIdValid(username)){
+            throw new RuntimeException("Invalid format of the username");
+        }
+
         Map<String, String> data = new HashMap<>();
         data.put("externalReference", username);
 

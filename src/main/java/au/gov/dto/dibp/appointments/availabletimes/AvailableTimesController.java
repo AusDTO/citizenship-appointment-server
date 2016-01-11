@@ -13,13 +13,23 @@ import java.util.Map;
 
 @RestController
 public class AvailableTimesController {
+
     @Autowired
     private AvailableTimesService availableTimesService;
 
     @RequestMapping(value = "/get_available_times", method = RequestMethod.GET, produces = "application/json")
     public Map<String, Object> getAvailableTimes(@AuthenticationPrincipal Client client, @RequestParam(value="calendar_id", required=false) String calendarId) {
+
+        if(!isCalendarIdValid(calendarId)){
+            throw new RuntimeException("Invalid format of the calendarId!");
+        }
+
         Map<String, Object> map = new HashMap<>();
         map.put("times", availableTimesService.getAvailableTimes(client, calendarId));
         return map;
+    }
+
+    private boolean isCalendarIdValid(String calendarId){
+        return calendarId != null && calendarId.matches("[0-9]*");
     }
 }

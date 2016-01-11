@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.login;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.client.ClientIdValidator;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
@@ -19,16 +20,28 @@ public class LoginClientServiceTest {
             public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
                 return getStandardResponse();
             }
-        }, "serviceUrl");
+        }, new ClientIdValidator(), "serviceUrl");
 
-        Client client = service.loadUserByUsername("919191");
+        Client client = service.loadUserByUsername("91919191919");
 
         assertThat(client.isEnabled(), is(true));
-        assertThat(client.getUsername(), is("919191"));
-        assertThat(client.getClientId(), is("919191"));
+        assertThat(client.getUsername(), is("91919191919"));
+        assertThat(client.getClientId(), is("91919191919"));
         assertThat(client.getPassword(), is("Smith"));
         assertThat(client.getCustomerId(), is("6"));
         assertThat(client.hasEmail(), is(true));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void getCustomerByExternalReference_shouldThrowAnExceptionIfUsernameIsNot11Digits() throws Exception {
+        LoginClientService service = new LoginClientService(new ApiCallsSenderService() {
+            @Override
+            public ResponseWrapper sendRequest(String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) {
+                return getStandardResponse();
+            }
+        }, new ClientIdValidator(), "serviceUrl");
+
+        service.loadUserByUsername("919191");
     }
 
     private ResponseWrapper getStandardResponse() {
@@ -40,7 +53,7 @@ public class LoginClientServiceTest {
             "         <GetByExtRefResult xmlns:b=\"http://schemas.datacontract.org/2004/07/QFlow.Library\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
             "            <b:Customer>\n" +
             "               <b:Active>true</b:Active>\n" +
-            "               <b:ExtRef>919191</b:ExtRef>\n" +
+            "               <b:ExtRef>91919191919</b:ExtRef>\n" +
             "               <b:Id>6</b:Id>\n" +
             "               <b:Name>Smith Martin</b:Name>\n" +
             "               <b:EMail>2323@test.com</b:EMail>\n" +
