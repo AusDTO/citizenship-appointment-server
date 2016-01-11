@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin()
                 .loginPage("/login") // custom login page
                 .passwordParameter("familyName") // form element name
-                .defaultSuccessUrl("/booking")
+                .defaultSuccessUrl("/calendar")
                 .failureUrl("/login?error")
                 .permitAll()  // no authentication on login endpoint
                 .and()

@@ -80,7 +80,7 @@ public class ConfirmationControllerTest {
 
         final ModelAndView result = controller.getConfirmationPage(getStandardClient());
 
-        assertThat(result.getViewName(), is("redirect:/booking?error"));
+        assertThat(result.getViewName(), is("redirect:/calendar?error"));
     }
 
     private Client getStandardClient (){

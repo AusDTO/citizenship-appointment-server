@@ -1,13 +1,9 @@
 package au.gov.dto.dibp.appointments.availabledates;
 
-import au.gov.dto.dibp.appointments.availabledates.AvailableDate;
-import au.gov.dto.dibp.appointments.availabledates.AvailableDatesService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.SortedMap;
@@ -33,7 +29,7 @@ public class AvailableDatesServiceTest {
         assertThat(calendarEntries.size(), is(1));
         assertThat(availableDate.getId(), is("192"));
         assertThat(availableDate.getCalendarDate(), is("2015-12-16"));
-        assertThat(availableDate.getAvailableSlotsCount(), is(12));
+        assertThat(availableDate.getAvailableTimesCount(), is(12));
     }
 
     // FIXME(Emily) test inactive entries are not included in response

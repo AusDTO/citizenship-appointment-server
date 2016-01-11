@@ -11,13 +11,13 @@ class AvailableDate {
     @JsonIgnore
     private final String calendarDate;
 
-    @JsonProperty("available_slots_count")
-    private final int availableSlotsCount;
+    @JsonProperty("available_times_count")
+    private final int availableTimesCount;
 
-    public AvailableDate(String id, String calendarDate, int availableSlotsCount) {
+    public AvailableDate(String id, String calendarDate, int availableTimesCount) {
         this.id = id;
         this.calendarDate = calendarDate;
-        this.availableSlotsCount = availableSlotsCount;
+        this.availableTimesCount = availableTimesCount;
     }
 
     public String getId() {
@@ -28,7 +28,7 @@ class AvailableDate {
         return calendarDate;
     }
 
-    public int getAvailableSlotsCount() {
-        return availableSlotsCount;
+    public int getAvailableTimesCount() {
+        return availableTimesCount;
     }
 }

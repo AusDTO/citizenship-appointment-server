@@ -41,7 +41,7 @@ public class BookingControllerTest {
         });
 
         ModelAndView modelViewResult = controller.bookAnAppointment(getStandardClient(), "2015-12-30T13:00:00");
-        assertThat(modelViewResult.getViewName(), is("redirect:/booking?error"));
+        assertThat(modelViewResult.getViewName(), is("redirect:/calendar?error"));
         assertThat(modelViewResult.getModel().get("bookedDateTime"), is(nullValue()));
     }
 }

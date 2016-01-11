@@ -31,7 +31,7 @@ public class ConfirmationController {
         final AppointmentDetails appointmentDetails = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
 
         if(appointmentDetails == null){
-            return new ModelAndView("redirect:/booking?error",  new HashMap<>());
+            return new ModelAndView("redirect:/calendar?error",  new HashMap<>());
         }
 
         Map<String, Object> model = new HashMap<>();

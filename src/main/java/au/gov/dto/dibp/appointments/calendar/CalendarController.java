@@ -30,7 +30,7 @@ public class CalendarController {
         this.unitDetailsService = unitDetailsService;
     }
 
-    @RequestMapping(value = "/booking", method = RequestMethod.GET, produces = "text/html")
+    @RequestMapping(value = "/calendar", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView bookingHtml(@AuthenticationPrincipal Client client,
                                     @RequestParam(value = "error", required = false) String error,
                                     HttpServletRequest request) {
@@ -49,7 +49,7 @@ public class CalendarController {
         if (error != null) {
             model.put("error", true);
         }
-        return new ModelAndView("booking_page", model);
+        return new ModelAndView("calendar_page", model);
     }
 
     private String getCurrentAppointmentDetails(Client client){

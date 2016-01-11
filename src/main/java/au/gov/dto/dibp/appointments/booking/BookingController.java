@@ -39,7 +39,7 @@ public class BookingController {
 
         } catch( RuntimeException e ){
             logger.error("Appointment not booked for "+ client.getClientId()+". Exception: "+ e);
-            return new ModelAndView("redirect:/booking?error", new HashMap<>());
+            return new ModelAndView("redirect:/calendar?error", new HashMap<>());
         }
     }
 }
