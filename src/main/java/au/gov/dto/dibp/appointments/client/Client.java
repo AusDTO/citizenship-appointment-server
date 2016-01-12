@@ -8,13 +8,17 @@ public class Client extends User {
 
     private final String customerId;
     private final boolean hasEmail;
+    private String unitId;
     private String serviceId;
     private String appointmentTypeId;
 
-    public Client(String clientId, String familyName, String customerId, boolean hasEmail, boolean active) {
+    public Client(String clientId, String familyName, String customerId, boolean hasEmail,String unitId, String serviceId, String appointmentTypeId, boolean active) {
         super(clientId, familyName, active, true, true, true, Collections.emptyList());
         this.customerId = customerId;
         this.hasEmail = hasEmail;
+        this.unitId = unitId;
+        this.serviceId = serviceId;
+        this.appointmentTypeId = appointmentTypeId;
     }
 
     public String getClientId() {
@@ -25,26 +29,19 @@ public class Client extends User {
         return customerId;
     }
 
+    public String getUnitId() {
+        return unitId;
+    }
+
     public boolean hasEmail() {
         return hasEmail;
     }
 
     public String getServiceId() {
-        // FIXME(Marz)
-        return "5";
+        return serviceId;
     }
-
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
-    }
-
+    
     public String getAppointmentTypeId() {
-        // FIXME(Marz)
-        return "3";
+        return appointmentTypeId;
     }
-
-    public void setAppointmentTypeId(String appointmentTypeId) {
-        this.appointmentTypeId = appointmentTypeId;
-    }
-
 }

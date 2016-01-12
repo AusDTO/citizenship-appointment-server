@@ -1,11 +1,13 @@
-package au.gov.dto.dibp.appointments.unit;
+package au.gov.dto.dibp.appointments.organisation;
 
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +35,12 @@ public class UnitDetailsService {
         return response.getStringAttribute(GetUnit.UNIT_ADDRESS);
     }
 
-    public String getUnitCurrentLocalTime(String unitId){
+    public LocalDateTime getUnitCurrentLocalTime(String unitId){
         Map<String, String> data = new HashMap<>();
         data.put("unitId", unitId);
 
         ResponseWrapper response = senderService.sendRequest(GetUnitLocalTime.REQUEST_TEMPLATE_PATH, data, serviceAddress);
-        return response.getStringAttribute(GetUnitLocalTime.LOCAL_TIME);
+        return LocalDateTime.parse(response.getStringAttribute(GetUnitLocalTime.LOCAL_TIME));
     }
 
     public String getUnitAddressByServiceId(String serviceId){
@@ -46,11 +48,10 @@ public class UnitDetailsService {
         return getUnitAddress(unitId);
     }
 
-    public String getUnitCurrentLocalTimeByServiceId(String serviceId){
+    public LocalDateTime getUnitCurrentLocalTimeByServiceId(String serviceId){
         String unitId = serviceDetailsService.getUnitIdForService(serviceId);
         return getUnitCurrentLocalTime(unitId);
     }
-
 
     private class GetUnit {
         static final String REQUEST_TEMPLATE_PATH = "GetUnit.mustache";

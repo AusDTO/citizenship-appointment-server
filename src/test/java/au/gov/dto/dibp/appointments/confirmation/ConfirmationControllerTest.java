@@ -84,7 +84,7 @@ public class ConfirmationControllerTest {
     }
 
     private Client getStandardClient (){
-        return new Client(CLIENT_ID, "Surname", "40404", HAS_EMAIL, true);
+        return new Client(CLIENT_ID, "Surname", "40404", HAS_EMAIL,  "3", "5", "3", true);
     }
 
     private AppointmentDetails getBasicAppointmentDetails(){

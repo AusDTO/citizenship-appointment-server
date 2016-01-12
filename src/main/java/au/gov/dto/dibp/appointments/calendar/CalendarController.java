@@ -3,7 +3,7 @@ package au.gov.dto.dibp.appointments.calendar;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
-import au.gov.dto.dibp.appointments.unit.UnitDetailsService;
+import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -37,7 +37,6 @@ public class CalendarController {
 
         Map<String, Object> model = new HashMap<>();
 
-        //TODO: refactor not to make 2 calls for unitId & details
         model.put("location", getUnitLocation(client));
         model.put("todayDate", getUnitCurrentDate(client));
         model.put("current_appointment", getCurrentAppointmentDetails(client));
@@ -61,11 +60,11 @@ public class CalendarController {
     }
 
     private String getUnitLocation(Client client){
-        return unitDetailsService.getUnitAddressByServiceId(client.getServiceId());
+        return unitDetailsService.getUnitAddress(client.getUnitId());
     }
 
     private String getUnitCurrentDate(Client client){
-        return unitDetailsService.getUnitCurrentLocalTimeByServiceId(client.getServiceId());
+        return unitDetailsService.getUnitCurrentLocalTime(client.getUnitId()).toString();
     }
 
 }

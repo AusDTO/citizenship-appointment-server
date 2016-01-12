@@ -2,7 +2,7 @@ package au.gov.dto.dibp.appointments.appointmentdetails;
 
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
-import au.gov.dto.dibp.appointments.unit.UnitDetailsService;
+import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.util.NodeParser;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +24,6 @@ public class AppointmentDetailsService {
 
     private final String serviceAddressCustomer;
 
-    private class GetExpectedAppointments {
-        static final String REQUEST_TEMPLATE_PATH = "GetExpectedAppointments.mustache";
-
-        static final String APPOINTMENTS = "//GetExpectedAppointmentsResponse/GetExpectedAppointmentsResult/CustomerGetExpectedAppointmentsResults";
-        static final String APPOINTMENT_DATE = "AppointmentDate";
-        static final String APPOINTMENT_DURATION = "AppointmentDuration";
-        static final String PROCESS_ID = "ProcessId";
-        static final String SERVICE_ID = "ServiceId";
-        static final String CUSTOMER_ID = "CustomerId";
-        static final String UNIT_NAME = "UnitName";
-    }
-
     @Autowired
     public AppointmentDetailsService(ApiCallsSenderService senderService,
                                      UnitDetailsService unitDetailsService,
@@ -46,9 +34,7 @@ public class AppointmentDetailsService {
     }
 
     public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
-
-        //TODO: Dates according to the timezone of the unit!
-        LocalDateTime today =  LocalDateTime.now(ZoneId.of("Australia/Sydney"));
+        LocalDateTime today =  unitDetailsService.getUnitCurrentLocalTime(client.getUnitId());
         LocalDateTime endDate = today.plusYears(1L);
 
         return this.getExpectedAppointmentForClient(client, today, endDate);
@@ -95,4 +81,15 @@ public class AppointmentDetailsService {
         return new AppointmentDetails(appointmentDate, appointmentDuration, processId, serviceId, customerId, unitName, unitAddress);
     }
 
+    private class GetExpectedAppointments {
+        static final String REQUEST_TEMPLATE_PATH = "GetExpectedAppointments.mustache";
+
+        static final String APPOINTMENTS = "//GetExpectedAppointmentsResponse/GetExpectedAppointmentsResult/CustomerGetExpectedAppointmentsResults";
+        static final String APPOINTMENT_DATE = "AppointmentDate";
+        static final String APPOINTMENT_DURATION = "AppointmentDuration";
+        static final String PROCESS_ID = "ProcessId";
+        static final String SERVICE_ID = "ServiceId";
+        static final String CUSTOMER_ID = "CustomerId";
+        static final String UNIT_NAME = "UnitName";
+    }
 }

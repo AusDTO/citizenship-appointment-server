@@ -1,5 +1,6 @@
 package au.gov.dto.dibp.appointments.availabledates;
 
+import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.NodeParser;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
@@ -20,11 +21,15 @@ import java.util.TreeMap;
 class AvailableDatesService {
 
     private final ApiCallsSenderService senderService;
+    private final UnitDetailsService unitDetailsService;
     private final String serviceAddressService;
 
     @Autowired
-    public AvailableDatesService(ApiCallsSenderService senderService, @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddressService) {
+    public AvailableDatesService(ApiCallsSenderService senderService,
+                                 UnitDetailsService unitDetailsService,
+                                 @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddressService) {
         this.senderService = senderService;
+        this.unitDetailsService = unitDetailsService;
         this.serviceAddressService = serviceAddressService;
     }
 
@@ -42,8 +47,7 @@ class AvailableDatesService {
     }
 
     public SortedMap<String, AvailableDate> getAvailabilityForNextYear(String serviceId) {
-        //TODO: Dates according to the timezone of the unit!
-        LocalDate today =  LocalDate.now(ZoneId.of("Australia/Sydney"));
+        LocalDate today =  unitDetailsService.getUnitCurrentLocalTimeByServiceId(serviceId).toLocalDate();
         LocalDate endDate = today.plusYears(1L);
 
         return this.getAvailabilityForDateRange(serviceId, today, endDate);

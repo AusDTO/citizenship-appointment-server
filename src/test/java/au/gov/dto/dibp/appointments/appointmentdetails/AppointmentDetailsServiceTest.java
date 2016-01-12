@@ -2,7 +2,7 @@ package au.gov.dto.dibp.appointments.appointmentdetails;
 
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
-import au.gov.dto.dibp.appointments.unit.UnitDetailsService;
+import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
 
@@ -133,6 +133,6 @@ public class AppointmentDetailsServiceTest {
     }
 
     private Client getStandardClient (){
-        return new Client("123", "Surname", "40404", false, true);
+        return new Client("123", "Surname", "40404", false, "3", "5", "3", true);
     }
 }

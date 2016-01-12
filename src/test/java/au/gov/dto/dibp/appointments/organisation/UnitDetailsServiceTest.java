@@ -1,8 +1,9 @@
-package au.gov.dto.dibp.appointments.unit;
+package au.gov.dto.dibp.appointments.organisation;
 
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
@@ -13,7 +14,7 @@ public class UnitDetailsServiceTest {
     public static final String SERVICE_ID = "AAA";
     public static final String UNIT_ID = "232323";
     public static final String UNIT_ADDRESS = "Some Address in the middle of the forest";
-    public static final String UNIT_LOCALTIME = "2016-01-06T11:06:25.87";
+    public static final String UNIT_LOCALTIME = "2016-01-06T11:06:25";
 
     private UnitDetailsService service;
 
@@ -44,7 +45,7 @@ public class UnitDetailsServiceTest {
                 (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> getUnitCurrentLocalTimeResponse(messageParams),
                 "Some Service URL");
 
-        assertThat(service.getUnitCurrentLocalTimeByServiceId(SERVICE_ID), is(UNIT_LOCALTIME));
+        assertThat(service.getUnitCurrentLocalTimeByServiceId(SERVICE_ID), is(LocalDateTime.of(2016, 1, 6, 11, 6, 25)));
     }
 
     @Test
@@ -54,7 +55,7 @@ public class UnitDetailsServiceTest {
                 (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> getUnitCurrentLocalTimeResponse(messageParams),
                 "Some Service URL");
 
-        assertThat(service.getUnitCurrentLocalTime(UNIT_ID), is(UNIT_LOCALTIME));
+        assertThat(service.getUnitCurrentLocalTime(UNIT_ID), is(is(LocalDateTime.of(2016, 1, 6, 11, 6, 25))));
     }
 
     private ResponseWrapper getUnitDetailsResponse(Map<String, String> messageParams){

@@ -29,7 +29,7 @@ public class BookingControllerTest {
     }
 
     private Client getStandardClient (){
-        return new Client("123", "Surname", "40404", false, true);
+        return new Client("123", "Surname", "40404", false,  "3", "5", "3", true);
     }
 
     @Test
