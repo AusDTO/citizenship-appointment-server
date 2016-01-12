@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class CookieBasedSecurityContextRepository implements SecurityContextRepository {
     private final SecurityCookieService securityCookieService;
+    private static final int COOKIE_MAX_AGE_SECONDS = 60 * 30;
 
     @Autowired
     public CookieBasedSecurityContextRepository(SecurityCookieService securityCookieService) {
@@ -85,6 +86,7 @@ public class CookieBasedSecurityContextRepository implements SecurityContextRepo
                 if (!this.isContextSaved()) {
                     securityCookie.setHttpOnly(true);
                     securityCookie.setSecure(secure);
+                    securityCookie.setMaxAge(COOKIE_MAX_AGE_SECONDS);
                     addCookie(securityCookie);
                 }
             } else {
