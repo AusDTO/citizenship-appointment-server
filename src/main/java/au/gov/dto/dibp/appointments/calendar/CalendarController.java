@@ -38,7 +38,7 @@ public class CalendarController {
         Map<String, Object> model = new HashMap<>();
 
         model.put("location", getUnitLocation(client));
-        model.put("todayDate", getUnitCurrentDate(client));
+        model.put("today_date", getUnitCurrentDate(client));
         model.put("current_appointment", getCurrentAppointmentDetails(client));
 
         CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());

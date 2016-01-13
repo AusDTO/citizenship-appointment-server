@@ -60,7 +60,7 @@ public class CalendarControllerTest {
     public void test_bookingHtml_should_passTodayDateToTheModel(){
         final ModelAndView result = controller.bookingHtml(getStandardClient(), null, mock(HttpServletRequest.class));
 
-        assertThat(result.getModel().get("todayDate"), is(UNIT_LOCALTIME));
+        assertThat(result.getModel().get("today_date"), is(UNIT_LOCALTIME));
     }
 
     @Test
