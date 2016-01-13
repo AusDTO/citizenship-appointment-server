@@ -4,6 +4,8 @@ import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.NodeParser;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import au.gov.dto.dibp.appointments.util.TemplateLoader;
+import com.samskivert.mustache.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -24,13 +25,18 @@ class AvailableDatesService {
     private final UnitDetailsService unitDetailsService;
     private final String serviceAddressService;
 
+    private final Template getCalendarsTemplate;
+
     @Autowired
     public AvailableDatesService(ApiCallsSenderService senderService,
                                  UnitDetailsService unitDetailsService,
+                                 TemplateLoader templateLoader,
                                  @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddressService) {
         this.senderService = senderService;
         this.unitDetailsService = unitDetailsService;
         this.serviceAddressService = serviceAddressService;
+
+        this.getCalendarsTemplate = templateLoader.loadTemplateByPath(GetCalendars.REQUEST_TEMPLATE_PATH);
     }
 
     private class GetCalendars {
@@ -59,7 +65,7 @@ class AvailableDatesService {
         data.put("startDate", startDate.toString()+"T00:00:00");
         data.put("endDate", endDate.toString()+"T00:00:00");
 
-        ResponseWrapper response = senderService.sendRequest(GetCalendars.REQUEST_TEMPLATE_PATH, data, serviceAddressService);
+        ResponseWrapper response = senderService.sendRequest(this.getCalendarsTemplate, data, serviceAddressService);
         return parseGetCalendarsResponse(response);
     }
 

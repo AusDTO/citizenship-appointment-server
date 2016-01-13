@@ -1,9 +1,11 @@
 package au.gov.dto.dibp.appointments.appointmentdetails;
 
 import au.gov.dto.dibp.appointments.client.Client;
-import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
+import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import com.samskivert.mustache.Template;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -23,7 +25,9 @@ public class AppointmentDetailsServiceTest {
 
         service = new AppointmentDetailsService(
                 getApiCallsSenderServiceReturningNoAppointments(),
-                getUnitDetailsServiceReturningCorrectAddress(), "Service Address");
+                getUnitDetailsServiceReturningCorrectAddress(),
+                new FakeTemplateLoader(),
+                "Service Address");
 
         final AppointmentDetails appointmentDetails = service.getExpectedAppointmentForClient(getStandardClient(), LocalDateTime.parse("2016-01-01T13:00:00"), LocalDateTime.parse("2016-01-30T13:00:00"));
         assertThat(appointmentDetails, is(nullValue()));
@@ -34,7 +38,9 @@ public class AppointmentDetailsServiceTest {
 
         service = new AppointmentDetailsService(
                 getApiCallsSenderServiceReturningAppointmentWithWrongCustomerId(),
-                getUnitDetailsServiceReturningCorrectAddress(), "Service Address");
+                getUnitDetailsServiceReturningCorrectAddress(),
+                new FakeTemplateLoader(),
+                "Service Address");
 
         service.getExpectedAppointmentForClient(getStandardClient(), LocalDateTime.parse("2016-01-01T13:00:00"), LocalDateTime.parse("2016-01-30T13:00:00"));
         assertTrue(false);
@@ -45,7 +51,9 @@ public class AppointmentDetailsServiceTest {
 
         service = new AppointmentDetailsService(
                 getApiCallsSenderServiceReturningCorrectAppointment(),
-                getUnitDetailsServiceReturningCorrectAddress(), "Service Address");
+                getUnitDetailsServiceReturningCorrectAddress(),
+                new FakeTemplateLoader(),
+                "Service Address");
 
         final AppointmentDetails appointmentDetails = service.getExpectedAppointmentForClient(getStandardClient(), LocalDateTime.parse("2016-01-01T13:00:00"), LocalDateTime.parse("2016-01-30T13:00:00"));
 
@@ -59,7 +67,7 @@ public class AppointmentDetailsServiceTest {
     }
 
     private ApiCallsSenderService getApiCallsSenderServiceReturningNoAppointments(){
-        return (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> {
+        return (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> {
             String responseWithNoAppointments =
             "   <s:Body>\n" +
             "      <GetExpectedAppointmentsResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
@@ -72,7 +80,7 @@ public class AppointmentDetailsServiceTest {
     }
 
     private ApiCallsSenderService getApiCallsSenderServiceReturningAppointmentWithWrongCustomerId(){
-        return (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> {
+        return (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> {
             String responseWithWrongCustomerId =
             " <s:Body>\n" +
             "      <GetExpectedAppointmentsResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
@@ -98,8 +106,8 @@ public class AppointmentDetailsServiceTest {
     }
 
     private ApiCallsSenderService getApiCallsSenderServiceReturningCorrectAppointment(){
-        return (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> {
-            String responseWithWrongCustomerId =
+        return (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> {
+            String response =
                 " <s:Body>\n" +
                 "      <GetExpectedAppointmentsResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
                 "         <GetExpectedAppointmentsResult xmlns:b=\"http://schemas.datacontract.org/2004/07/QFlow.Library\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
@@ -119,12 +127,12 @@ public class AppointmentDetailsServiceTest {
                 "      </GetExpectedAppointmentsResponse>\n" +
                 "   </s:Body>";
 
-            return new ResponseWrapper(200, responseWithWrongCustomerId);
+            return new ResponseWrapper(200, response);
         };
     }
 
     private UnitDetailsService getUnitDetailsServiceReturningCorrectAddress(){
-        return new UnitDetailsService(null, null, null){
+        return new UnitDetailsService(null, null, new FakeTemplateLoader(), null){
             @Override
             public String getUnitAddressByServiceId(String serviceId){
                 return "Some address 23";

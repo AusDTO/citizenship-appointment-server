@@ -1,7 +1,8 @@
 package au.gov.dto.dibp.appointments.availabledates;
 
-import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
+import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import com.samskivert.mustache.Template;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -16,8 +17,10 @@ public class AvailableDatesServiceTest {
     @Test
     public void getCalendars_shouldConvertResponseIntoCalendarEntryObject() throws Exception {
         AvailableDatesService service = new AvailableDatesService(
-                (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> getStandardResponse(),
-                null, "serviceUrl");
+                (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> getStandardResponse(),
+                null,
+                new FakeTemplateLoader(),
+                "serviceUrl");
 
         SortedMap<String, AvailableDate> calendarEntries = service.getAvailabilityForDateRange("serviceId", LocalDate.now(), LocalDate.now());
 

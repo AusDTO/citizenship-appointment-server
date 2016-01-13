@@ -1,10 +1,12 @@
 package au.gov.dto.dibp.appointments.appointmentdetails;
 
 import au.gov.dto.dibp.appointments.client.Client;
-import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.NodeParser;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import au.gov.dto.dibp.appointments.util.TemplateLoader;
+import com.samskivert.mustache.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,14 +24,18 @@ public class AppointmentDetailsService {
     private final UnitDetailsService unitDetailsService;
 
     private final String serviceAddressCustomer;
+    private final Template getExpectedAppointmentsTemplate;
 
     @Autowired
     public AppointmentDetailsService(ApiCallsSenderService senderService,
                                      UnitDetailsService unitDetailsService,
+                                     TemplateLoader templateLoader,
                                      @Value("${SERVICE.ADDRESS.CUSTOMER}") String serviceAddressCustomer) {
         this.senderService = senderService;
         this.unitDetailsService = unitDetailsService;
         this.serviceAddressCustomer = serviceAddressCustomer;
+
+        this.getExpectedAppointmentsTemplate = templateLoader.loadTemplateByPath(GetExpectedAppointments.REQUEST_TEMPLATE_PATH);
     }
 
     public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
@@ -46,7 +51,7 @@ public class AppointmentDetailsService {
         data.put("startDate", startDate.toString());
         data.put("endDate", endDate.toString());
 
-        ResponseWrapper response = senderService.sendRequest(GetExpectedAppointments.REQUEST_TEMPLATE_PATH, data, serviceAddressCustomer);
+        ResponseWrapper response = senderService.sendRequest(getExpectedAppointmentsTemplate, data, serviceAddressCustomer);
         return parseGetExpectedAppointmentsResponse(response, client);
     }
 

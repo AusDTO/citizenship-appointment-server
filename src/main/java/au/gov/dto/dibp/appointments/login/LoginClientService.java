@@ -6,6 +6,8 @@ import au.gov.dto.dibp.appointments.organisation.ServiceDetails;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.organisation.ServiceDetailsService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import au.gov.dto.dibp.appointments.util.TemplateLoader;
+import com.samskivert.mustache.Template;
 import org.eclipse.jetty.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +27,17 @@ public class LoginClientService implements UserDetailsService {
     private final AppointmentTypeService appointmentTypeService;
 
     private final String serviceAddressCustomer;
-    private ClientIdValidator clientIdValidator;
+    private final ClientIdValidator clientIdValidator;
+
+    private final Template getClientByExternalReferenceTemplate;
+    private final Template getClientCustomPropertiesTemplate;
 
 
     @Autowired
     public LoginClientService(ApiCallsSenderService senderService,
                               ServiceDetailsService serviceDetailsService,
                               AppointmentTypeService appointmentTypeService,
+                              TemplateLoader templateLoader,
                               ClientIdValidator clientIdValidator,
                               @Value("${SERVICE.ADDRESS.CUSTOMER}") String serviceAddressCustomer) {
         this.senderService = senderService;
@@ -39,6 +45,9 @@ public class LoginClientService implements UserDetailsService {
         this.serviceDetailsService = serviceDetailsService;
         this.appointmentTypeService = appointmentTypeService;
         this.serviceAddressCustomer = serviceAddressCustomer;
+
+        getClientByExternalReferenceTemplate = templateLoader.loadTemplateByPath(GetClientByExternalReference.REQUEST_TEMPLATE_PATH);
+        getClientCustomPropertiesTemplate = templateLoader.loadTemplateByPath(GetClientCustomProperties.REQUEST_TEMPLATE_PATH);
     }
 
     @Override
@@ -50,7 +59,7 @@ public class LoginClientService implements UserDetailsService {
         Map<String, String> data = new HashMap<>();
         data.put("externalReference", username);
 
-        ResponseWrapper response = senderService.sendRequest(GetClientByExternalReference.REQUEST_TEMPLATE_PATH, data, serviceAddressCustomer);
+        ResponseWrapper response = senderService.sendRequest(getClientByExternalReferenceTemplate, data, serviceAddressCustomer);
         return parseGetCustomerByClientIdResponse(response);
     }
 
@@ -72,7 +81,7 @@ public class LoginClientService implements UserDetailsService {
         Map<String, String> data = new HashMap<>();
         data.put("customerId", customerId);
 
-        return senderService.sendRequest(GetClientCustomProperties.REQUEST_TEMPLATE_PATH, data, serviceAddressCustomer);
+        return senderService.sendRequest(getClientCustomPropertiesTemplate, data, serviceAddressCustomer);
     }
 
     private String getAppointmentTypeId(ResponseWrapper response, String customerId){

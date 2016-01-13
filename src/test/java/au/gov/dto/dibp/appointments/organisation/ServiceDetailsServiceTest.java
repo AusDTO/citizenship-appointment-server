@@ -1,6 +1,9 @@
 package au.gov.dto.dibp.appointments.organisation;
 
+import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import com.samskivert.mustache.Template;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
@@ -12,25 +15,37 @@ public class ServiceDetailsServiceTest {
 
     private ServiceDetailsService service;
 
+    @Before
+    public void setUp(){
+        service = new ServiceDetailsService(
+                (Template requestTemplate, Map<String, String> messageParams, String serviceAddress)
+                        -> getCallsResponses(requestTemplate),
+                new FakeTemplateLoader(),
+                "Some Service URL");
+    }
+
     @Test
     public void test_getUnitIdForService_should_returnUnitIdGivenAServiceId(){
-        service = new ServiceDetailsService(
-                (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> getServiceDetailsResponse(),
-                "Some Service URL");
 
         assertThat(service.getUnitIdForService("1234"), is("3"));
     }
 
     @Test
     public void test_getServiceIdByExternalReference_should_returnServiceIdGivenAServiceExternalReference(){
-        service = new ServiceDetailsService(
-                (String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> getServiceByExtRefResponse(),
-                "Some Service URL");
 
         ServiceDetails serviceDetails = service.getServiceByExternalReference("SYD_CI_20m");
         assertThat(serviceDetails.getServiceId(), is("5"));
         assertThat(serviceDetails.getUnitId(), is("3"));
         assertThat(serviceDetails.getExternalReference(), is("SYD_CI_20m"));
+    }
+
+    private ResponseWrapper getCallsResponses(Template template){
+        if(template.toString().contains("GetService.")){
+            return getServiceDetailsResponse();
+        } else if(template.toString().contains("GetServiceByExternalReference.")){
+            return getServiceByExtRefResponse();
+        }
+        return null;
     }
 
     private ResponseWrapper getServiceDetailsResponse(){

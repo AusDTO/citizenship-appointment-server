@@ -4,6 +4,8 @@ import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
+import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
+import au.gov.dto.dibp.appointments.util.TemplateLoader;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,12 +30,14 @@ public class CalendarControllerTest {
 
     @Before
     public void setUp(){
-        controller = new CalendarController(new AppointmentDetailsService(null, null, null){
+        TemplateLoader templateLoader = new FakeTemplateLoader();
+
+        controller = new CalendarController(new AppointmentDetailsService(null, null, templateLoader, null){
             @Override
             public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
                 return getBasicAppointmentDetails();
             }
-        }, new UnitDetailsService(null, null, null){
+        }, new UnitDetailsService(null, null, templateLoader, null){
 
             @Override
             public LocalDateTime getUnitCurrentLocalTime(String unitId){

@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.booking;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -17,7 +18,7 @@ public class BookingControllerTest {
     public void test_bookAnAppointment_should_redirectToConfirmationPageIfBookedSuccessfully(){
         final String bookedDate = "2015-12-30T13:00:00";
 
-        BookingController controller = new BookingController(new BookingService(null, null, null, null){
+        BookingController controller = new BookingController(new BookingService(null, null, new FakeTemplateLoader(), null, null){
             public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
                 return bookedDate;
             }
@@ -34,7 +35,7 @@ public class BookingControllerTest {
 
     @Test
     public void test_bookAnAppointment_should_redirectToBookingPageIfBookingFailed(){
-        BookingController controller = new BookingController(new BookingService(null, null, null, null){
+        BookingController controller = new BookingController(new BookingService(null, null, new FakeTemplateLoader(), null, null){
             public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
                 throw new RuntimeException("Something failed");
             }

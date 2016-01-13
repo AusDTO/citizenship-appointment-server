@@ -5,6 +5,8 @@ import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import au.gov.dto.dibp.appointments.util.TemplateLoader;
+import com.samskivert.mustache.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +24,27 @@ public class BookingService {
     private final ApiCallsSenderService senderService;
     private final AppointmentDetailsService appointmentDetailsService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
 
     private final String serviceAddress;
     private final String serviceAddressProcess;
 
+    private final Template setAppointmentTemplate;
+    private final Template rescheduleAppointmentTemplate;
+
     @Autowired
     public BookingService(ApiCallsSenderService senderService,
                           AppointmentDetailsService appointmentDetailsService,
+                          TemplateLoader templateLoader,
                           @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddress,
                           @Value("${SERVICE.ADDRESS.PROCESS}") String serviceAddressProcess) {
         this.senderService = senderService;
         this.appointmentDetailsService = appointmentDetailsService;
         this.serviceAddress = serviceAddress;
         this.serviceAddressProcess = serviceAddressProcess;
+
+        setAppointmentTemplate = templateLoader.loadTemplateByPath(SetAppointment.REQUEST_TEMPLATE_PATH);
+        rescheduleAppointmentTemplate = templateLoader.loadTemplateByPath(RescheduleAppointment.REQUEST_TEMPLATE_PATH);
     }
 
     public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
@@ -61,7 +70,7 @@ public class BookingService {
         data.put("appointmentTypeId", client.getAppointmentTypeId());
         data.put("clientId", client.getClientId());
 
-        ResponseWrapper response = senderService.sendRequest(RescheduleAppointment.REQUEST_TEMPLATE_PATH, data, serviceAddressProcess);
+        ResponseWrapper response = senderService.sendRequest(rescheduleAppointmentTemplate, data, serviceAddressProcess);
         return getScheduledAppointmentTime(response, RescheduleAppointment.APPOINTMENT_DATE);
     }
 
@@ -73,7 +82,7 @@ public class BookingService {
         data.put("serviceId", client.getServiceId());
         data.put("appointmentTypeId", client.getAppointmentTypeId());
 
-        ResponseWrapper response = senderService.sendRequest(SetAppointment.REQUEST_TEMPLATE_PATH, data, serviceAddress);
+        ResponseWrapper response = senderService.sendRequest(setAppointmentTemplate, data, serviceAddress);
         return getScheduledAppointmentTime(response, SetAppointment.APPOINTMENT_DATE);
     }
 
@@ -90,5 +99,4 @@ public class BookingService {
         public static final String REQUEST_TEMPLATE_PATH = "RescheduleAppointment.mustache";
         public static final String APPOINTMENT_DATE = "//RescheduleAppointmentResponse/RescheduleAppointmentResult/RescheduleAppointmentData/DateAndTime";
     }
-
 }

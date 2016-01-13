@@ -1,12 +1,14 @@
 package au.gov.dto.dibp.appointments.login;
 
+import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import com.samskivert.mustache.Template;
 import org.junit.Test;
 
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class AppointmentTypeServiceTest {
 
@@ -14,7 +16,9 @@ public class AppointmentTypeServiceTest {
 
     @Test
     public void test_getAppointmentTypeIdByExternalReference_should_returnAppointmentId(){
-        service = new AppointmentTypeService((String requestTemplatePath, Map<String, String> messageParams, String serviceAddress) -> getAppointmentTypeByExtRefResponse(),
+        service = new AppointmentTypeService(
+                (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> getAppointmentTypeByExtRefResponse(),
+                new FakeTemplateLoader(),
                 "Some Service URL");
 
         assertThat("3", is(service.getAppointmentTypeIdByExternalReference("232323")));

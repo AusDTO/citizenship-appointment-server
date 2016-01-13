@@ -2,6 +2,8 @@ package au.gov.dto.dibp.appointments.organisation;
 
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
+import au.gov.dto.dibp.appointments.util.TemplateLoader;
+import com.samskivert.mustache.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,18 +17,25 @@ public class ServiceDetailsService {
     private final ApiCallsSenderService senderService;
     private final String serviceAddress;
 
+    private final Template getServiceTemplate;
+    private final Template getServiceByExternalReferenceTemplate;
+
     @Autowired
     public ServiceDetailsService(ApiCallsSenderService senderService,
+                                 TemplateLoader templateLoader,
                                  @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddress) {
         this.senderService = senderService;
         this.serviceAddress = serviceAddress;
+
+        getServiceTemplate = templateLoader.loadTemplateByPath(GetService.REQUEST_TEMPLATE_PATH);
+        getServiceByExternalReferenceTemplate = templateLoader.loadTemplateByPath(GetServiceByExternalReference.REQUEST_TEMPLATE_PATH);
     }
 
     public String getUnitIdForService(String serviceId){
         Map<String, String> data = new HashMap<>();
         data.put("serviceId", serviceId);
 
-        ResponseWrapper response = senderService.sendRequest(GetService.REQUEST_TEMPLATE_PATH, data, serviceAddress);
+        ResponseWrapper response = senderService.sendRequest(getServiceTemplate, data, serviceAddress);
         return getUnitIdFromGetServiceResponse(response);
     }
 
@@ -34,7 +43,7 @@ public class ServiceDetailsService {
         Map<String, String> data = new HashMap<>();
         data.put("externalReference", externalReference);
 
-        ResponseWrapper response = senderService.sendRequest(GetServiceByExternalReference.REQUEST_TEMPLATE_PATH, data, serviceAddress);
+        ResponseWrapper response = senderService.sendRequest(getServiceByExternalReferenceTemplate, data, serviceAddress);
         return getServiceFromGetServiceByExternalReferenceResponse(response);
     }
 
