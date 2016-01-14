@@ -87,6 +87,7 @@ def metricsVersion = '3.0.2'
 def commonsIoVersion = '2.4'
 def springCookieSessionVersion = '1.0'
 def commonsCodecVersion = '1.10'
+def zxingVersion = '3.2.1'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
@@ -101,7 +102,8 @@ dependencies {
             "com.samskivert:jmustache:${jmustacheVersion}",
             "com.squareup.okhttp:okhttp:${okhttpVersion}",
             "com.oakfusion:spring-cookie-session:${springCookieSessionVersion}",
-            "commons-codec:commons-codec:${commonsCodecVersion}"
+            "commons-codec:commons-codec:${commonsCodecVersion}",
+            "com.google.zxing:javase:${zxingVersion}"
 
     testCompile "junit:junit:${junitVersion}",
             "org.hamcrest:hamcrest-library:${hamcrestVersion}",
