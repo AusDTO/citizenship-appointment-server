@@ -11,6 +11,7 @@
     </appender>
 
     <logger name="au.gov.dto.dibp.appointments" level="DEBUG"/>
+    <logger name="au.gov.dto.dibp.appointments.security.context.CookieBasedSecurityContextRepository$SaveToCookieResponseWrapper" level="INFO"/>
 
     <logger name="org.crsh.plugin" level="WARN"/>
     <logger name="org.crsh.ssh" level="WARN"/>
