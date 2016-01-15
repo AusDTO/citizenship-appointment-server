@@ -3,10 +3,7 @@ package au.gov.dto.dibp.appointments.login;
 import au.gov.dto.dibp.appointments.client.ClientIdValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +42,11 @@ public class LoginController {
 
     @RequestMapping(value = "/sessionExpired", method = RequestMethod.POST, produces = "text/html")
     public ModelAndView sessionExpiredHtml(HttpServletRequest request) {
+        return new ModelAndView("redirect:/login?expired", new HashMap<>());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ModelAndView handleRuntimeException(HttpServletRequest req, RuntimeException exception){
         return new ModelAndView("redirect:/login?expired", new HashMap<>());
     }
 }
