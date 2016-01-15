@@ -32,17 +32,4 @@ public class BookingControllerTest {
     private Client getStandardClient (){
         return new Client("123", "Surname", "40404", false,  "3", "5", "3", true);
     }
-
-    @Test
-    public void test_bookAnAppointment_should_redirectToBookingPageIfBookingFailed(){
-        BookingController controller = new BookingController(new BookingService(null, null, new FakeTemplateLoader(), null, null){
-            public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
-                throw new RuntimeException("Something failed");
-            }
-        });
-
-        ModelAndView modelViewResult = controller.bookAnAppointment(getStandardClient(), "2015-12-30T13:00:00");
-        assertThat(modelViewResult.getViewName(), is("redirect:/calendar?error"));
-        assertThat(modelViewResult.getModel().get("bookedDateTime"), is(nullValue()));
-    }
 }

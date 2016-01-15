@@ -22,6 +22,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView loginHtml(
             @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "expired", required = false) String expired,
             @RequestParam(value = "id", required = false) String clientId,
             HttpServletRequest request) {
 
@@ -33,10 +34,17 @@ public class LoginController {
         if (error != null) {
             model.put("error", true);
         }
+        if (expired != null) {
+            model.put("expired", true);
+        }
         if(clientIdValidator.isClientIdValid(clientId)){
             model.put("clientId", clientId);
         }
         return new ModelAndView("login_page", model);
     }
 
+    @RequestMapping(value = "/sessionExpired", method = RequestMethod.POST, produces = "text/html")
+    public ModelAndView sessionExpiredHtml(HttpServletRequest request) {
+        return new ModelAndView("redirect:/login?expired", new HashMap<>());
+    }
 }

@@ -56,7 +56,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
                 .logoutSuccessUrl("/login")
-                .permitAll();  // no authentication on logout endpoint
+                .permitAll()  // no authentication on logout endpoint
+                .and()
+            .exceptionHandling()
+                .accessDeniedPage("/sessionExpired");
     }
 
     @Bean

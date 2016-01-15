@@ -87,7 +87,11 @@ public class BookingService {
     }
 
     private String getScheduledAppointmentTime(ResponseWrapper response, String appointmentDatePath){
-        return response.getStringAttribute(appointmentDatePath);
+        try {
+            return response.getStringAttribute(appointmentDatePath);
+        }catch(RuntimeException e){
+            throw new BookingResponseInvalidException("Response did not contain the appointment date.");
+        }
     }
 
     private class SetAppointment {

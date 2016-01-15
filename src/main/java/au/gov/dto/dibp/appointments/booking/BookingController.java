@@ -5,12 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -29,17 +27,21 @@ public class BookingController {
     @RequestMapping(value = "/book_appointment", method = RequestMethod.POST)
     public ModelAndView bookAnAppointment(@AuthenticationPrincipal Client client,
                                     @RequestParam(value="selected_appointment", required=true) String dateTime){
-        try {
             LocalDateTime selectedAppointment = LocalDateTime.parse(dateTime);
 
             bookingService.bookAnAppointment(client, selectedAppointment);
             logger.info("Appointment booked for "+ client.getClientId() + " on "+ selectedAppointment);
 
             return new ModelAndView("redirect:/confirmation",  new HashMap<>());
+    }
 
-        } catch( RuntimeException e ){
-            logger.error("Appointment not booked for "+ client.getClientId()+". Exception: "+ e);
-            return new ModelAndView("redirect:/calendar?error", new HashMap<>());
-        }
+    @ExceptionHandler(BookingResponseInvalidException.class)
+    public ModelAndView handleAppointmentNotBookedError(HttpServletRequest req, BookingResponseInvalidException exception){
+        return new ModelAndView("redirect:/calendar?unavailable", new HashMap<>());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ModelAndView handleRuntimeException(HttpServletRequest req, RuntimeException exception){
+        return new ModelAndView("redirect:/calendar?error", new HashMap<>());
     }
 }
