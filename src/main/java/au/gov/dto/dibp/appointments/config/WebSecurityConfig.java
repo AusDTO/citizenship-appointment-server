@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .requestCache()
                 .disable()
             .authorizeRequests()
-                .antMatchers("/", "/images/*", "/static/*").permitAll()  // no authentication on endpoints '/' and public assets
+                .antMatchers("/", "/images/*", "/static/*", "/login").permitAll()  // no authentication on endpoints '/' and public assets
                 .anyRequest().authenticated()  // all other endpoints require authentication
                 .and()
             .formLogin()
