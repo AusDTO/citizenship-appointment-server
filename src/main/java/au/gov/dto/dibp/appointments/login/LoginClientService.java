@@ -29,7 +29,7 @@ public class LoginClientService implements UserDetailsService {
     private final String serviceAddressCustomer;
     private final ClientIdValidator clientIdValidator;
 
-    private final Template getClientByExternalReferenceTemplate;
+    private final Template getClientByPersonalIdTemplate;
     private final Template getClientCustomPropertiesTemplate;
 
 
@@ -46,7 +46,7 @@ public class LoginClientService implements UserDetailsService {
         this.appointmentTypeService = appointmentTypeService;
         this.serviceAddressCustomer = serviceAddressCustomer;
 
-        getClientByExternalReferenceTemplate = templateLoader.loadTemplateByPath(GetClientByExternalReference.REQUEST_TEMPLATE_PATH);
+        getClientByPersonalIdTemplate = templateLoader.loadTemplateByPath(GetClientByPersonalId.REQUEST_TEMPLATE_PATH);
         getClientCustomPropertiesTemplate = templateLoader.loadTemplateByPath(GetClientCustomProperties.REQUEST_TEMPLATE_PATH);
     }
 
@@ -57,18 +57,18 @@ public class LoginClientService implements UserDetailsService {
         }
 
         Map<String, String> data = new HashMap<>();
-        data.put("externalReference", username);
+        data.put("personalId", username);
 
-        ResponseWrapper response = senderService.sendRequest(getClientByExternalReferenceTemplate, data, serviceAddressCustomer);
+        ResponseWrapper response = senderService.sendRequest(getClientByPersonalIdTemplate, data, serviceAddressCustomer);
         return parseGetCustomerByClientIdResponse(response);
     }
 
     private Client parseGetCustomerByClientIdResponse(ResponseWrapper response) {
-        String clientId = response.getStringAttribute(GetClientByExternalReference.CUSTOMER_CLIENT_ID);
-        String lastName = response.getStringAttribute(GetClientByExternalReference.CUSTOMER_LAST_NAME);
-        String customerId = response.getStringAttribute(GetClientByExternalReference.CUSTOMER_ID);
-        boolean hasEmail = StringUtil.isNotBlank(response.getStringAttribute(GetClientByExternalReference.CUSTOMER_EMAIL));
-        boolean isActive = "true".equals(response.getStringAttribute(GetClientByExternalReference.CUSTOMER_ACTIVE));
+        String clientId = response.getStringAttribute(GetClientByPersonalId.CUSTOMER_CLIENT_ID);
+        String lastName = response.getStringAttribute(GetClientByPersonalId.CUSTOMER_LAST_NAME);
+        String customerId = response.getStringAttribute(GetClientByPersonalId.CUSTOMER_ID);
+        boolean hasEmail = StringUtil.isNotBlank(response.getStringAttribute(GetClientByPersonalId.CUSTOMER_EMAIL));
+        boolean isActive = "true".equals(response.getStringAttribute(GetClientByPersonalId.CUSTOMER_ACTIVE));
 
         ResponseWrapper customPropertiesResponse = getCustomPropertiesResponse(customerId);
         ServiceDetails serviceDetails = getServiceDetails(customPropertiesResponse, customerId);
@@ -102,13 +102,13 @@ public class LoginClientService implements UserDetailsService {
         return serviceDetailsService.getServiceByExternalReference(response.getStringAttribute(GetClientCustomProperties.SERVICE_REF));
     }
 
-    private class GetClientByExternalReference {
-        static final String REQUEST_TEMPLATE_PATH = "GetByExtRef.mustache";
-        private static final String CUSTOMER_EMAIL = "//GetByExtRefResponse/GetByExtRefResult/Customer/EMail";
-        private static final String CUSTOMER_CLIENT_ID = "//GetByExtRefResponse/GetByExtRefResult/Customer/ExtRef";
-        private static final String CUSTOMER_ACTIVE = "//GetByExtRefResponse/GetByExtRefResult/Customer/Active";
-        private static final String CUSTOMER_LAST_NAME = "//GetByExtRefResponse/GetByExtRefResult/Customer/LastName";
-        private static final String CUSTOMER_ID = "//GetByExtRefResponse/GetByExtRefResult/Customer/Id";
+    private class GetClientByPersonalId {
+        static final String REQUEST_TEMPLATE_PATH = "GetByPersonalId.mustache";
+        private static final String CUSTOMER_EMAIL = "//GetByPersonalIdResponse/GetByPersonalIdResult/EMail";
+        private static final String CUSTOMER_CLIENT_ID = "//GetByPersonalIdResponse/GetByPersonalIdResult/PersonalId";
+        private static final String CUSTOMER_ACTIVE = "//GetByPersonalIdResponse/GetByPersonalIdResult/Active";
+        private static final String CUSTOMER_LAST_NAME = "//GetByPersonalIdResponse/GetByPersonalIdResult/LastName";
+        private static final String CUSTOMER_ID = "//GetByPersonalIdResponse/GetByPersonalIdResult/Id";
     }
 
     private class GetClientCustomProperties{

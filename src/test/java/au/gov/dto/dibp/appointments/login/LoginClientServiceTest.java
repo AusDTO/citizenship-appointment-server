@@ -24,7 +24,7 @@ public class LoginClientServiceTest {
     private static final String APPOINTMENT_TYPE_EXT_REF ="34";
 
     @Test
-    public void getCustomerByExternalReference_shouldConvertResponseIntoClientObject() throws Exception {
+    public void getCustomerByPersonalId_shouldConvertResponseIntoClientObject() throws Exception {
         ApiCallsSenderService senderService = (Template requestTemplate, Map<String, String> messageParams, String serviceAddress)
                 -> getCallsResponse(requestTemplate, getCustomerCustomPropertiesBothValuesFilled());
         TemplateLoader templateLoader = new FakeTemplateLoader();
@@ -49,7 +49,7 @@ public class LoginClientServiceTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void getCustomerByExternalReference_shouldThrowAnExceptionIfUsernameIsNot11Digits() throws Exception {
+    public void getCustomerByPersonalId_shouldThrowAnExceptionIfUsernameIsNot11Digits() throws Exception {
         ApiCallsSenderService senderService = (Template requestTemplate, Map<String, String> messageParams, String serviceAddress)
                 -> getCallsResponse(requestTemplate, getCustomerCustomPropertiesBothValuesFilled());
         TemplateLoader templateLoader = new FakeTemplateLoader();
@@ -64,7 +64,7 @@ public class LoginClientServiceTest {
     }
 
     @Test(expected = UserDetailsNotFilledException.class)
-    public void getCustomerByExternalReference_shouldThrowAnExceptionIfServiceReferenceIsNotSetOnClient() throws Exception {
+    public void getCustomerByPersonalId_shouldThrowAnExceptionIfServiceReferenceIsNotSetOnClient() throws Exception {
         ApiCallsSenderService senderService = (Template requestTemplate, Map<String, String> messageParams, String serviceAddress)
                 -> getCallsResponse(requestTemplate, getCustomerCustomPropertiesAppointmentTypeValueOnlyFilled());
         TemplateLoader templateLoader = new FakeTemplateLoader();
@@ -79,7 +79,7 @@ public class LoginClientServiceTest {
     }
 
     @Test(expected = UserDetailsNotFilledException.class)
-    public void getCustomerByExternalReference_shouldThrowAnExceptionIfAppointmentTypeReferenceIsNotSetOnClient() throws Exception {
+    public void getCustomerByPersonalId_shouldThrowAnExceptionIfAppointmentTypeReferenceIsNotSetOnClient() throws Exception {
         ApiCallsSenderService senderService = (Template requestTemplate, Map<String, String> messageParams, String serviceAddress)
                 -> getCallsResponse(requestTemplate, getCustomerCustomPropertiesServiceValueOnlyFilled());
         TemplateLoader templateLoader = new FakeTemplateLoader();
@@ -95,36 +95,34 @@ public class LoginClientServiceTest {
 
     private ResponseWrapper getCallsResponse(Template requestTemplate, String customPropertiesResponse){
         String response = null;
-        if(requestTemplate.toString().contains("GetByExtRef.")){
-            response = getCustomerByExternalReferenceResponse();
+        if(requestTemplate.toString().contains("GetByPersonalId.")){
+            response = getCustomerByPersonalIdResponse();
         } else if(requestTemplate.toString().contains("GetCustomerCustomProperties.")){
             response = customPropertiesResponse;
         } else if (requestTemplate.toString().contains("GetServiceByExternalReference.")){
-            response = getServiceByExtRefResponse();
+            response = getServiceByExternalReferenceResponse();
         } else if(requestTemplate.toString().contains("GetAppointmentTypeByExternalReference.")){
-            response = getAppointmentTypeByExtRefResponse();
+            response = getAppointmentTypeByExternalReferenceResponse();
         }
         return new ResponseWrapper(200, response);
     }
 
-    private String getCustomerByExternalReferenceResponse() {
+    private String getCustomerByPersonalIdResponse() {
         return
         "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://www.w3.org/2005/08/addressing\">\n" +
         "   <s:Header/>\n" +
         "   <s:Body>\n" +
-        "      <GetByExtRefResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
-        "         <GetByExtRefResult xmlns:b=\"http://schemas.datacontract.org/2004/07/QFlow.Library\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-        "            <b:Customer>\n" +
-        "               <b:Active>true</b:Active>\n" +
-        "               <b:ExtRef>91919191919</b:ExtRef>\n" +
-        "               <b:Id>6</b:Id>\n" +
-        "               <b:Name>Smith Martin</b:Name>\n" +
-        "               <b:EMail>2323@test.com</b:EMail>\n" +
-        "               <b:FirstName>Martin</b:FirstName>\n" +
-        "               <b:LastName>Smith</b:LastName>\n" +
-        "            </b:Customer>\n" +
-        "         </GetByExtRefResult>\n" +
-        "      </GetByExtRefResponse>\n" +
+        "      <GetByPersonalIdResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
+        "         <GetByPersonalIdResult xmlns:b=\"http://schemas.datacontract.org/2004/07/QFlow.Library\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+        "            <b:Active>true</b:Active>\n" +
+        "            <b:PersonalId>91919191919</b:PersonalId>\n" +
+        "            <b:Id>6</b:Id>\n" +
+        "            <b:Name>Smith Martin</b:Name>\n" +
+        "            <b:EMail>2323@test.com</b:EMail>\n" +
+        "            <b:FirstName>Martin</b:FirstName>\n" +
+        "            <b:LastName>Smith</b:LastName>\n" +
+        "         </GetByPersonalIdResult>\n" +
+        "      </GetByPersonalIdResponse>\n" +
         "   </s:Body>\n" +
         "</s:Envelope>";
     }
@@ -203,7 +201,7 @@ public class LoginClientServiceTest {
         "   </s:Body>";
     }
 
-    private String getServiceByExtRefResponse(){
+    private String getServiceByExternalReferenceResponse(){
         return
         "<s:Body>\n" +
         "      <GetByExtRefResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
@@ -220,7 +218,7 @@ public class LoginClientServiceTest {
         "   </s:Body>";
     }
 
-    private String getAppointmentTypeByExtRefResponse(){
+    private String getAppointmentTypeByExternalReferenceResponse(){
         return
         " <s:Body>\n" +
         "      <GetByExtRefResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
