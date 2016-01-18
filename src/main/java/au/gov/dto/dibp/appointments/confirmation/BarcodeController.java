@@ -6,6 +6,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.pdf417.encoder.Compaction;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,8 @@ public class BarcodeController {
         Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>() {{
             put(EncodeHintType.MARGIN, MARGIN_PIXELS);
             put(EncodeHintType.ERROR_CORRECTION, 2);
+            put(EncodeHintType.PDF417_COMPACT, true);
+            put(EncodeHintType.PDF417_COMPACTION, Compaction.TEXT);
         }};
         BitMatrix matrix = new MultiFormatWriter().encode(id, BarcodeFormat.PDF_417, BARCODE_WIDTH, BARCODE_HEIGHT, hints);
         MatrixToImageWriter.writeToStream(matrix, IMAGE_FORMAT, response.getOutputStream());
