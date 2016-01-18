@@ -1,8 +1,9 @@
 {
+  "private": true,
   "name": "citizenship-appointment-server",
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "citizenship-client": "AusDTO/citizenship-appointment-client"
+    "citizenship-appointment-client": "AusDTO/citizenship-appointment-client#fc8c5ea"
   }
 }

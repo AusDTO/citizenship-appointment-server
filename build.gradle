@@ -169,9 +169,9 @@ clean.doFirst {
 run.dependsOn copySpringLoaded
 bootRun.dependsOn copySpringLoaded
 
-copyBundledAssets.dependsOn npm_update
-copyImageAssets.dependsOn npm_update
-copyServerTempl.dependsOn npm_update
+copyBundledAssets.dependsOn npmInstall
+copyImageAssets.dependsOn npmInstall
+copyServerTempl.dependsOn npmInstall
 processResources.dependsOn copyServerTempl, copyImageAssets, copyBundledAssets
 
 task wrapper(type: Wrapper,
