@@ -67,8 +67,8 @@ public class AddToCalendarController {
        String queryParams = "action=TEMPLATE" +
                 "&text=Citizenship appointment" +
                 "&dates=" + getFormattedStartDate(appointmentDetails) + "/" + getFormattedEndDate(appointmentDetails) +
-                "&location=Department of Immigration and Border Protection, " + appointmentDetails.getUnitAddress() +
-                "&details=For details please refer to your citizenship appointment email/letter." +
+                "&location=" + appointmentDetails.getUnitAddress() +
+                "&details=For details please refer to your citizenship appointment email/letter.%0A%0A%0Ahttps://www.border.gov.au" +
                 "&trp=false";
 
         return new ModelAndView("redirect:http://www.google.com/calendar/event?" + queryParams);
@@ -83,8 +83,8 @@ public class AddToCalendarController {
                 "&DUR=0200" +
                 "&TITLE=Citizenship appointment" +
                 "&ST=" + getFormattedStartDate(appointmentDetails) +
-                "&in_loc=Department of Immigration and Border Protection, " + appointmentDetails.getUnitAddress() +
-                "&DESC=For details please refer to your citizenship appointment email/letter.";
+                "&in_loc=" + appointmentDetails.getUnitAddress() +
+                "&DESC=For details please refer to your citizenship appointment email/letter.%0A%0A%0Ahttps://www.border.gov.au";
         return new ModelAndView("redirect:http://calendar.yahoo.com/?" + queryParams);
     }
 
@@ -97,8 +97,8 @@ public class AddToCalendarController {
                 "&summary=Citizenship appointment" +
                 "&dtstart=" + getFormattedStartDate(appointmentDetails) +
                 "&dtend=" + getFormattedEndDate(appointmentDetails) +
-                "&location=Department of Immigration and Border Protection, " + appointmentDetails.getUnitAddress() +
-                "&description=For details please refer to your citizenship appointment email/letter.";
+                "&location=" + appointmentDetails.getUnitAddress() +
+                "&description=For details please refer to your citizenship appointment email/letter.%0A%0A%0Ahttps://www.border.gov.au";
         return new ModelAndView("redirect:http://calendar.live.com/calendar/calendar.aspx?" + queryParams);
     }
 

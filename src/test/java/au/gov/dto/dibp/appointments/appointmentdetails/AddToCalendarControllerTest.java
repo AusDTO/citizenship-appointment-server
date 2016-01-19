@@ -53,8 +53,8 @@ public class AddToCalendarControllerTest {
                 "action=TEMPLATE" +
                 "&text=Citizenship appointment" +
                 "&dates=20160206T020000Z/20160206T040000Z" +
-                "&location=Department of Immigration and Border Protection, 51 Pitt Street, North Sydney 2060" +
-                "&details=For details please refer to your citizenship appointment email/letter.&trp=false", is(modelAndView.getViewName()));
+                "&location=51 Pitt Street, North Sydney 2060" +
+                "&details=For details please refer to your citizenship appointment email/letter.%0A%0A%0Ahttps://www.border.gov.au&trp=false", is(modelAndView.getViewName()));
     }
 
     @Test
@@ -65,8 +65,8 @@ public class AddToCalendarControllerTest {
                 "&DUR=0200" +
                 "&TITLE=Citizenship appointment" +
                 "&ST=20160206T020000Z" +
-                "&in_loc=Department of Immigration and Border Protection, 51 Pitt Street, North Sydney 2060" +
-                "&DESC=For details please refer to your citizenship appointment email/letter.", is(modelAndView.getViewName()));
+                "&in_loc=51 Pitt Street, North Sydney 2060" +
+                "&DESC=For details please refer to your citizenship appointment email/letter.%0A%0A%0Ahttps://www.border.gov.au", is(modelAndView.getViewName()));
     }
 
     @Test
@@ -77,8 +77,8 @@ public class AddToCalendarControllerTest {
                 "&summary=Citizenship appointment" +
                 "&dtstart=20160206T020000Z" +
                 "&dtend=20160206T040000Z" +
-                "&location=Department of Immigration and Border Protection, 51 Pitt Street, North Sydney 2060" +
-                "&description=For details please refer to your citizenship appointment email/letter.", is(modelAndView.getViewName()));
+                "&location=51 Pitt Street, North Sydney 2060" +
+                "&description=For details please refer to your citizenship appointment email/letter.%0A%0A%0Ahttps://www.border.gov.au", is(modelAndView.getViewName()));
     }
 
     @Test
@@ -106,8 +106,8 @@ public class AddToCalendarControllerTest {
         assertTrue("Should contain start time", responseBody.contains("DTSTART;TZID=Australia/Sydney:20160206T130000"));
         assertTrue("Should contain end time", responseBody.contains("DTEND;TZID=Australia/Sydney:20160206T150000"));
         assertTrue("Should contain summary", responseBody.contains("SUMMARY:Citizenship appointment"));
-        assertTrue("Should contain location", responseBody.contains("LOCATION:Department of Immigration and Border Protection, 51 Pitt Street, North Sydney 2060"));
-        assertTrue("Should contain description", responseBody.contains("DESCRIPTION:For details please refer to your citizenship appointment email/letter."));
+        assertTrue("Should contain location", responseBody.contains("LOCATION:51 Pitt Street, North Sydney 2060"));
+        assertTrue("Should contain description", responseBody.contains("DESCRIPTION:For details please refer to your citizenship appointment email/letter.\\n\\n\\nhttps://www.border.gov.au"));
         assertTrue("Should contain end event statement", responseBody.contains("END:VEVENT"));
         assertTrue("Should contain end statement", responseBody.contains("END:VCALENDAR"));
     }
