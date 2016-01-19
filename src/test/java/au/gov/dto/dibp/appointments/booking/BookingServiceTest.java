@@ -81,7 +81,7 @@ public class BookingServiceTest {
     private static final String UNTI_ADDRESS = "Some Street 12";
 
     private AppointmentDetails getBasicAppointmentDetails(){
-        return new AppointmentDetails(LocalDateTime.parse(BOOKED_DATE), 20, PROCESS_ID, SERVICE_ID, CUSTOMER_ID, "Sydney", UNTI_ADDRESS);
+        return new AppointmentDetails(LocalDateTime.parse(BOOKED_DATE), 20, PROCESS_ID, SERVICE_ID, CUSTOMER_ID, "Sydney", UNTI_ADDRESS, "Australia/Sydney");
     }
 
     private Client getStandardClient (){

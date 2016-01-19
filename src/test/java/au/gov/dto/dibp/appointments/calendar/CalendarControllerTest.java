@@ -3,6 +3,7 @@ package au.gov.dto.dibp.appointments.calendar;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.organisation.TimeZoneDictionaryForTests;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
 import au.gov.dto.dibp.appointments.util.TemplateLoader;
@@ -38,7 +39,7 @@ CalendarControllerTest {
             public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
                 return getBasicAppointmentDetails();
             }
-        }, new UnitDetailsService(null, null, templateLoader, null){
+        }, new UnitDetailsService(null, null, new TimeZoneDictionaryForTests(), templateLoader, null){
 
             @Override
             public LocalDateTime getUnitCurrentLocalTime(String unitId){
@@ -108,6 +109,6 @@ CalendarControllerTest {
     }
 
     private AppointmentDetails getBasicAppointmentDetails(){
-        return new AppointmentDetails(LocalDateTime.parse(CURRENT_APPOINTMENT_TIME), 20, "121212", SERVICE_ID, "3333", "Sydney", "Some Street 12");
+        return new AppointmentDetails(LocalDateTime.parse(CURRENT_APPOINTMENT_TIME), 20, "121212", SERVICE_ID, "3333", "Sydney", "Some Street 12", "Australia/Sydney");
     }
 }

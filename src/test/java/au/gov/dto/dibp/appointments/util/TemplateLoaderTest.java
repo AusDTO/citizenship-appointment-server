@@ -22,7 +22,7 @@ public class TemplateLoaderTest {
     public void test_loadTemplateByPath_shouldLoadATemplateAndCompileItSuccessfully_basedOnGetServiceDetailsTemplate(){
 
         TemplateLoader templateLoader = new TemplateLoader(Mustache.compiler(), new DefaultResourceLoader());
-        Template template = templateLoader.loadTemplateByPath("GetUnit.mustache");
+        Template template = templateLoader.loadRequestTemplate("GetUnit.mustache");
 
         Map<String, String> data = new HashMap<>();
         data.put("unitId", UNIT_ID);

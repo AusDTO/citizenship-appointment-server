@@ -10,7 +10,7 @@ public class FakeTemplateLoader extends TemplateLoader {
     }
 
     @Override
-    public Template loadTemplateByPath(String requestTemplatePath){
+    public Template loadRequestTemplate(String requestTemplatePath){
         return new Template(null, Mustache.compiler()){
             @Override
             public String toString(){

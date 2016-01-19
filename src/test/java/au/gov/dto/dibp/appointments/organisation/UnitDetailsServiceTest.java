@@ -18,8 +18,6 @@ public class UnitDetailsServiceTest {
 
     private UnitDetailsService service;
 
-
-
     public static final String SERVICE_ID = "AAA";
     public static final String UNIT_ID = "232323";
     public static final String UNIT_ADDRESS = "Some Address in the middle of the forest";
@@ -34,7 +32,7 @@ public class UnitDetailsServiceTest {
 
         ServiceDetailsService serviceDetailsService = new ServiceDetailsService(senderService, templateLoader, "SomeUrl");
 
-        service = new UnitDetailsService(serviceDetailsService, senderService, templateLoader, "Some Service URL");
+        service = new UnitDetailsService(serviceDetailsService, senderService, new TimeZoneDictionaryForTests(), templateLoader, "Some Service URL");
     }
 
     @Test

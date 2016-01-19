@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.appointmentdetails;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.organisation.UnitDetails;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.NodeParser;
@@ -35,7 +36,7 @@ public class AppointmentDetailsService {
         this.unitDetailsService = unitDetailsService;
         this.serviceAddressCustomer = serviceAddressCustomer;
 
-        this.getExpectedAppointmentsTemplate = templateLoader.loadTemplateByPath(GetExpectedAppointments.REQUEST_TEMPLATE_PATH);
+        this.getExpectedAppointmentsTemplate = templateLoader.loadRequestTemplate(GetExpectedAppointments.REQUEST_TEMPLATE_PATH);
     }
 
     public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
@@ -80,10 +81,9 @@ public class AppointmentDetailsService {
         }
 
         String unitName = nodeParser.getStringAttribute(GetExpectedAppointments.UNIT_NAME);
-        String unitAddress = unitDetailsService.getUnitAddressByServiceId(serviceId);
+        UnitDetails unit = unitDetailsService.getUnitDetailsByServiceId(serviceId);
 
-
-        return new AppointmentDetails(appointmentDate, appointmentDuration, processId, serviceId, customerId, unitName, unitAddress);
+        return new AppointmentDetails(appointmentDate, appointmentDuration, processId, serviceId, customerId, unitName, unit.getAddress(), unit.getTimeZoneIANA());
     }
 
     private class GetExpectedAppointments {

@@ -24,8 +24,17 @@ public class TemplateLoader {
         this.resourceLoader = resourceLoader;
     }
 
-    public Template loadTemplateByPath(String requestTemplatePath){
+    public Template loadRequestTemplate(String requestTemplatePath){
         Resource resource = resourceLoader.getResource("classpath:request_templates/" + requestTemplatePath);
+        return loadTemplate(resource, requestTemplatePath);
+    }
+
+    public Template loadTemplate(String requestTemplatePath){
+        Resource resource = resourceLoader.getResource("classpath:templates/" + requestTemplatePath);
+        return loadTemplate(resource, requestTemplatePath);
+    }
+
+    private Template loadTemplate(Resource resource, String requestTemplatePath){
         InputStream inputStream;
         try {
             inputStream = resource.getInputStream();

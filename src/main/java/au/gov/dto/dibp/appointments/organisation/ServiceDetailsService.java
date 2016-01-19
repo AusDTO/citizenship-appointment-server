@@ -27,8 +27,8 @@ public class ServiceDetailsService {
         this.senderService = senderService;
         this.serviceAddress = serviceAddress;
 
-        getServiceTemplate = templateLoader.loadTemplateByPath(GetService.REQUEST_TEMPLATE_PATH);
-        getServiceByExternalReferenceTemplate = templateLoader.loadTemplateByPath(GetServiceByExternalReference.REQUEST_TEMPLATE_PATH);
+        getServiceTemplate = templateLoader.loadRequestTemplate(GetService.REQUEST_TEMPLATE_PATH);
+        getServiceByExternalReferenceTemplate = templateLoader.loadRequestTemplate(GetServiceByExternalReference.REQUEST_TEMPLATE_PATH);
     }
 
     public String getUnitIdForService(String serviceId){

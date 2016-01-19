@@ -17,6 +17,8 @@ public class UnitDetailsService {
 
     private final ServiceDetailsService serviceDetailsService;
     private final ApiCallsSenderService senderService;
+    private final TimeZoneDictionary timeZoneDictionary;
+
     private final String serviceAddress;
 
     private final Template getUnitTemplate;
@@ -25,14 +27,16 @@ public class UnitDetailsService {
     @Autowired
     public UnitDetailsService(ServiceDetailsService serviceDetailsService,
                               ApiCallsSenderService senderService,
+                              TimeZoneDictionary timeZoneDictionary,
                               TemplateLoader templateLoader,
                               @Value("${SERVICE.ADDRESS.UNIT}") String serviceAddress){
         this.serviceDetailsService = serviceDetailsService;
         this.senderService = senderService;
+        this.timeZoneDictionary = timeZoneDictionary;
         this.serviceAddress = serviceAddress;
 
-        getUnitTemplate = templateLoader.loadTemplateByPath(GetUnit.REQUEST_TEMPLATE_PATH);
-        getUnitLocalTimeTemplate = templateLoader.loadTemplateByPath(GetUnitLocalTime.REQUEST_TEMPLATE_PATH);
+        getUnitTemplate = templateLoader.loadRequestTemplate(GetUnit.REQUEST_TEMPLATE_PATH);
+        getUnitLocalTimeTemplate = templateLoader.loadRequestTemplate(GetUnitLocalTime.REQUEST_TEMPLATE_PATH);
     }
 
     public String getUnitAddress(String unitId){
@@ -51,6 +55,18 @@ public class UnitDetailsService {
         return LocalDateTime.parse(response.getStringAttribute(GetUnitLocalTime.LOCAL_TIME));
     }
 
+    public UnitDetails getUnitDetails(String unitId){
+        Map<String, String> data = new HashMap<>();
+        data.put("unitId", unitId);
+
+        ResponseWrapper response = senderService.sendRequest(getUnitTemplate, data, serviceAddress);
+        String id = response.getStringAttribute(GetUnit.UNIT_ID);
+        String address = response.getStringAttribute(GetUnit.UNIT_ADDRESS);
+        String timeZoneId = response.getStringAttribute(GetUnit.UNIT_TIMEZONE_ID);
+
+        return new UnitDetails(id, address, timeZoneDictionary.getTimeZoneIANA(timeZoneId));
+    }
+
     public String getUnitAddressByServiceId(String serviceId){
         String unitId = serviceDetailsService.getUnitIdForService(serviceId);
         return getUnitAddress(unitId);
@@ -61,8 +77,15 @@ public class UnitDetailsService {
         return getUnitCurrentLocalTime(unitId);
     }
 
+    public UnitDetails getUnitDetailsByServiceId(String serviceId){
+        String unitId = serviceDetailsService.getUnitIdForService(serviceId);
+        return getUnitDetails(unitId);
+    }
+
     private class GetUnit {
         static final String REQUEST_TEMPLATE_PATH = "GetUnit.mustache";
+        static final String UNIT_ID = "//GetResponse/GetResult/Id";
+        static final String UNIT_TIMEZONE_ID = "//GetResponse/GetResult/TimeZoneId";
         static final String UNIT_ADDRESS = "//GetResponse/GetResult/Address";
     }
 

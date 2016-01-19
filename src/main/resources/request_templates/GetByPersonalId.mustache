@@ -3,16 +3,16 @@
                xmlns:ser="http://www.qnomy.com/Services">
     <soap:Header>
         <a:MessageID>urn:uuid:{{messageUUID}}</a:MessageID>
-        <a:Action>http://www.qnomy.com/Services/IsvcCustomer/GetByExtRef</a:Action>
+        <a:Action>http://www.qnomy.com/Services/IsvcCustomer/GetByPersonalId</a:Action>
         <a:ReplyTo>
             <a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
         </a:ReplyTo>
         <a:To>{{serviceAddress}}</a:To>
     </soap:Header>
     <soap:Body>
-        <ser:GetByExtRef>
+        <ser:GetByPersonalId>
             <ser:apiSessionId>{{apiSessionId}}</ser:apiSessionId>
-            <ser:extRef>{{externalReference}}</ser:extRef>
-        </ser:GetByExtRef>
+            <ser:personalId>{{personalId}}</ser:personalId>
+        </ser:GetByPersonalId>
     </soap:Body>
 </soap:Envelope>
