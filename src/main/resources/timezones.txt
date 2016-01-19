@@ -1,0 +1,90 @@
+1:Morocco Standard Time
+2:GMT Standard Time
+3:Greenwich Standard Time
+4:W. Europe Standard Time
+5:Central Europe Standard Time
+6:Romance Standard Time
+7:Central European Standard Time
+8:W. Central Africa Standard Time
+9:Jordan Standard Time
+10:GTB Standard Time
+11:Middle East Standard Time
+12:Egypt Standard Time
+13:South Africa Standard Time
+14:FLE Standard Time
+15:Jerusalem Standard Time
+16:E. Europe Standard Time
+17:Namibia Standard Time
+18:Arabic Standard Time
+19:Arab Standard Time
+20:Russian Standard Time
+21:E. Africa Standard Time
+22:Georgian Standard Time
+23:Iran Standard Time
+24:Arabian Standard Time
+25:Azerbaijan Standard Time
+26:Caucasus Standard Time
+27:Armenian Standard Time
+28:Afghanistan Standard Time
+29:Ekaterinburg Standard Time
+30:Pakistan Standard Time
+31:West Asia Standard Time
+32:India Standard Time
+33:Sri Lanka Standard Time
+34:Nepal Standard Time
+35:N. Central Asia Standard Time
+36:Central Asia Standard Time
+37:Myanmar Standard Time
+38:SE Asia Standard Time
+39:North Asia Standard Time
+40:China Standard Time
+41:North Asia East Standard Time
+42:Malay Peninsula Standard Time
+43:W. Australia Standard Time
+44:Taipei Standard Time
+45:Tokyo Standard Time
+46:Korea Standard Time
+47:Yakutsk Standard Time
+48:Cen. Australia Standard Time
+49:AUS Central Standard Time
+50:E. Australia Standard Time
+51:AUS Eastern Standard Time
+52:West Pacific Standard Time
+53:Tasmania Standard Time
+54:Vladivostok Standard Time
+55:Central Pacific Standard Time
+56:New Zealand Standard Time
+57:Fiji Standard Time
+58:Tonga Standard Time
+59:Azores Standard Time
+60:Cape Verde Standard Time
+61:Mid-Atlantic Standard Time
+62:E. South America Standard Time
+63:Argentina Standard Time
+64:SA Eastern Standard Time
+65:Greenland Standard Time
+66:Montevideo Standard Time
+67:Newfoundland Standard Time
+68:Atlantic Standard Time
+69:SA Western Standard Time
+70:Central Brazilian Standard Time
+71:Pacific SA Standard Time
+72:Venezuela Standard Time
+73:SA Pacific Standard Time
+74:Eastern Standard Time
+75:US Eastern Standard Time
+76:Central America Standard Time
+77:Central Standard Time
+78:Central Standard Time (Mexico)
+79:Mexico Standard Time
+80:Canada Central Standard Time
+81:US Mountain Standard Time
+82:Mountain Standard Time (Mexico)
+83:Mexico Standard Time 2
+84:Mountain Standard Time
+85:Pacific Standard Time
+86:Pacific Standard Time (Mexico)
+87:Alaskan Standard Time
+88:Hawaiian Standard Time
+89:Samoa Standard Time
+90:Dateline Standard Time

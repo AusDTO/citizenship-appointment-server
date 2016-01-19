@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +32,7 @@ public class AddToCalendarController {
     @Autowired
     public AddToCalendarController(AppointmentDetailsService appointmentDetailsService, TemplateLoader templateLoader){
         this.appointmentDetailsService = appointmentDetailsService;
-        this.calendarDateFormat = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
+        this.calendarDateFormat = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
         this.templateLoader = templateLoader;
     }
 
@@ -40,10 +43,11 @@ public class AddToCalendarController {
 
         Map<String, Object> model = new HashMap<>();
         model.put("id", UUID.randomUUID().toString());
-        model.put("timeZone", "");
+        model.put("timeZone", appointmentDetails.getUnitTimeZoneIANA());
 
-        model.put("startTime", appointmentDetails.getAppointmentDate().format(calendarDateFormat));
-        model.put("endTime", appointmentDetails.getAppointmentDate().plusHours(2L).format(calendarDateFormat));
+        DateTimeFormatter calendarDateNoZoneFormat = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
+        model.put("startTime", appointmentDetails.getAppointmentDate().format(calendarDateNoZoneFormat));
+        model.put("endTime", appointmentDetails.getAppointmentDate().plusHours(2L).format(calendarDateNoZoneFormat));
         model.put("location", appointmentDetails.getUnitAddress());
 
         Template template = templateLoader.loadTemplate("calendar_ics.mustache");
@@ -60,15 +64,11 @@ public class AddToCalendarController {
     public ModelAndView addToGoogleCalendar(@AuthenticationPrincipal Client client){
         final AppointmentDetails appointmentDetails = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
 
-        String startTime = appointmentDetails.getAppointmentDate().format(calendarDateFormat);
-        String endTime = appointmentDetails.getAppointmentDate().plusHours(2L).format(calendarDateFormat);
-
-        String queryParams = "action=TEMPLATE" +
-                "&text=Citizenship Appointment" +
-                "&dates=" + startTime + "/" + endTime +
-                "&czt=Australia/Melbourne" +
-                "&location=" + appointmentDetails.getUnitAddress() +
-                "&details=" + "Australian Citizenship Appointment please bring all the required documents and make sure you are prepared to sit the test" +
+       String queryParams = "action=TEMPLATE" +
+                "&text=Citizenship appointment" +
+                "&dates=" + getFormattedStartDate(appointmentDetails) + "/" + getFormattedEndDate(appointmentDetails) +
+                "&location=Department of Immigration and Border Protection, " + appointmentDetails.getUnitAddress() +
+                "&details=For details please refer to your citizenship appointment email/letter." +
                 "&trp=false";
 
         return new ModelAndView("redirect:http://www.google.com/calendar/event?" + queryParams);
@@ -78,15 +78,13 @@ public class AddToCalendarController {
     public ModelAndView addToYahooCalendar(@AuthenticationPrincipal Client client){
         final AppointmentDetails appointmentDetails = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
 
-        String startTime = appointmentDetails.getAppointmentDate().format(calendarDateFormat);
-
         String queryParams =
                 "v=60" +
                 "&DUR=0200" +
-                "&TITLE=Citizenship Appointment" +
-                "&ST=" + startTime +
-                "&in_loc=" + appointmentDetails.getUnitAddress() +
-                "&DESC=" + "Australian Citizenship Appointment please bring all the required documents and make sure you are prepared to sit the test";
+                "&TITLE=Citizenship appointment" +
+                "&ST=" + getFormattedStartDate(appointmentDetails) +
+                "&in_loc=Department of Immigration and Border Protection, " + appointmentDetails.getUnitAddress() +
+                "&DESC=For details please refer to your citizenship appointment email/letter.";
         return new ModelAndView("redirect:http://calendar.yahoo.com/?" + queryParams);
     }
 
@@ -94,16 +92,28 @@ public class AddToCalendarController {
     public ModelAndView addToOutlookOnlineCalendar(@AuthenticationPrincipal Client client){
         final AppointmentDetails appointmentDetails = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
 
-        String startTime = appointmentDetails.getAppointmentDate().format(calendarDateFormat);
-        String endtTime = appointmentDetails.getAppointmentDate().plusHours(2L).format(calendarDateFormat);
-
         String queryParams =
                 "rru=addevent" +
-                "&summary=Citizenship Appointment" +
-                "&dtstart=" + startTime +
-                "&dtend=" + endtTime +
-                "&location=" + appointmentDetails.getUnitAddress() +
-                "&description=" + "Australian Citizenship Appointment please bring all the required documents and make sure you are prepared to sit the test";
+                "&summary=Citizenship appointment" +
+                "&dtstart=" + getFormattedStartDate(appointmentDetails) +
+                "&dtend=" + getFormattedEndDate(appointmentDetails) +
+                "&location=Department of Immigration and Border Protection, " + appointmentDetails.getUnitAddress() +
+                "&description=For details please refer to your citizenship appointment email/letter.";
         return new ModelAndView("redirect:http://calendar.live.com/calendar/calendar.aspx?" + queryParams);
     }
+
+    private String getFormattedStartDate(AppointmentDetails appointmentDetails){
+        return formatDateIntoUTC(appointmentDetails.getAppointmentDate(), appointmentDetails.getUnitTimeZoneIANA());
+    }
+
+    private String getFormattedEndDate(AppointmentDetails appointmentDetails){
+        return formatDateIntoUTC(appointmentDetails.getAppointmentDate().plusHours(2L), appointmentDetails.getUnitTimeZoneIANA());
+    }
+
+    private String formatDateIntoUTC(LocalDateTime dateTime, String unitTimeZone){
+        ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of(unitTimeZone));
+        final ZonedDateTime utcTime = zonedDateTime.withZoneSameInstant(ZoneId.of("Z"));
+        return utcTime.format(calendarDateFormat);
+    }
+
 }

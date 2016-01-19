@@ -10,9 +10,10 @@ public class AppointmentDetails {
     private String processId;
     private String customerId;
     private String unitName;
+    private String unitTimeZoneIANA;
     private String unitAddress;
 
-    public AppointmentDetails(LocalDateTime appointmentDate, int appointmentDuration, String processId, String serviceId, String customerId, String unitName, String unitAddress){
+    public AppointmentDetails(LocalDateTime appointmentDate, int appointmentDuration, String processId, String serviceId, String customerId, String unitName, String unitAddress, String unitTimeZoneIANA){
         this.appointmentDate = appointmentDate;
         this.appointmentDuration = appointmentDuration;
         this.processId = processId;
@@ -20,6 +21,7 @@ public class AppointmentDetails {
         this.customerId = customerId;
         this.unitName = unitName;
         this.unitAddress = unitAddress;
+        this.unitTimeZoneIANA = unitTimeZoneIANA;
     }
 
     public LocalDateTime getAppointmentDate() {
@@ -48,5 +50,9 @@ public class AppointmentDetails {
 
     public String getProcessId() {
         return processId;
+    }
+
+    public String getUnitTimeZoneIANA() {
+        return unitTimeZoneIANA;
     }
 }

@@ -4,6 +4,7 @@ import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.organisation.ServiceDetailsService;
+import au.gov.dto.dibp.appointments.organisation.TimeZoneDictionaryForTests;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
@@ -39,7 +40,7 @@ public class ConfirmationControllerTest {
                 -> getCallsResponses(requestTemplate);
 
         ServiceDetailsService serviceDetailsService = new ServiceDetailsService(senderService, templateLoader, "someUrl");
-        UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, templateLoader, "someUrl");
+        UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, new TimeZoneDictionaryForTests(), templateLoader, "someUrl");
 
         controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"));
     }
@@ -87,7 +88,7 @@ public class ConfirmationControllerTest {
                 -> getCallsResponsesNoAppointments(requestTemplate);
 
         ServiceDetailsService serviceDetailsService = new ServiceDetailsService(senderService, templateLoader, "someUrl");
-        UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, templateLoader, "someUrl");
+        UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, new TimeZoneDictionaryForTests(), templateLoader, "someUrl");
 
         controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"));
 

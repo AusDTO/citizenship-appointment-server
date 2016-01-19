@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.appointmentdetails;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.organisation.TimeZoneDictionaryForTests;
 import au.gov.dto.dibp.appointments.organisation.ServiceDetailsService;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
@@ -21,7 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class AddToCalendarControllerTest {
     private final static String APPOINTMENT_DATE = "2016-02-06T13:00:00";
@@ -37,24 +39,22 @@ public class AddToCalendarControllerTest {
         final ApiCallsSenderService senderService = getApiCallsSenderService();
         final TemplateLoader fakeTemplateLoader = new FakeTemplateLoader();
         final ServiceDetailsService serviceDetailsService = new ServiceDetailsService(senderService, fakeTemplateLoader, "some Url");
-        final UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, fakeTemplateLoader, "someUrl");
+        final UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, new TimeZoneDictionaryForTests(), fakeTemplateLoader, "someUrl");
 
         controller = new AddToCalendarController(
                 new AppointmentDetailsService(senderService, unitDetailsService, fakeTemplateLoader, "someServiceUrl"),
                 new TemplateLoader(Mustache.compiler(), new DefaultResourceLoader()));
     }
 
-    @Ignore("WIP")
     @Test
     public void test_addToGoogleCalendar_should_returnRedirectUrlWithAppointmentDetailsFilled(){
         ModelAndView modelAndView = controller.addToGoogleCalendar(getStandardClient());
         assertThat("redirect:http://www.google.com/calendar/event?" +
                 "action=TEMPLATE" +
-                "&text=Citizenship Appointment" +
-                "&dates=20160206T130000/20160206T150000" +
-                "&czt=Australia/Sydney" +
-                "&location=51 Pitt Street, North Sydney 2060" +
-                "&details=Australian Citizenship Appointment please bring all the required documents and make sure you are prepared to sit the test&trp=false", is(modelAndView.getViewName()));
+                "&text=Citizenship appointment" +
+                "&dates=20160206T020000Z/20160206T040000Z" +
+                "&location=Department of Immigration and Border Protection, 51 Pitt Street, North Sydney 2060" +
+                "&details=For details please refer to your citizenship appointment email/letter.&trp=false", is(modelAndView.getViewName()));
     }
 
     @Test
@@ -63,10 +63,10 @@ public class AddToCalendarControllerTest {
         assertThat("redirect:http://calendar.yahoo.com/?" +
                 "v=60" +
                 "&DUR=0200" +
-                "&TITLE=Citizenship Appointment" +
-                "&ST=20160206T130000" +
-                "&in_loc=51 Pitt Street, North Sydney 2060" +
-                "&DESC=Australian Citizenship Appointment please bring all the required documents and make sure you are prepared to sit the test", is(modelAndView.getViewName()));
+                "&TITLE=Citizenship appointment" +
+                "&ST=20160206T020000Z" +
+                "&in_loc=Department of Immigration and Border Protection, 51 Pitt Street, North Sydney 2060" +
+                "&DESC=For details please refer to your citizenship appointment email/letter.", is(modelAndView.getViewName()));
     }
 
     @Test
@@ -74,11 +74,11 @@ public class AddToCalendarControllerTest {
         ModelAndView modelAndView = controller.addToOutlookOnlineCalendar(getStandardClient());
         assertThat("redirect:http://calendar.live.com/calendar/calendar.aspx?" +
                 "rru=addevent" +
-                "&summary=Citizenship Appointment" +
-                "&dtstart=20160206T130000" +
-                "&dtend=20160206T150000" +
-                "&location=51 Pitt Street, North Sydney 2060" +
-                "&description=Australian Citizenship Appointment please bring all the required documents and make sure you are prepared to sit the test", is(modelAndView.getViewName()));
+                "&summary=Citizenship appointment" +
+                "&dtstart=20160206T020000Z" +
+                "&dtend=20160206T040000Z" +
+                "&location=Department of Immigration and Border Protection, 51 Pitt Street, North Sydney 2060" +
+                "&description=For details please refer to your citizenship appointment email/letter.", is(modelAndView.getViewName()));
     }
 
     @Test
@@ -95,7 +95,6 @@ public class AddToCalendarControllerTest {
         assertThat("attachment; filename=appointment.ics", is(headers.get("content-disposition").get(0)));
     }
 
-    @Ignore("WIP")
     @Test
     public void test_getCalendarIcsFile_should_returnResponseEntityWithFilledResponseBody(){
         ResponseEntity<String> responseEntity = controller.getCalendarIcsFile(getStandardClient());
@@ -104,11 +103,11 @@ public class AddToCalendarControllerTest {
         assertTrue("Should contain version", responseBody.contains("VERSION:2.0"));
         assertTrue("Should contain prodid", responseBody.contains("PRODID:-//border.gov.au//Citizenship Appointment Service//EN"));
         assertTrue("Should contain begin event statement", responseBody.contains("BEGIN:VEVENT"));
-        assertTrue("Should contain start time", responseBody.contains("DTSTART;TZID=Sydney/Australia:20160206T130000"));
-        assertTrue("Should contain end time", responseBody.contains("DTEND;TZID=Sydney/Australia:20160206T150000"));
-        assertTrue("Should contain summary", responseBody.contains("SUMMARY:Citizenship Appointment"));
-        assertTrue("Should contain location", responseBody.contains("LOCATION:51 Pitt Street, North Sydney 2060"));
-        assertTrue("Should contain description", responseBody.contains("DESCRIPTION:Australian Citizenship Appointment"));
+        assertTrue("Should contain start time", responseBody.contains("DTSTART;TZID=Australia/Sydney:20160206T130000"));
+        assertTrue("Should contain end time", responseBody.contains("DTEND;TZID=Australia/Sydney:20160206T150000"));
+        assertTrue("Should contain summary", responseBody.contains("SUMMARY:Citizenship appointment"));
+        assertTrue("Should contain location", responseBody.contains("LOCATION:Department of Immigration and Border Protection, 51 Pitt Street, North Sydney 2060"));
+        assertTrue("Should contain description", responseBody.contains("DESCRIPTION:For details please refer to your citizenship appointment email/letter."));
         assertTrue("Should contain end event statement", responseBody.contains("END:VEVENT"));
         assertTrue("Should contain end statement", responseBody.contains("END:VCALENDAR"));
     }

@@ -1,6 +1,8 @@
 package au.gov.dto.dibp.appointments.appointmentdetails;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.organisation.TimeZoneDictionaryForTests;
+import au.gov.dto.dibp.appointments.organisation.UnitDetails;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
@@ -132,10 +134,15 @@ public class AppointmentDetailsServiceTest {
     }
 
     private UnitDetailsService getUnitDetailsServiceReturningCorrectAddress(){
-        return new UnitDetailsService(null, null, new FakeTemplateLoader(), null){
+        return new UnitDetailsService(null, null, new TimeZoneDictionaryForTests(), new FakeTemplateLoader(), null){
             @Override
             public String getUnitAddressByServiceId(String serviceId){
                 return "Some address 23";
+            }
+
+            @Override
+            public UnitDetails getUnitDetailsByServiceId(String serviceId){
+                return new UnitDetails("3", "Some address 23", "Australia/Sydney");
             }
         };
     }
