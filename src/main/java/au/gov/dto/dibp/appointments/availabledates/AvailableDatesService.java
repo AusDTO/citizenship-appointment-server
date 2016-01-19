@@ -36,7 +36,7 @@ class AvailableDatesService {
         this.unitDetailsService = unitDetailsService;
         this.serviceAddressService = serviceAddressService;
 
-        this.getCalendarsTemplate = templateLoader.loadTemplateByPath(GetCalendars.REQUEST_TEMPLATE_PATH);
+        this.getCalendarsTemplate = templateLoader.loadRequestTemplate(GetCalendars.REQUEST_TEMPLATE_PATH);
     }
 
     private class GetCalendars {

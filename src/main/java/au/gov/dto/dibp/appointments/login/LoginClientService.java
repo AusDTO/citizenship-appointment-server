@@ -46,8 +46,8 @@ public class LoginClientService implements UserDetailsService {
         this.appointmentTypeService = appointmentTypeService;
         this.serviceAddressCustomer = serviceAddressCustomer;
 
-        getClientByPersonalIdTemplate = templateLoader.loadTemplateByPath(GetClientByPersonalId.REQUEST_TEMPLATE_PATH);
-        getClientCustomPropertiesTemplate = templateLoader.loadTemplateByPath(GetClientCustomProperties.REQUEST_TEMPLATE_PATH);
+        getClientByPersonalIdTemplate = templateLoader.loadRequestTemplate(GetClientByPersonalId.REQUEST_TEMPLATE_PATH);
+        getClientCustomPropertiesTemplate = templateLoader.loadRequestTemplate(GetClientCustomProperties.REQUEST_TEMPLATE_PATH);
     }
 
     @Override
@@ -73,6 +73,7 @@ public class LoginClientService implements UserDetailsService {
         ResponseWrapper customPropertiesResponse = getCustomPropertiesResponse(customerId);
         ServiceDetails serviceDetails = getServiceDetails(customPropertiesResponse, customerId);
         String appointmentTypeId = getAppointmentTypeId(customPropertiesResponse, customerId);
+        checkUserConfiguredCorrectly(serviceDetails, appointmentTypeId);
 
         return new Client(clientId, lastName, customerId, hasEmail, serviceDetails.getUnitId(), serviceDetails.getServiceId(), appointmentTypeId, isActive);
     }
@@ -100,6 +101,14 @@ public class LoginClientService implements UserDetailsService {
         }
 
         return serviceDetailsService.getServiceByExternalReference(response.getStringAttribute(GetClientCustomProperties.SERVICE_REF));
+    }
+
+    private void checkUserConfiguredCorrectly(ServiceDetails serviceDetails, String appointmentTypeId){
+        if(StringUtils.isEmpty(serviceDetails.getServiceId()) ||
+                StringUtils.isEmpty(serviceDetails.getUnitId()) ||
+                StringUtils.isEmpty(appointmentTypeId)){
+            throw new UserDetailsNotFilledException("ServiceId or UnitId or AppointmentTypeId is not filled for the user.");
+        }
     }
 
     private class GetClientByPersonalId {

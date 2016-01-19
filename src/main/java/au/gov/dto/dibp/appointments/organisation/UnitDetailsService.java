@@ -31,8 +31,8 @@ public class UnitDetailsService {
         this.senderService = senderService;
         this.serviceAddress = serviceAddress;
 
-        getUnitTemplate = templateLoader.loadTemplateByPath(GetUnit.REQUEST_TEMPLATE_PATH);
-        getUnitLocalTimeTemplate = templateLoader.loadTemplateByPath(GetUnitLocalTime.REQUEST_TEMPLATE_PATH);
+        getUnitTemplate = templateLoader.loadRequestTemplate(GetUnit.REQUEST_TEMPLATE_PATH);
+        getUnitLocalTimeTemplate = templateLoader.loadRequestTemplate(GetUnitLocalTime.REQUEST_TEMPLATE_PATH);
     }
 
     public String getUnitAddress(String unitId){

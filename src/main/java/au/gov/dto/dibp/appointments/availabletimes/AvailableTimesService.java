@@ -32,7 +32,7 @@ class AvailableTimesService {
         this.senderService = senderService;
         this.serviceAddress = serviceAddress;
 
-        getDynamicSuggestedSlots2Template = templateLoader.loadTemplateByPath(GetDynamicSuggestedSlots2.REQUEST_TEMPLATE_PATH);
+        getDynamicSuggestedSlots2Template = templateLoader.loadRequestTemplate(GetDynamicSuggestedSlots2.REQUEST_TEMPLATE_PATH);
     }
 
     public List<String> getAvailableTimes(Client client, String calendarId) {

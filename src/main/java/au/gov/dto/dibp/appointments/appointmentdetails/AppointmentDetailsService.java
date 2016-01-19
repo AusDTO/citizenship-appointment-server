@@ -35,7 +35,7 @@ public class AppointmentDetailsService {
         this.unitDetailsService = unitDetailsService;
         this.serviceAddressCustomer = serviceAddressCustomer;
 
-        this.getExpectedAppointmentsTemplate = templateLoader.loadTemplateByPath(GetExpectedAppointments.REQUEST_TEMPLATE_PATH);
+        this.getExpectedAppointmentsTemplate = templateLoader.loadRequestTemplate(GetExpectedAppointments.REQUEST_TEMPLATE_PATH);
     }
 
     public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {

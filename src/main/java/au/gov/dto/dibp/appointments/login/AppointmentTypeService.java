@@ -26,7 +26,7 @@ class AppointmentTypeService {
         this.senderService = senderService;
         this.serviceAddressAppointmentType = serviceAddressAppointmentType;
 
-        getAppointmentTypeByExtRefTemplate = templateLoader.loadTemplateByPath(GetAppointmentTypeByExtRef.REQUEST_TEMPLATE_PATH);
+        getAppointmentTypeByExtRefTemplate = templateLoader.loadRequestTemplate(GetAppointmentTypeByExtRef.REQUEST_TEMPLATE_PATH);
     }
 
     public String getAppointmentTypeIdByExternalReference(String extRef){

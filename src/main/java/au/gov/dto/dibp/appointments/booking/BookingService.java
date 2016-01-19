@@ -43,8 +43,8 @@ public class BookingService {
         this.serviceAddress = serviceAddress;
         this.serviceAddressProcess = serviceAddressProcess;
 
-        setAppointmentTemplate = templateLoader.loadTemplateByPath(SetAppointment.REQUEST_TEMPLATE_PATH);
-        rescheduleAppointmentTemplate = templateLoader.loadTemplateByPath(RescheduleAppointment.REQUEST_TEMPLATE_PATH);
+        setAppointmentTemplate = templateLoader.loadRequestTemplate(SetAppointment.REQUEST_TEMPLATE_PATH);
+        rescheduleAppointmentTemplate = templateLoader.loadRequestTemplate(RescheduleAppointment.REQUEST_TEMPLATE_PATH);
     }
 
     public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
