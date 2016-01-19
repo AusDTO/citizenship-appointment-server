@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-class AvailableTimesService {
+public class AvailableTimesService {
 
 
     private final ApiCallsSenderService senderService;

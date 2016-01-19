@@ -52,14 +52,15 @@ class AvailableDatesService {
         static final String VACANT_SLOTS_NOON = "VacantSlotsNoon";
     }
 
-    public SortedMap<String, AvailableDate> getAvailabilityForNextYear(String serviceId) {
+    public AvailableDates getAvailabilityForNextYear(String serviceId) {
         LocalDate today =  unitDetailsService.getUnitCurrentLocalTimeByServiceId(serviceId).toLocalDate();
         LocalDate endDate = today.plusYears(1L);
 
-        return this.getAvailabilityForDateRange(serviceId, today, endDate);
+        Map<String, AvailableDate> availabilityForDateRange = getAvailabilityForDateRange(serviceId, today, endDate);
+        return new AvailableDates(today, availabilityForDateRange);
     }
 
-    public SortedMap<String, AvailableDate> getAvailabilityForDateRange(String serviceId, LocalDate startDate, LocalDate endDate) {
+    SortedMap<String, AvailableDate> getAvailabilityForDateRange(String serviceId, LocalDate startDate, LocalDate endDate) {
         Map<String, String> data = new HashMap<>();
         data.put("serviceId", serviceId);
         data.put("startDate", startDate.toString()+"T00:00:00");

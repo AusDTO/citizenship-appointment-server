@@ -1,7 +1,11 @@
 package au.gov.dto.dibp.appointments.availabledates;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class AvailableDate {
 
@@ -12,7 +16,11 @@ class AvailableDate {
     private final String calendarDate;
 
     @JsonProperty("available_times_count")
-    private final int availableTimesCount;
+    private int availableTimesCount;
+
+    @JsonProperty("times")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<String> availableTimes;
 
     public AvailableDate(String id, String calendarDate, int availableTimesCount) {
         this.id = id;
@@ -30,5 +38,14 @@ class AvailableDate {
 
     public int getAvailableTimesCount() {
         return availableTimesCount;
+    }
+
+    public List<String> getAvailableTimes() {
+        return availableTimes != null ? new ArrayList<>(availableTimes) : null;
+    }
+
+    public void setAvailableTimes(List<String> availableTimes) {
+        this.availableTimes = availableTimes != null ? new ArrayList<>(availableTimes) : new ArrayList<>();
+        this.availableTimesCount = availableTimes.size();
     }
 }
