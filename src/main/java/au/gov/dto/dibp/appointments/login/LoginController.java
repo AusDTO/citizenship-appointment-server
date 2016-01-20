@@ -2,8 +2,13 @@ package au.gov.dto.dibp.appointments.login;
 
 import au.gov.dto.dibp.appointments.client.ClientIdValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +18,15 @@ import java.util.Map;
 @RestController
 public class LoginController {
 
+    private final ClientIdValidator clientIdValidator;
+    private final String trackingId;
+
     @Autowired
-    private ClientIdValidator clientIdValidator;
+    public LoginController(ClientIdValidator clientIdValidator,
+                           @Value("${analytics.tracking.id}") String trackingId) {
+        this.clientIdValidator = clientIdValidator;
+        this.trackingId = trackingId;
+    }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView loginHtml(
@@ -24,6 +36,7 @@ public class LoginController {
             HttpServletRequest request) {
 
         Map<String, Object> model = new HashMap<>();
+        model.put("trackingId", trackingId);
         CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
         if (csrfToken != null) {
             model.put("_csrf", csrfToken);
@@ -34,7 +47,7 @@ public class LoginController {
         if (expired != null) {
             model.put("expired", true);
         }
-        if(clientIdValidator.isClientIdValid(clientId)){
+        if (clientIdValidator.isClientIdValid(clientId)){
             model.put("clientId", clientId);
         }
         return new ModelAndView("login_page", model);

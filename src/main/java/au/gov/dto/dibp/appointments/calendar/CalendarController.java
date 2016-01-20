@@ -5,6 +5,7 @@ import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +21,15 @@ public class CalendarController {
 
     private final AppointmentDetailsService appointmentDetailsService;
     private final UnitDetailsService unitDetailsService;
+    private final String trackingId;
 
     @Autowired
-    public CalendarController(AppointmentDetailsService appointmentDetailsService, UnitDetailsService unitDetailsService){
+    public CalendarController(AppointmentDetailsService appointmentDetailsService,
+                              UnitDetailsService unitDetailsService,
+                              @Value("${analytics.tracking.id}") String trackingId){
         this.appointmentDetailsService = appointmentDetailsService;
         this.unitDetailsService = unitDetailsService;
+        this.trackingId = trackingId;
     }
 
     @RequestMapping(value = "/calendar", method = RequestMethod.GET, produces = "text/html")
@@ -34,6 +39,7 @@ public class CalendarController {
                                     HttpServletRequest request) {
 
         Map<String, Object> model = new HashMap<>();
+        model.put("trackingId", trackingId);
 
         model.put("location", getUnitLocation(client));
         model.put("today_date", getUnitCurrentDate(client));

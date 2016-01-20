@@ -17,3 +17,8 @@ spring:
 security:
     user:
         password: password
+
+# Until set in environment
+analytics:
+  tracking:
+    id: UA-XXXXX-Y

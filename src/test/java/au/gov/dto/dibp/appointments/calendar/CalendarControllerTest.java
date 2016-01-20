@@ -52,7 +52,7 @@ CalendarControllerTest {
                 assertThat(unitId, is(UNIT_ID));
                 return UNIT_ADDRESS;
             }
-        });
+        }, "trackingId");
     }
 
     @Test

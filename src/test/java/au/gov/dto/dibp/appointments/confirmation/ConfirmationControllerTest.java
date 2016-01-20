@@ -42,7 +42,7 @@ public class ConfirmationControllerTest {
         ServiceDetailsService serviceDetailsService = new ServiceDetailsService(senderService, templateLoader, "someUrl");
         UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, new TimeZoneDictionaryForTests(), templateLoader, "someUrl");
 
-        controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"));
+        controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"), "trackingId");
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ConfirmationControllerTest {
         ServiceDetailsService serviceDetailsService = new ServiceDetailsService(senderService, templateLoader, "someUrl");
         UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, new TimeZoneDictionaryForTests(), templateLoader, "someUrl");
 
-        controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"));
+        controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"), "trackingId");
 
 
 
@@ -99,7 +99,7 @@ public class ConfirmationControllerTest {
             public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
                 return null;
             }
-        });
+        }, "trackingId");
 
         final ModelAndView result = controller.getConfirmationPage(getStandardClient());
 
