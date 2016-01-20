@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.config;
 
 import au.gov.dto.dibp.appointments.initializer.HttpsOnlyFilter;
+import au.gov.dto.dibp.appointments.initializer.LogClientIdFilter;
 import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
 import com.oakfusion.security.SecurityCookieService;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -26,7 +27,15 @@ public class AppConfig {
         registration.addUrlPatterns("/*");
         return registration;
     }
-    
+
+    @Bean
+    public FilterRegistrationBean logClientIdFilter() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new LogClientIdFilter());
+        registration.addUrlPatterns("/*");
+        return registration;
+    }
+
     @Bean
     public SecurityCookieService securityCookieService() {
         return new SecurityCookieService("session", "secretkey");
