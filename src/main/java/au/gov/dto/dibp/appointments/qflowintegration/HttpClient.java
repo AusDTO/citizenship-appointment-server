@@ -21,7 +21,7 @@ class HttpClient {
             .url(url)
             .post(body)
             .build();
-        LOGGER.debug("Request to be sent: " + messageBody);
+        LOGGER.debug("Request to be sent: " + messageBody.replaceAll("\\n", ""));
 
         try {
             Response response = httpClient.newCall(request).execute();
