@@ -5,40 +5,33 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
 @Component
 class TimeZoneDictionary {
 
-    private HashMap<String, String> timeZones;
+    private final HashMap<String, String> timeZones = new HashMap<>();
 
     @Autowired
     public TimeZoneDictionary(ResourceLoader resourceLoader){
-        try {
-            readTimeZonesConfigurationFile(resourceLoader);
-        } catch(IOException e){
-            //empty
-        }
+        readTimeZonesConfigurationFile(resourceLoader);
     }
 
-    private void readTimeZonesConfigurationFile(ResourceLoader resourceLoader) throws IOException {
+    private void readTimeZonesConfigurationFile(ResourceLoader resourceLoader) {
         Resource resource = resourceLoader.getResource("classpath:" + "timezones.txt");
 
-        Path path =  Paths.get(resource.getURI());
-        timeZones = new HashMap<>();
-
-        try(Stream<String> lines = Files.lines(path)){
+        try (Stream<String> lines = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)).lines()){
             lines.forEach(line -> {
                 String[] entry = line.split(":");
                 timeZones.put(entry[0], entry[1]);
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error reading timezones from timezones.txt", e);
         }
     }
 
