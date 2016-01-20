@@ -70,8 +70,7 @@ public class BookingService {
         data.put("appointmentTypeId", client.getAppointmentTypeId());
         data.put("clientId", client.getClientId());
 
-        ResponseWrapper response = senderService.sendRequest(rescheduleAppointmentTemplate, data, serviceAddressProcess);
-        return getScheduledAppointmentTime(response, RescheduleAppointment.APPOINTMENT_DATE);
+        return setScheduledAppointmentTime(rescheduleAppointmentTemplate, data, serviceAddressProcess, RescheduleAppointment.APPOINTMENT_DATE);
     }
 
     private String bookInitialAppointment(Client client, LocalDateTime appointmentTime) {
@@ -82,12 +81,12 @@ public class BookingService {
         data.put("serviceId", client.getServiceId());
         data.put("appointmentTypeId", client.getAppointmentTypeId());
 
-        ResponseWrapper response = senderService.sendRequest(setAppointmentTemplate, data, serviceAddress);
-        return getScheduledAppointmentTime(response, SetAppointment.APPOINTMENT_DATE);
+        return setScheduledAppointmentTime(setAppointmentTemplate, data, serviceAddress, SetAppointment.APPOINTMENT_DATE);
     }
 
-    private String getScheduledAppointmentTime(ResponseWrapper response, String appointmentDatePath){
+    private String setScheduledAppointmentTime(Template template, Map<String, String> data, String serviceAddress, String appointmentDatePath){
         try {
+            ResponseWrapper response = senderService.sendRequest(template, data, serviceAddress);
             return response.getStringAttribute(appointmentDatePath);
         }catch(RuntimeException e){
             throw new BookingResponseInvalidException("Response did not contain the appointment date.");
