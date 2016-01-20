@@ -26,8 +26,11 @@ class DefaultApiCallsSenderService implements ApiCallsSenderService {
 
     @Override
     public ResponseWrapper sendRequest(Template template, Map<String, String> messageParams, String serviceAddress) {
-         try (ApiSessionService.ApiSession apiSession = apiSessionService.createSession()) {
+        ApiSession apiSession = apiSessionService.createSession();
+
+        try {
             messageParams.put("apiSessionId", apiSession.getApiSessionId());
+            messageParams.put("currentUserId", apiSession.getUserId());
             messageParams.put("serviceAddress", serviceAddress);
             messageParams.put("messageUUID", UUID.randomUUID().toString());
             String requestBody = template.execute(messageParams);
@@ -36,6 +39,8 @@ class DefaultApiCallsSenderService implements ApiCallsSenderService {
                 throw new RuntimeException("Invalid server response with code "+ response.getCode() + ": " + response.getMessage());
             }
             return response;
+        }finally {
+            apiSessionService.closeSession(apiSession.getApiSessionId());
         }
     }
 }

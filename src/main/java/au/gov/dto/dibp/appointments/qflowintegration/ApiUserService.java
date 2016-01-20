@@ -21,7 +21,8 @@ class ApiUserService {
         for(int i = 1; i<=userCount; i++){
             String username = getEnvironmentVariable("USER_USERNAME_"+i);
             String password = getEnvironmentVariable("USER_PASSWORD_"+i);
-            apiUsers.add(new ApiUser(username, password));
+            String userId = getEnvironmentVariable("USER_ID_"+i);
+            apiUsers.add(new ApiUser(username, password, userId));
         }
     }
 

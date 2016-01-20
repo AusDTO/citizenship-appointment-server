@@ -39,7 +39,6 @@ public class AvailableTimesService {
         Map<String, String> data = new HashMap<>();
         data.put("calendarId", calendarId);
         data.put("appointmentTypeId", client.getAppointmentTypeId());
-        data.put("currentUserId", "3"); // FIXME(Marz)
 
         ResponseWrapper response = senderService.sendRequest(getDynamicSuggestedSlots2Template, data, serviceAddress);
         return parseAvailableTimesResponse(response);
@@ -66,5 +65,4 @@ public class AvailableTimesService {
         private static final String REQUEST_TEMPLATE_PATH = "GetDynamicSuggestedSlots2.mustache";
         private static final String START_TIME = "//GetDynamicSuggestedSlots2Response/GetDynamicSuggestedSlots2Result/SuggestedSlots/DynamicCalendarSuggestedSlotItem/StartTime";
     }
-
 }

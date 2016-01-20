@@ -41,7 +41,7 @@ class ApiLoginService {
         this.userForceLogin = userForceLogin;
     }
 
-    public String login() {
+    public ApiSession login() {
         Resource resource = resourceLoader.getResource("classpath:request_templates/" + SIGN_IN_TEMPLATE_PATH);
         InputStream inputStream = null;
         try {
@@ -53,9 +53,13 @@ class ApiLoginService {
         Template tmpl = Mustache.compiler().compile(inputStreamReader);
 
         for (int attempts = 1 ; attempts <= MAX_ATTEMPTS; attempts++) {
-            ResponseWrapper response = sendLoginRequest(tmpl);
+            int index = new Random().nextInt(apiUsers.size());
+            ResponseWrapper response = sendLoginRequest(tmpl, index);
             if (response!=null && response.getCode() == 200) {
-                return response.getStringAttribute(API_SESSION_ID);
+
+                String apiSessionId = response.getStringAttribute(API_SESSION_ID);
+                String userId = apiUsers.get(index).getUserId();
+                return new ApiSession(apiSessionId, userId);
             }
             if (attempts >= MAX_ATTEMPTS*.8) {
                 LOGGER.warn("Reached {} of {} max FormsSignIn attempts", attempts, MAX_ATTEMPTS);
@@ -64,9 +68,8 @@ class ApiLoginService {
         throw new ApiLoginException("Failed to authenticate to Q-Flow API. Exceeded max FormsSignIn attempts: " + MAX_ATTEMPTS);
     }
 
-    private ResponseWrapper sendLoginRequest(Template tmpl) {
+    private ResponseWrapper sendLoginRequest(Template tmpl, int index) {
         Map<String, String> messageParams = new HashMap<>();
-        int index = new Random().nextInt(apiUsers.size());
         messageParams.put("username", apiUsers.get(index).getUsername());
         messageParams.put("password", apiUsers.get(index).getPassword());
         messageParams.put("forceSignIn", userForceLogin);
@@ -82,5 +85,4 @@ class ApiLoginService {
             return null;
         }
     }
-
 }
