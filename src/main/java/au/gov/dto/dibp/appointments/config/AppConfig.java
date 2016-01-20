@@ -4,6 +4,7 @@ import au.gov.dto.dibp.appointments.initializer.HttpsOnlyFilter;
 import au.gov.dto.dibp.appointments.initializer.LogClientIdFilter;
 import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
 import com.oakfusion.security.SecurityCookieService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackages = "au.gov.dto.dibp.appointments")
 public class AppConfig {
+
     @Bean
     public FilterRegistrationBean httpsFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
@@ -37,7 +39,7 @@ public class AppConfig {
     }
 
     @Bean
-    public SecurityCookieService securityCookieService() {
-        return new SecurityCookieService("session", "secretkey");
+    public SecurityCookieService securityCookieService(@Value("${session.encryption.key}") String sessionEncryptionKey) {
+        return new SecurityCookieService("session", sessionEncryptionKey);
     }
 }
