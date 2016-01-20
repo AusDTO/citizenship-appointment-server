@@ -53,7 +53,7 @@ public class LoginClientService implements UserDetailsService {
     @Override
     public Client loadUserByUsername(String username) throws UsernameNotFoundException {
         if(!clientIdValidator.isClientIdValid(username)){
-            throw new RuntimeException("Invalid format of the username");
+            throw new UsernameNotFoundException("Invalid format of the username");
         }
 
         Map<String, String> data = new HashMap<>();
