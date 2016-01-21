@@ -60,7 +60,7 @@ public class ApiLogInServiceIntegrationTest {
         };
         mockWebServer.setDispatcher(dispatcher);
 
-        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(), "http://localhost:"+this.mockWebServer.getPort(), "false");
+        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(null), "http://localhost:"+this.mockWebServer.getPort(), "false");
         ApiSession apiSession = apiLoginService.login();
         assertThat(apiSession.getApiSessionId(), not(isEmptyOrNullString()));
         assertThat(apiSession.getUserId(), not(isEmptyOrNullString()));
@@ -75,7 +75,7 @@ public class ApiLogInServiceIntegrationTest {
         }
         this.mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(successResponse));
 
-        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(), "http://localhost:"+this.mockWebServer.getPort(), "false");
+        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(null), "http://localhost:"+this.mockWebServer.getPort(), "false");
         ApiSession apiSession = apiLoginService.login();
 
         assertThat(apiSession.getApiSessionId(), not(isEmptyOrNullString()));
@@ -89,7 +89,7 @@ public class ApiLogInServiceIntegrationTest {
             this.mockWebServer.enqueue(new MockResponse().setResponseCode(500).setBody(takenUserResponse));
         }
 
-        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(), "http://localhost:"+this.mockWebServer.getPort(), "false");
+        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(null), "http://localhost:"+this.mockWebServer.getPort(), "false");
         try {
             apiLoginService.login();
             fail("Expected Runtime exception");
