@@ -6,14 +6,17 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.internal.tls.OkHostnameVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
+import javax.security.cert.X509Certificate;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -23,6 +26,7 @@ class HttpClient {
     private static final MediaType SOAP_MEDIA_TYPE = MediaType.parse("application/soap+xml; charset=utf-8");
 
     private final OkHttpClient httpClient;
+    private final OkHostnameVerifier okHostnameVerifier = OkHostnameVerifier.INSTANCE;
 
     @Autowired
     public HttpClient(SSLSocketFactory sslSocketFactory) throws GeneralSecurityException, IOException {
@@ -31,7 +35,17 @@ class HttpClient {
         this.httpClient.setHostnameVerifier(new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession sslSession) {
-                return true;
+                if (okHostnameVerifier.verify(hostname, sslSession)) {
+                    return true;
+                }
+                try {
+                    X509Certificate certificate = sslSession.getPeerCertificateChain()[0];
+                    String distinguishedName = certificate.getSubjectDN().getName();
+                    String trimmedDistinguishedName = distinguishedName.replace("CN=*", "");
+                    return hostname.endsWith(trimmedDistinguishedName);
+                } catch (SSLException e) {
+                    throw new RuntimeException("Could not verify hostname " + hostname, e);
+                }
             }
         });
     }
