@@ -78,11 +78,6 @@ class ApiLoginService {
         messageParams.put("ipAddressUUID", UUID.randomUUID().toString());
         String messageBody = tmpl.execute(messageParams);
 
-        try{
-            return httpClient.post(serviceAddressUser, messageBody);
-        }catch(RuntimeException e){
-            //do nothing, retries
-            return null;
-        }
+        return httpClient.post(serviceAddressUser, messageBody);
     }
 }
