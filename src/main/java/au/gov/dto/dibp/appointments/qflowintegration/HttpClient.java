@@ -11,8 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 @Component
 class HttpClient {
@@ -22,13 +25,15 @@ class HttpClient {
     private final OkHttpClient httpClient;
 
     @Autowired
-    public HttpClient(SSLSocketFactory sslSocketFactory) {
+    public HttpClient(SSLSocketFactory sslSocketFactory) throws GeneralSecurityException, IOException {
         this.httpClient = new OkHttpClient();
-        if (sslSocketFactory != null) {
-            this.httpClient.setSslSocketFactory(sslSocketFactory);
-        } else {
-            LOGGER.warn("Not setting SSLSocketFactory since none provided");
-        }
+        this.httpClient.setSslSocketFactory(sslSocketFactory);
+        this.httpClient.setHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession sslSession) {
+                return true;
+            }
+        });
     }
 
     public ResponseWrapper post(String url, String messageBody) {
