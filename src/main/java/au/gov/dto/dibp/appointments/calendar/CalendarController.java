@@ -40,7 +40,7 @@ public class CalendarController {
 
         Map<String, Object> model = new HashMap<>();
         model.put("trackingId", trackingId);
-
+        model.put("clientId", client.getClientId());
         model.put("location", getUnitLocation(client));
         model.put("today_date", getUnitCurrentDate(client));
         model.put("current_appointment", getCurrentAppointmentDetails(client));

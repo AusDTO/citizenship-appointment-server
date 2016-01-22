@@ -40,6 +40,7 @@ public class ConfirmationController {
 
         HashMap<String, Object> model = new HashMap<>();
         model.put("trackingId", trackingId);
+        model.put("clientId", client.getClientId());
         model.put("location", appointmentDetails.getUnitAddress());
         model.put("clientId", client.getClientId());
         model.put("hasEmail", client.hasEmail());
