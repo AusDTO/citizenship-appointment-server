@@ -28,18 +28,22 @@ class SslSocketFactoryConfig {
     private String keystorePassword;
 
     @Bean
-    public SSLSocketFactory sslSocketFactory() throws GeneralSecurityException, IOException {
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        Resource keyStoreResource = resourceLoader.getResource("classpath:qflow_certificates.jks");
-        try (InputStream keyStoreInputStream = keyStoreResource.getInputStream()) {
-            keyStore.load(keyStoreInputStream, keystorePassword.toCharArray());
+    public SSLSocketFactory sslSocketFactory() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            Resource keyStoreResource = resourceLoader.getResource("classpath:qflow_certificates.jks");
+            try (InputStream keyStoreInputStream = keyStoreResource.getInputStream()) {
+                keyStore.load(keyStoreInputStream, keystorePassword.toCharArray());
+            }
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(keyStore);
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            keyManagerFactory.init(keyStore, new char[0]);
+            sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
+            return sslContext.getSocketFactory();
+        } catch (IOException|GeneralSecurityException e) {
+            throw new RuntimeException("Exception when creating SSLSocketFactory", e);
         }
-        SSLContext sslContext = SSLContext.getInstance("SSL");
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init(keyStore);
-        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyManagerFactory.init(keyStore, new char[0]);
-        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
-        return sslContext.getSocketFactory();
     }
 }

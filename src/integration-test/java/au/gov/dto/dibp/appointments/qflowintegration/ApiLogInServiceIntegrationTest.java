@@ -1,17 +1,21 @@
 package au.gov.dto.dibp.appointments.qflowintegration;
 
-import com.squareup.okhttp.mockwebserver.Dispatcher;
-import com.squareup.okhttp.mockwebserver.MockResponse;
-import com.squareup.okhttp.mockwebserver.MockWebServer;
-import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import okhttp3.internal.tls.OkHostnameVerifier;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -19,6 +23,8 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
 
 public class ApiLogInServiceIntegrationTest {
+
+    private final HttpClient httpClient = new HttpClient(defaultSocketFactory(), OkHostnameVerifier.INSTANCE);
 
     private MockWebServer mockWebServer;
 
@@ -60,7 +66,7 @@ public class ApiLogInServiceIntegrationTest {
         };
         mockWebServer.setDispatcher(dispatcher);
 
-        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(null), "http://localhost:"+this.mockWebServer.getPort(), "false");
+        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), httpClient, "http://localhost:"+this.mockWebServer.getPort(), "false");
         ApiSession apiSession = apiLoginService.login();
         assertThat(apiSession.getApiSessionId(), not(isEmptyOrNullString()));
         assertThat(apiSession.getUserId(), not(isEmptyOrNullString()));
@@ -75,7 +81,7 @@ public class ApiLogInServiceIntegrationTest {
         }
         this.mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(successResponse));
 
-        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(null), "http://localhost:"+this.mockWebServer.getPort(), "false");
+        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), httpClient, "http://localhost:"+this.mockWebServer.getPort(), "false");
         ApiSession apiSession = apiLoginService.login();
 
         assertThat(apiSession.getApiSessionId(), not(isEmptyOrNullString()));
@@ -89,12 +95,20 @@ public class ApiLogInServiceIntegrationTest {
             this.mockWebServer.enqueue(new MockResponse().setResponseCode(500).setBody(takenUserResponse));
         }
 
-        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), new HttpClient(null), "http://localhost:"+this.mockWebServer.getPort(), "false");
+        ApiLoginService apiLoginService = new ApiLoginService(new DefaultResourceLoader(), new ApiUserService(new ApiUser("success_user", "any_password", "1")), httpClient, "http://localhost:"+this.mockWebServer.getPort(), "false");
         try {
             apiLoginService.login();
             fail("Expected Runtime exception");
         } catch (ApiLoginException expected) {
             // expected
+        }
+    }
+
+    private SSLSocketFactory defaultSocketFactory() {
+        try {
+            return SSLContext.getDefault().getSocketFactory();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Could not create default SSLContext", e);
         }
     }
 }
