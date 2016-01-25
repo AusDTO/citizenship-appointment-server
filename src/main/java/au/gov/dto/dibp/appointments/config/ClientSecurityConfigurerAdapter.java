@@ -6,18 +6,24 @@ import au.gov.dto.dibp.appointments.security.csrf.CookieBasedCsrfTokenRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.encoding.PlaintextPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/**
+ * Authentication configuration for clients (citizenship applicants).
+ */
 @Configuration
+@Order(2)  // must have higher value (lower priority) than AdminSecurityConfigurerAdapter
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private LoginClientService loginClientService;
@@ -27,6 +33,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private CookieBasedSecurityContextRepository cookieBasedSecurityContextRepository;
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/images/**", "/static/**", "/barcode/**");
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -43,7 +54,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .requestCache()
                 .disable()
             .authorizeRequests()
-                .antMatchers("/", "/images/**", "/static/**", "/barcode/**", "/login").permitAll()  // no authentication on endpoints '/' and public assets
+                .antMatchers("/", "/login").permitAll()  // no authentication on endpoints '/' and public assets
+                .antMatchers("/admin/**").denyAll()  // no admin access
                 .anyRequest().authenticated()  // all other endpoints require authentication
                 .and()
             .formLogin()
@@ -75,4 +87,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .userDetailsService(userDetailsService())
             .passwordEncoder(passwordEncoder);
     }
+
 }
