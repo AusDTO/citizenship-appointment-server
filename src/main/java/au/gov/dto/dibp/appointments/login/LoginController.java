@@ -3,7 +3,6 @@ package au.gov.dto.dibp.appointments.login;
 import au.gov.dto.dibp.appointments.client.ClientIdValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,10 +37,6 @@ public class LoginController {
 
         Map<String, Object> model = new HashMap<>();
         model.put("trackingId", trackingId);
-        CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-        if (csrfToken != null) {
-            model.put("_csrf", csrfToken);
-        }
         if (error != null) {
             model.put("error", true);
         }
