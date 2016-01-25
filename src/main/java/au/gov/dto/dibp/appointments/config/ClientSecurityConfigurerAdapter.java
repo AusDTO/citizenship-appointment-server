@@ -50,6 +50,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 .and()
             .csrf()
                 .csrfTokenRepository(cookieBasedCsrfTokenRepository)
+                .ignoringAntMatchers("/login")
                 .and()
             .requestCache()
                 .disable()
