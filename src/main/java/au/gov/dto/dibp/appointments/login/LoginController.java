@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class LoginController {
             @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "expired", required = false) String expired,
             @RequestParam(value = "id", required = false) String clientId,
-            HttpServletRequest request) {
+            HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("trackingId", trackingId);
@@ -46,6 +47,7 @@ public class LoginController {
         }
         if (expired != null) {
             model.put("expired", true);
+            response.setStatus(401);
         }
         if (clientIdValidator.isClientIdValid(clientId)){
             model.put("clientId", clientId);
