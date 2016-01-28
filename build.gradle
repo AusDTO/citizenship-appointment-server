@@ -86,6 +86,7 @@ def metricsVersion = '3.0.2'
 def commonsIoVersion = '2.4'
 def springCookieSessionVersion = '1.0'
 def commonsCodecVersion = '1.10'
+def commonsLang3Version = '3.4'
 def zxingVersion = '3.2.1'
 
 dependencies {
@@ -101,6 +102,7 @@ dependencies {
             "com.squareup.okhttp3:okhttp:${okhttpVersion}",
             "com.oakfusion:spring-cookie-session:${springCookieSessionVersion}",
             "commons-codec:commons-codec:${commonsCodecVersion}",
+            "org.apache.commons:commons-lang3:${commonsLang3Version}",
             "com.google.zxing:javase:${zxingVersion}"
 
     testCompile "junit:junit:${junitVersion}",

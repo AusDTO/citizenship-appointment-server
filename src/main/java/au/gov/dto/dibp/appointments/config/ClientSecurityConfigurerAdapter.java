@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -24,6 +25,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Order(2)  // must have higher value (lower priority) than AdminSecurityConfigurerAdapter
 @EnableWebSecurity
 public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+    private static final String LOGIN_FAILURE_URL = "/login?error";
 
     @Autowired
     private LoginClientService loginClientService;
@@ -41,6 +43,9 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        SimpleUrlAuthenticationFailureHandler authenticationFailureHandler = new SimpleUrlAuthenticationFailureHandler(LOGIN_FAILURE_URL);
+        authenticationFailureHandler.setAllowSessionCreation(false);
+
         http
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -56,14 +61,14 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 .disable()
             .authorizeRequests()
                 .antMatchers("/", "/login").permitAll()  // no authentication on endpoints '/' and public assets
-                .antMatchers("/admin/**").denyAll()  // no admin access
+                .antMatchers("/admin/**").permitAll()  // handled by AdminSecurityConfigurerAdapter
                 .anyRequest().authenticated()  // all other endpoints require authentication
                 .and()
             .formLogin()
                 .loginPage("/login") // custom login page
                 .passwordParameter("familyName") // form element name
                 .defaultSuccessUrl("/calendar")
-                .failureUrl("/login?error")
+                .failureHandler(authenticationFailureHandler)
                 .permitAll()  // no authentication on login endpoint
                 .and()
             .logout()

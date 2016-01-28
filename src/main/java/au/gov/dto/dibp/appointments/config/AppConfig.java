@@ -6,13 +6,17 @@ import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
 import com.oakfusion.security.SecurityCookieService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.http.HttpSessionListener;
+
 @Configuration
 @ComponentScan(basePackages = "au.gov.dto.dibp.appointments")
 public class AppConfig {
+    private static final String SESSION_COOKIE_NAME = "session";
 
     @Bean
     public FilterRegistrationBean httpsFilter() {
@@ -39,7 +43,14 @@ public class AppConfig {
     }
 
     @Bean
+    public ServletListenerRegistrationBean<HttpSessionListener> sessionCreatedListener() {
+        ServletListenerRegistrationBean<HttpSessionListener> listenerRegistrationBean = new ServletListenerRegistrationBean<>();
+        listenerRegistrationBean.setListener(new HttpSessionCreatedListener());
+        return listenerRegistrationBean;
+    }
+
+    @Bean
     public SecurityCookieService securityCookieService(@Value("${session.encryption.key}") String sessionEncryptionKey) {
-        return new SecurityCookieService("session", sessionEncryptionKey);
+        return new SecurityCookieService(SESSION_COOKIE_NAME, sessionEncryptionKey);
     }
 }
