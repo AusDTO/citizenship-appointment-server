@@ -105,7 +105,7 @@ CalendarControllerTest {
     }
 
     private Client getStandardClient (){
-        return new Client("123", "Surname", "40404", true,  UNIT_ID, SERVICE_ID, "3", true);
+        return new Client("123", "Surname", "40404", true,  false, UNIT_ID, SERVICE_ID, "3", true);
     }
 
     private AppointmentDetails getBasicAppointmentDetails(){

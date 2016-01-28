@@ -31,6 +31,7 @@ public class ConfirmationControllerTest {
     private static final String SERVICE_ID = "AAA";
     private static final String UNIT_ADDRESS = "Some Street 12";
     private static final boolean HAS_EMAIL = true;
+    private static final boolean HAS_MOBILE = true;
 
     @Before
     public void setUp(){
@@ -67,10 +68,24 @@ public class ConfirmationControllerTest {
     }
 
     @Test
+    public void test_getConfirmationPage_should_passIfUserHasMobileToTheModel(){
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+
+        assertThat(result.getModel().get("hasMobile"), is(HAS_MOBILE));
+    }
+
+    @Test
+    public void test_getConfirmationPage_should_passTheAppointmentDateToTheModel(){
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+
+        assertThat(result.getModel().get("appointment_date"), is("Monday 18 January 2016"));
+    }
+
+    @Test
     public void test_getConfirmationPage_should_passTheAppointmentTimeToTheModel(){
         final ModelAndView result = controller.getConfirmationPage(getStandardClient());
 
-        assertThat(result.getModel().get("selected_appointment"), is("Monday 18 January, 1:20 PM"));
+        assertThat(result.getModel().get("appointment_time"), is("1:20 PM"));
     }
 
     @Test
@@ -107,7 +122,7 @@ public class ConfirmationControllerTest {
     }
 
     private Client getStandardClient (){
-        return new Client(CLIENT_ID, "Surname", CUSTOMER_ID, HAS_EMAIL,  "3", "5", "3", true);
+        return new Client(CLIENT_ID, "Surname", CUSTOMER_ID, HAS_EMAIL,  HAS_MOBILE, "3", "5", "3", true);
     }
 
     private ResponseWrapper getCallsResponses(Template template){

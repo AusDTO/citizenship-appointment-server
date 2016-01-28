@@ -46,6 +46,7 @@ public class LoginClientServiceTest {
         assertThat(client.getUnitId(), is(UNIT_ID));
         assertThat(client.getAppointmentTypeId(), is(APPOINTMENT_TYPE_ID));
         assertThat(client.hasEmail(), is(true));
+        assertThat(client.hasMobile(), is(true));
     }
 
     @Test(expected = RuntimeException.class)
@@ -119,6 +120,7 @@ public class LoginClientServiceTest {
         "            <b:Id>6</b:Id>\n" +
         "            <b:Name>Smith Martin</b:Name>\n" +
         "            <b:EMail>2323@test.com</b:EMail>\n" +
+        "            <b:TelNumber1>0483737373</b:TelNumber1>" +
         "            <b:FirstName>Martin</b:FirstName>\n" +
         "            <b:LastName>Smith</b:LastName>\n" +
         "         </GetByPersonalIdResult>\n" +

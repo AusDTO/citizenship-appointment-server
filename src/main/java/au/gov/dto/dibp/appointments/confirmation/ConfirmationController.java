@@ -18,7 +18,8 @@ import java.util.HashMap;
 @RestController
 public class ConfirmationController {
 
-    private static final DateTimeFormatter APPOINTMENT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("EEEE dd MMMM, h:mm a");
+    private static final DateTimeFormatter APPOINTMENT_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy");
+    private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
 
     private final AppointmentDetailsService appointmentDetailsService;
     private final String trackingId;
@@ -44,8 +45,10 @@ public class ConfirmationController {
         model.put("location", appointmentDetails.getUnitAddress());
         model.put("clientId", client.getClientId());
         model.put("hasEmail", client.hasEmail());
+        model.put("hasMobile", client.hasMobile());
 
-        model.put("selected_appointment", appointmentDetails.getAppointmentDate().format(APPOINTMENT_DATE_TIME_FORMATTER));
+        model.put("appointment_date", appointmentDetails.getAppointmentDate().format(APPOINTMENT_DATE_FORMATTER));
+        model.put("appointment_time", appointmentDetails.getAppointmentDate().format(APPOINTMENT_TIME_FORMATTER));
 
         return new ModelAndView("confirmation_page", model);
     }

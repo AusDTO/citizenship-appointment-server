@@ -113,7 +113,7 @@ public class AddToCalendarControllerTest {
     }
 
     private Client getStandardClient (){
-        return new Client("123", "Surname", "40404", false, UNIT_ID, SERVICE_ID, "3", true);
+        return new Client("123", "Surname", "40404", false, false, UNIT_ID, SERVICE_ID, "3", true);
     }
 
     private ApiCallsSenderService getApiCallsSenderService(){

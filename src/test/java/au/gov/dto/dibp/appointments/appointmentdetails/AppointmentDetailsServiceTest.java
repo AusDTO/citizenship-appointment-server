@@ -148,6 +148,6 @@ public class AppointmentDetailsServiceTest {
     }
 
     private Client getStandardClient (){
-        return new Client("123", "Surname", "40404", false, "3", "5", "3", true);
+        return new Client("123", "Surname", "40404", false, false, "3", "5", "3", true);
     }
 }

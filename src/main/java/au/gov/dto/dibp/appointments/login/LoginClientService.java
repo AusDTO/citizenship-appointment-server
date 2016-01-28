@@ -68,6 +68,7 @@ public class LoginClientService implements UserDetailsService {
         String lastName = response.getStringAttribute(GetClientByPersonalId.CUSTOMER_LAST_NAME);
         String customerId = response.getStringAttribute(GetClientByPersonalId.CUSTOMER_ID);
         boolean hasEmail = StringUtil.isNotBlank(response.getStringAttribute(GetClientByPersonalId.CUSTOMER_EMAIL));
+        boolean hasMobile = StringUtil.isNotBlank(response.getStringAttribute(GetClientByPersonalId.CUSTOMER_TELEPHONE1));
         boolean isActive = "true".equals(response.getStringAttribute(GetClientByPersonalId.CUSTOMER_ACTIVE));
 
         ResponseWrapper customPropertiesResponse = getCustomPropertiesResponse(customerId);
@@ -75,7 +76,7 @@ public class LoginClientService implements UserDetailsService {
         String appointmentTypeId = getAppointmentTypeId(customPropertiesResponse, customerId);
         checkUserConfiguredCorrectly(serviceDetails, appointmentTypeId);
 
-        return new Client(clientId, lastName, customerId, hasEmail, serviceDetails.getUnitId(), serviceDetails.getServiceId(), appointmentTypeId, isActive);
+        return new Client(clientId, lastName, customerId, hasEmail, hasMobile, serviceDetails.getUnitId(), serviceDetails.getServiceId(), appointmentTypeId, isActive);
     }
 
     private ResponseWrapper getCustomPropertiesResponse(String customerId){
@@ -114,6 +115,7 @@ public class LoginClientService implements UserDetailsService {
     private class GetClientByPersonalId {
         static final String REQUEST_TEMPLATE_PATH = "GetByPersonalId.mustache";
         private static final String CUSTOMER_EMAIL = "//GetByPersonalIdResponse/GetByPersonalIdResult/EMail";
+        private static final String CUSTOMER_TELEPHONE1 = "//GetByPersonalIdResponse/GetByPersonalIdResult/TelNumber1";
         private static final String CUSTOMER_CLIENT_ID = "//GetByPersonalIdResponse/GetByPersonalIdResult/PersonalId";
         private static final String CUSTOMER_ACTIVE = "//GetByPersonalIdResponse/GetByPersonalIdResult/Active";
         private static final String CUSTOMER_LAST_NAME = "//GetByPersonalIdResponse/GetByPersonalIdResult/LastName";
