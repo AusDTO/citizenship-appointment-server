@@ -13,5 +13,8 @@ management:
   port: ${port:8083}
 
 spring:
+  mvc:
+    favicon:
+      enabled: false
   mustache:
     suffix: .mustache
