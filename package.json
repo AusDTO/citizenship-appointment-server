@@ -4,6 +4,6 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "citizenship-appointment-client": "AusDTO/citizenship-appointment-client#313e757"
+    "citizenship-appointment-client": "AusDTO/citizenship-appointment-client#a6569b5"
   }
 }

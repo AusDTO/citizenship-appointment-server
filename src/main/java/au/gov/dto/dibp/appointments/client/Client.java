@@ -8,14 +8,16 @@ public class Client extends User {
 
     private final String customerId;
     private final boolean hasEmail;
+    private final boolean hasMobile;
     private String unitId;
     private String serviceId;
     private String appointmentTypeId;
 
-    public Client(String clientId, String familyName, String customerId, boolean hasEmail,String unitId, String serviceId, String appointmentTypeId, boolean active) {
+    public Client(String clientId, String familyName, String customerId, boolean hasEmail, boolean hasMobile, String unitId, String serviceId, String appointmentTypeId, boolean active) {
         super(clientId, familyName, active, true, true, true, Collections.emptyList());
         this.customerId = customerId;
         this.hasEmail = hasEmail;
+        this.hasMobile = hasMobile;
         this.unitId = unitId;
         this.serviceId = serviceId;
         this.appointmentTypeId = appointmentTypeId;
@@ -37,10 +39,14 @@ public class Client extends User {
         return hasEmail;
     }
 
+    public boolean hasMobile() {
+        return hasMobile;
+    }
+
     public String getServiceId() {
         return serviceId;
     }
-    
+
     public String getAppointmentTypeId() {
         return appointmentTypeId;
     }
