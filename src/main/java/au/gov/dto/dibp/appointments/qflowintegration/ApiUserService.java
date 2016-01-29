@@ -1,44 +1,39 @@
 package au.gov.dto.dibp.appointments.qflowintegration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 class ApiUserService {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private final List<ApiUser> apiUsers;
+    private static final Logger LOG = LoggerFactory.getLogger(ApiUserService.class);
+
+    private final List<ApiUser> apiUsers = new ArrayList<>();
 
     public ApiUserService() {
-        int userCount = Integer.parseInt(getEnvironmentVariable("USER_COUNT"));
-        apiUsers = new ArrayList<>();
-
-        for(int i = 1; i<=userCount; i++){
-            String username = getEnvironmentVariable("USER_USERNAME_"+i);
-            String password = getEnvironmentVariable("USER_PASSWORD_"+i);
-            String userId = getEnvironmentVariable("USER_ID_"+i);
+        String username;
+        String password;
+        String userId;
+        for (int i = 1;
+             StringUtils.isNotBlank(username = System.getenv("USER_USERNAME_" + i))
+                     && StringUtils.isNotBlank(password = System.getenv("USER_PASSWORD_" + i))
+                     && StringUtils.isNotBlank(userId = System.getenv("USER_ID_" + i));
+             i++) {
             apiUsers.add(new ApiUser(username, password, userId));
+            LOG.info("Configuring API user number {} with username=[{}] and userid=[{}]", i, username, userId);
         }
     }
 
     public ApiUserService(ApiUser... apiUsers) {
-        this.apiUsers = Arrays.asList(apiUsers);
+        Collections.addAll(this.apiUsers, apiUsers);
     }
 
-    public List<ApiUser> initializeApiUsers(){
+    public List<ApiUser> initializeApiUsers() {
         return new ArrayList<>(apiUsers);
-    }
-
-    String getEnvironmentVariable(String name){
-        String value =  System.getenv(name);
-        if(StringUtils.isEmpty(value)){
-            log.error("No value set for the environment variable "+ name);
-        }
-        return value;
     }
 }
