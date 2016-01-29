@@ -1,9 +1,9 @@
 package au.gov.dto.dibp.appointments.config;
 
+import au.gov.dto.dibp.appointments.initializer.DoSFilter;
 import au.gov.dto.dibp.appointments.initializer.HttpsOnlyFilter;
 import au.gov.dto.dibp.appointments.initializer.LogClientIdFilter;
 import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
-import au.gov.dto.dibp.appointments.initializer.DoSFilter;
 import com.oakfusion.security.SecurityCookieService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpSessionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @ComponentScan(basePackages = "au.gov.dto.dibp.appointments")
@@ -29,15 +31,26 @@ public class AppConfig {
     public FilterRegistrationBean dosFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         DoSFilter dosFilter = new DoSFilter();
-        String ipAddressOrCidrRange;
-        for (int i = 1; StringUtils.isNotBlank(ipAddressOrCidrRange = System.getenv("IP_WHITELIST_" + i)); i++) {
-            dosFilter.addWhitelistAddress(ipAddressOrCidrRange);
-            LOG.info("Adding IP address or range=[{}] to DoSFilter whitelist", ipAddressOrCidrRange);
-        }
         registration.setFilter(dosFilter);
+        registration.addInitParameter("enabled", "true");
+        registration.addInitParameter("insertHeaders", "false");
+        registration.addInitParameter("ipWhitelist", getIpWhitelist());
         registration.addInitParameter("managedAttr", "true");  // allow filter to be managed via JMX
+        registration.addInitParameter("remotePort", "false");
+        registration.addInitParameter("trackSessions", "false");
         registration.addUrlPatterns("/*");
         return registration;
+    }
+
+    private String getIpWhitelist() {
+        List<String> ipWhitelist = new ArrayList<>();
+        String ipAddressOrCidrRange;
+        for (int i = 1; StringUtils.isNotBlank(ipAddressOrCidrRange = System.getenv("IP_WHITELIST_" + i)); i++) {
+            LOG.info("Adding IP address or range=[{}] to DoSFilter whitelist", ipAddressOrCidrRange);
+            ipWhitelist.add(ipAddressOrCidrRange);
+        }
+        String[] ipWhitelistArray = ipWhitelist.toArray(new String[ipWhitelist.size()]);
+        return String.join(",", ipWhitelistArray);
     }
 
     @Bean
