@@ -1,9 +1,6 @@
 package au.gov.dto.dibp.appointments.initializer;
 
 import org.slf4j.MDC;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.Filter;
@@ -23,15 +20,9 @@ public class LogClientIdFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse
-            response, FilterChain filterChain) throws IOException,
-            ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null && !(auth.getPrincipal() instanceof String) ) {
-                User user = (User) auth.getPrincipal();
-                MDC.put(MDC_KEY_CLIENT_ID, user.getUsername());
-            }
+            MDC.put(MDC_KEY_CLIENT_ID, UsernameExtractor.getAuthenticatedUsername());
             filterChain.doFilter(request, response);
         } finally {
             MDC.remove(MDC_KEY_CLIENT_ID);
