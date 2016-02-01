@@ -26,19 +26,16 @@ class ApiLoginService {
     static final int MAX_ATTEMPTS = 10;
 
     private final String serviceAddressUser;
-    private final String userForceLogin;
-
     private final List<ApiUser> apiUsers;
     private final ResourceLoader resourceLoader;
     private final HttpClient httpClient;
 
     @Autowired
-    public ApiLoginService(ResourceLoader resourceLoader, ApiUserService apiUserService, HttpClient httpClient, @Value("${SERVICE.ADDRESS.USER}") String serviceAddressUser, @Value("${USER.FORCE.LOGIN}") String userForceLogin) {
+    public ApiLoginService(ResourceLoader resourceLoader, ApiUserService apiUserService, HttpClient httpClient, @Value("${SERVICE.ADDRESS.USER}") String serviceAddressUser) {
         this.resourceLoader = resourceLoader;
         this.apiUsers = Collections.unmodifiableList(apiUserService.initializeApiUsers());
         this.httpClient = httpClient;
         this.serviceAddressUser = serviceAddressUser;
-        this.userForceLogin = userForceLogin;
     }
 
     public ApiSession login() {
@@ -72,7 +69,7 @@ class ApiLoginService {
         Map<String, String> messageParams = new HashMap<>();
         messageParams.put("username", apiUsers.get(index).getUsername());
         messageParams.put("password", apiUsers.get(index).getPassword());
-        messageParams.put("forceSignIn", userForceLogin);
+        messageParams.put("forceSignIn", "false");
         messageParams.put("messageUUID", UUID.randomUUID().toString());
         messageParams.put("serviceAddress", serviceAddressUser);
         messageParams.put("ipAddressUUID", UUID.randomUUID().toString());
