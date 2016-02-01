@@ -46,6 +46,6 @@ class AvailableDate {
 
     public void setAvailableTimes(List<String> availableTimes) {
         this.availableTimes = availableTimes != null ? new ArrayList<>(availableTimes) : new ArrayList<>();
-        this.availableTimesCount = availableTimes.size();
+        this.availableTimesCount = this.availableTimes.size();
     }
 }

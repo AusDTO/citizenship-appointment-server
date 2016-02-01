@@ -13,8 +13,10 @@ import org.springframework.core.io.DefaultResourceLoader;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,15 +48,15 @@ public class ApiLogInServiceIntegrationTest {
                 try {
                     String requestBody = request.getBody().readUtf8();
                     if (requestBody.contains("success_user")) {
-                        String responseBody = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInSuccessResponse.xml"));
+                        String responseBody = readFile("src/integration-test/resources/FormsSignInSuccessResponse.xml");
                         return new MockResponse().setResponseCode(200).setBody(responseBody);
                     }
                     if (requestBody.contains("wrong_credentials_user")) {
-                        String responseBody = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInWrongCredentialsResponse.xml"));
+                        String responseBody = readFile("src/integration-test/resources/FormsSignInWrongCredentialsResponse.xml");
                         return new MockResponse().setResponseCode(500).setBody(responseBody);
                     }
                     if (requestBody.contains("taken_user")) {
-                        String responseBody = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInTakenUserResponse.xml"));
+                        String responseBody = readFile("src/integration-test/resources/FormsSignInTakenUserResponse.xml");
                         return new MockResponse().setResponseCode(500).setBody(responseBody);
                     }
 
@@ -74,8 +76,8 @@ public class ApiLogInServiceIntegrationTest {
 
     @Test
     public void successfulApiLoginOnLastRetry() throws Exception {
-        String takenUserResponse = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInTakenUserResponse.xml"));
-        String successResponse = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInSuccessResponse.xml"));
+        String takenUserResponse = readFile("src/integration-test/resources/FormsSignInTakenUserResponse.xml");
+        String successResponse = readFile("src/integration-test/resources/FormsSignInSuccessResponse.xml");
         for (int i = 0; i < ApiLoginService.MAX_ATTEMPTS - 1; i++) {
             this.mockWebServer.enqueue(new MockResponse().setResponseCode(500).setBody(takenUserResponse));
         }
@@ -90,7 +92,7 @@ public class ApiLogInServiceIntegrationTest {
 
     @Test
     public void failApiLoginAfterFailedRetries() throws Exception {
-        String takenUserResponse = IOUtils.toString(new FileReader("src/integration-test/resources/FormsSignInTakenUserResponse.xml"));
+        String takenUserResponse = readFile("src/integration-test/resources/FormsSignInTakenUserResponse.xml");
         for (int i = 0; i < ApiLoginService.MAX_ATTEMPTS; i++) {
             this.mockWebServer.enqueue(new MockResponse().setResponseCode(500).setBody(takenUserResponse));
         }
@@ -102,6 +104,10 @@ public class ApiLogInServiceIntegrationTest {
         } catch (ApiLoginException expected) {
             // expected
         }
+    }
+
+    private String readFile(String filename) throws IOException {
+        return IOUtils.toString(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8));
     }
 
     private SSLSocketFactory defaultSocketFactory() {

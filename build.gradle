@@ -10,11 +10,12 @@ buildscript {
     }
 }
 
-apply plugin: 'application'                  // http://www.gradle.org/docs/current/userguide/application_plugin.html
-apply plugin: 'java'                         // http://www.gradle.org/docs/current/userguide/java_plugin.html
+apply plugin: 'application'                  // https://docs.gradle.org/current/userguide/application_plugin.html
+apply plugin: 'com.moowork.node'             // https://github.com/srs/gradle-node-plugin
+apply plugin: 'findbugs'                     // https://docs.gradle.org/current/userguide/findbugs_plugin.html
+apply plugin: 'java'                         // https://docs.gradle.org/current/userguide/java_plugin.html
 apply plugin: 'org.unbroken-dome.test-sets'  // https://github.com/unbroken-dome/gradle-testsets-plugin
 apply plugin: 'spring-boot'                  // http://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html
-apply plugin: 'com.moowork.node'
 
 node {
     version = '4.2.6'
@@ -28,6 +29,12 @@ node {
     workDir = file("${project.buildDir}/nodejs")
     // Set the work directory where node_modules should be located
     nodeModulesDir = file("${project.projectDir}")
+}
+
+findbugs {
+    effort = "max"
+    ignoreFailures = false
+    reportLevel = "high"
 }
 
 def javaVersion = '1.8'
@@ -71,6 +78,13 @@ integrationTest.shouldRunAfter test  // Run unit tests before integration tests
 // Ensure that the HTML reports of unit and integration tests are written to different directories
 tasks.withType(Test) {
     reports.html.destination = file("${reporting.baseDir}/${name}")
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
 }
 
 repositories {
