@@ -7,13 +7,14 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.pdf417.encoder.Compaction;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +23,11 @@ import java.util.Map;
 @RequestMapping(value = "/barcode")
 public class BarcodeController {
     private static final String IMAGE_PNG = "image/png";
-    private static final String IMAGE_FORMAT = "png";
+    private static final int MARGIN_PIXELS = 10;
     private static final int BARCODE_WIDTH = 250;
     private static final int BARCODE_HEIGHT = 75;
-    private static final int QR_CODE_HEIGHT = BARCODE_WIDTH;
-    private static final int MARGIN_PIXELS = 10;
+    private static final int CROPPED_WIDTH = 158;
+    private static final int CROPPED_HEIGHT = 84;
 
     @RequestMapping(value = "/pdf417/{id}", method = RequestMethod.GET, produces = IMAGE_PNG)
     public void barcode417(@PathVariable("id") String id, HttpServletResponse response) throws IOException, WriterException {
@@ -38,27 +39,17 @@ public class BarcodeController {
             put(EncodeHintType.PDF417_COMPACTION, Compaction.TEXT);
         }};
         BitMatrix matrix = new MultiFormatWriter().encode(id, BarcodeFormat.PDF_417, BARCODE_WIDTH, BARCODE_HEIGHT, hints);
-        MatrixToImageWriter.writeToStream(matrix, IMAGE_FORMAT, response.getOutputStream());
+        BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
+        BufferedImage croppedImage = cropImageWorkaroundDueToZxingBug(bufferedImage);
+        ImageIO.write(croppedImage, "PNG", response.getOutputStream());
     }
 
-    @RequestMapping(value = "/code128/{id}", method = RequestMethod.GET, produces = IMAGE_PNG)
-    public void barcode128(@PathVariable("id") String id, HttpServletResponse response) throws IOException, WriterException {
-        response.setContentType(IMAGE_PNG);
-        Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>() {{
-            put(EncodeHintType.MARGIN, MARGIN_PIXELS);
-        }};
-        BitMatrix matrix = new MultiFormatWriter().encode(id, BarcodeFormat.CODE_128, BARCODE_WIDTH, BARCODE_HEIGHT, hints);
-        MatrixToImageWriter.writeToStream(matrix, IMAGE_FORMAT, response.getOutputStream());
-    }
-
-    @RequestMapping(value = "/qr/{id}", method = RequestMethod.GET, produces = IMAGE_PNG)
-    public void barcodeQr(@PathVariable("id") String id, HttpServletResponse response) throws IOException, WriterException {
-        response.setContentType(IMAGE_PNG);
-        Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>() {{
-            put(EncodeHintType.MARGIN, MARGIN_PIXELS);
-            put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-        }};
-        BitMatrix matrix = new MultiFormatWriter().encode(id, BarcodeFormat.QR_CODE, BARCODE_WIDTH, QR_CODE_HEIGHT, hints);
-        MatrixToImageWriter.writeToStream(matrix, IMAGE_FORMAT, response.getOutputStream());
+    /**
+     * zxing currently doesn't crop the image correctly when PDF417 compaction is applied.
+     * Instead, it leaves the right portion of the image blank (white).
+     * This code, with its magic numbers, crops the image to get rid of this white area.
+     */
+    private BufferedImage cropImageWorkaroundDueToZxingBug(BufferedImage bufferedImage) {
+        return bufferedImage.getSubimage(0, 0, CROPPED_WIDTH, CROPPED_HEIGHT);
     }
 }
