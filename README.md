@@ -1,4 +1,4 @@
-# citizenship-appointment-server
+# citizenship-appointment-server [![Travis CI Build Status](https://travis-ci.org/AusDTO/citizenship-appointment-server.svg?branch=master)](https://travis-ci.org/AusDTO/citizenship-appointment-server)
 
 This is the server code for the citizenship appointment service.  
 
