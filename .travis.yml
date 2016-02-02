@@ -1,4 +1,8 @@
 language: java
 jdk:
   - oraclejdk8
-script: ./gradlew check --info
+sudo: false
+script:
+  - ./gradlew check --info
+notifications:
+  email: false
