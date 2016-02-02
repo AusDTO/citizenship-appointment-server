@@ -1,6 +1,5 @@
 package au.gov.dto.dibp.appointments.security.context;
 
-import com.oakfusion.security.SecurityCookieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;

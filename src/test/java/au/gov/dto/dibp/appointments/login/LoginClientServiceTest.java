@@ -45,8 +45,8 @@ public class LoginClientServiceTest {
         assertThat(client.getServiceId(), is(SERVICE_ID));
         assertThat(client.getUnitId(), is(UNIT_ID));
         assertThat(client.getAppointmentTypeId(), is(APPOINTMENT_TYPE_ID));
-        assertThat(client.hasEmail(), is(true));
-        assertThat(client.hasMobile(), is(true));
+        assertThat(client.isEmail(), is(true));
+        assertThat(client.isMobile(), is(true));
     }
 
     @Test(expected = RuntimeException.class)

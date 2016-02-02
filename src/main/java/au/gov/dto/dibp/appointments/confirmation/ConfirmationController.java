@@ -44,8 +44,8 @@ public class ConfirmationController {
         model.put("clientId", client.getClientId());
         model.put("location", appointmentDetails.getUnitAddress());
         model.put("clientId", client.getClientId());
-        model.put("hasEmail", client.hasEmail());
-        model.put("hasMobile", client.hasMobile());
+        model.put("hasEmail", client.isEmail());
+        model.put("hasMobile", client.isMobile());
 
         model.put("appointment_date", appointmentDetails.getAppointmentDate().format(APPOINTMENT_DATE_FORMATTER));
         model.put("appointment_time", appointmentDetails.getAppointmentDate().format(APPOINTMENT_TIME_FORMATTER));

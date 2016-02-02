@@ -1,5 +1,7 @@
 package au.gov.dto.dibp.appointments.client;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collections;
@@ -9,11 +11,20 @@ public class Client extends User {
     private final String customerId;
     private final boolean hasEmail;
     private final boolean hasMobile;
-    private String unitId;
-    private String serviceId;
-    private String appointmentTypeId;
+    private final String unitId;
+    private final String serviceId;
+    private final String appointmentTypeId;
 
-    public Client(String clientId, String familyName, String customerId, boolean hasEmail, boolean hasMobile, String unitId, String serviceId, String appointmentTypeId, boolean active) {
+    @JsonCreator
+    public Client(@JsonProperty("clientId") String clientId,
+                  @JsonProperty("username") String familyName,
+                  @JsonProperty("customerId") String customerId,
+                  @JsonProperty("email") boolean hasEmail,
+                  @JsonProperty("mobile") boolean hasMobile,
+                  @JsonProperty("unitId") String unitId,
+                  @JsonProperty("serviceId") String serviceId,
+                  @JsonProperty("appointmentTypeId") String appointmentTypeId,
+                  @JsonProperty("enabled") boolean active) {
         super(clientId, familyName, active, true, true, true, Collections.emptyList());
         this.customerId = customerId;
         this.hasEmail = hasEmail;
@@ -35,11 +46,11 @@ public class Client extends User {
         return unitId;
     }
 
-    public boolean hasEmail() {
+    public boolean isEmail() {
         return hasEmail;
     }
 
-    public boolean hasMobile() {
+    public boolean isMobile() {
         return hasMobile;
     }
 

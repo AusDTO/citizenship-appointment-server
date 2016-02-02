@@ -4,7 +4,8 @@ import au.gov.dto.dibp.appointments.initializer.DoSFilter;
 import au.gov.dto.dibp.appointments.initializer.HttpsOnlyFilter;
 import au.gov.dto.dibp.appointments.initializer.LogClientIdFilter;
 import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
-import com.oakfusion.security.SecurityCookieService;
+import au.gov.dto.dibp.appointments.security.context.AuthenticationSerializer;
+import au.gov.dto.dibp.appointments.security.context.SecurityCookieService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,8 @@ public class AppConfig {
     }
 
     @Bean
-    public SecurityCookieService securityCookieService(@Value("${session.encryption.key}") String sessionEncryptionKey) {
-        return new SecurityCookieService(SESSION_COOKIE_NAME, sessionEncryptionKey);
+    public SecurityCookieService securityCookieService(@Value("${session.encryption.key}") String sessionEncryptionKey,
+                                                       AuthenticationSerializer authenticationSerializer) {
+        return new SecurityCookieService(SESSION_COOKIE_NAME, sessionEncryptionKey, authenticationSerializer);
     }
 }
