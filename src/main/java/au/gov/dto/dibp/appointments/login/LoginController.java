@@ -55,6 +55,14 @@ public class LoginController {
         return new ModelAndView("redirect:/login?expired", new HashMap<>());
     }
 
+    @RequestMapping(value = "/session_timeout", method = RequestMethod.GET, produces = "text/html")
+    public ModelAndView sessionTimeoutHtml() {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("trackingId", trackingId);
+       return new ModelAndView("session_timeout", model);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ModelAndView handleRuntimeException(HttpServletRequest req, RuntimeException exception){
         return new ModelAndView("redirect:/login?expired", new HashMap<>());
