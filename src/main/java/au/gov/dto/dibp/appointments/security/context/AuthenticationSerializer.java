@@ -59,7 +59,7 @@ public class AuthenticationSerializer {
         try {
             Client client = objectMapper.readValue(clientJson, Client.class);
             return new UsernamePasswordAuthenticationToken(client, null, Collections.emptyList());
-            } catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Problem deserializing Client JSON: " + clientJson, e);
         }
     }
