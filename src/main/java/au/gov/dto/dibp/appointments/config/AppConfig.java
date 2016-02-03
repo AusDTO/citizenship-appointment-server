@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import javax.servlet.http.HttpSessionListener;
 import java.util.ArrayList;
@@ -75,6 +76,14 @@ public class AppConfig {
     public FilterRegistrationBean logClientIdFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new LogClientIdFilter());
+        registration.addUrlPatterns("/*");
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean logAllRequestsAndResponsesFilter() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new CommonsRequestLoggingFilter());
         registration.addUrlPatterns("/*");
         return registration;
     }
