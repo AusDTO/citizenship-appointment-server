@@ -38,6 +38,7 @@ At least one set of API user credentials must be supplied. `x` is a sequential n
 - `ANALYTICS_TRACKING_ID`: Analytics tracking ID, may be left blank
 - `SECURITY_ADMIN_PASSWORD`: Password for the read-only monitoring endpoints
 - `KEYSTORE_PASSWORD`: The password for the included certificate trust store. Not required if you supply your own trust store.
+- `SECURITY_ANONYMOUS_TOKEN_KEY`: A key for use in anonymous authentication tokens
 
 ### Running the application
 
