@@ -1,5 +1,6 @@
 package au.gov.dto.dibp.appointments.config;
 
+import au.gov.dto.dibp.appointments.initializer.CustomAuthenticationProvider;
 import au.gov.dto.dibp.appointments.login.LoginClientService;
 import au.gov.dto.dibp.appointments.security.context.CookieBasedSecurityContextRepository;
 import au.gov.dto.dibp.appointments.security.csrf.CookieBasedCsrfTokenRepository;
@@ -97,9 +98,12 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         PlaintextPasswordEncoder passwordEncoder = new PlaintextPasswordEncoder();
         passwordEncoder.setIgnorePasswordCase(true);
-        auth
-            .userDetailsService(userDetailsService())
-            .passwordEncoder(passwordEncoder);
+
+        CustomAuthenticationProvider provider = new CustomAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userDetailsService());
+
+        auth.authenticationProvider(provider);
     }
 
 }
