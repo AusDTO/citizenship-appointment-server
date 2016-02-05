@@ -57,6 +57,8 @@ jar {
 configurations {
     all*.exclude group: 'commons-logging'              // Never include commons-logging (use SLF4J instead)
     all*.exclude group: 'log4j'                        // Never include log4j (use SLF4J instead)
+    all*.exclude group: 'org.apache.tomcat.embed'      // Never include Tomcat (use Jetty instead)
+    all*.exclude group: 'org.eclipse.jetty.websocket'  // No need for websocket support
     all*.exclude module: 'jetty-jsp'                   // No need for JSP support
     all*.exclude module: 'slf4j-simple'                // Use logback
     all*.exclude module: 'spring-boot-starter-tomcat'  // Never include Tomcat (use Jetty instead)
@@ -96,22 +98,29 @@ def jmustacheVersion = '1.12'
 def junitVersion = '4.12'
 def springBootVersion = '1.3.2.RELEASE'
 def okhttpVersion = '3.0.1'
-def metricsVersion = '3.0.2'
+def metricsVersion = '3.1.2'
 def commonsIoVersion = '2.4'
 def springCookieSessionVersion = '1.0'
 def commonsCodecVersion = '1.10'
 def commonsLang3Version = '3.4'
 def zxingVersion = '3.2.1'
+def prometheusVersion = '0.0.13'
+def prometheusJmxVersion = '0.0.6'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-jetty:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}",
-            "com.codahale.metrics:metrics-jetty9:${metricsVersion}",
-            "com.codahale.metrics:metrics-logback:${metricsVersion}",
-            "com.codahale.metrics:metrics-servlet:${metricsVersion}",
-            "com.codahale.metrics:metrics-servlets:${metricsVersion}",
+            "io.dropwizard.metrics:metrics-jetty9:${metricsVersion}",
+            "io.dropwizard.metrics:metrics-logback:${metricsVersion}",
+            "io.dropwizard.metrics:metrics-servlet:${metricsVersion}",
+            "io.dropwizard.metrics:metrics-servlets:${metricsVersion}",
+            "io.prometheus:simpleclient_dropwizard:${prometheusVersion}",
+            "io.prometheus:simpleclient_hotspot:${prometheusVersion}",
+            "io.prometheus:simpleclient_logback:${prometheusVersion}",
+            "io.prometheus:simpleclient_servlet:${prometheusVersion}",
+            "io.prometheus.jmx:collector:${prometheusJmxVersion}",
             "com.samskivert:jmustache:${jmustacheVersion}",
             "com.squareup.okhttp3:okhttp:${okhttpVersion}",
             "com.oakfusion:spring-cookie-session:${springCookieSessionVersion}",
