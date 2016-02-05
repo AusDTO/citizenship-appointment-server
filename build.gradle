@@ -105,7 +105,7 @@ def commonsCodecVersion = '1.10'
 def commonsLang3Version = '3.4'
 def zxingVersion = '3.2.1'
 def prometheusVersion = '0.0.13'
-def prometheusJmxVersion = '0.0.6'
+def prometheusJmxVersion = '0.6'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
