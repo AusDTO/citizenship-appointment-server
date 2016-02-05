@@ -69,7 +69,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 .and()
             .authorizeRequests()
                 .antMatchers("/", "/login").permitAll()  // no authentication on endpoints '/' and public assets
-                .antMatchers("/admin/**").permitAll()  // handled by AdminSecurityConfigurerAdapter
+                .antMatchers("/admin/**", "/metrics/**").permitAll()  // handled by AdminSecurityConfigurerAdapter
                 .anyRequest().authenticated()  // all other endpoints require authentication
                 .and()
             .formLogin()

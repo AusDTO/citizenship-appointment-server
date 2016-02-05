@@ -36,6 +36,8 @@ public class AdminSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter
                 .disable()
             .antMatcher("/admin/**").authorizeRequests().anyRequest().hasAnyRole(ROLE_ADMIN)
                 .and()
+            .antMatcher("/metrics/**").authorizeRequests().anyRequest().hasAnyRole(ROLE_ADMIN)
+                .and()
             .httpBasic();
     }
 
