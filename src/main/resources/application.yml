@@ -12,6 +12,9 @@ management:
   contextPath: /admin
   port: ${port:8083}
 
+endpoints:
+  enabled: false
+
 spring:
   mvc:
     favicon:
