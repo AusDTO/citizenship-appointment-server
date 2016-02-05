@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,6 +21,7 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import javax.servlet.http.HttpSessionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -27,6 +29,11 @@ import java.util.List;
 public class AppConfig {
     private static final Logger LOG = LoggerFactory.getLogger(AppConfig.class);
     private static final String SESSION_COOKIE_NAME = "session";
+
+    @Bean
+    public ServletContextInitializer noSessionTrackingServletContextInitializer() {
+        return servletContext -> servletContext.setSessionTrackingModes(Collections.emptySet());
+    }
 
     @Bean
     @Order(1)
