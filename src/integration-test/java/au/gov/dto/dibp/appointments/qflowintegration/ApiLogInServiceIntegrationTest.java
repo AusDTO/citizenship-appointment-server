@@ -1,6 +1,5 @@
 package au.gov.dto.dibp.appointments.qflowintegration;
 
-import okhttp3.internal.tls.OkHostnameVerifier;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -11,13 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -26,7 +22,7 @@ import static org.junit.Assert.fail;
 
 public class ApiLogInServiceIntegrationTest {
 
-    private final HttpClient httpClient = new HttpClient(defaultSocketFactory(), OkHostnameVerifier.INSTANCE);
+    private final HttpClient httpClient = new HttpClient();
 
     private MockWebServer mockWebServer;
 
@@ -108,13 +104,5 @@ public class ApiLogInServiceIntegrationTest {
 
     private String readFile(String filename) throws IOException {
         return IOUtils.toString(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8));
-    }
-
-    private SSLSocketFactory defaultSocketFactory() {
-        try {
-            return SSLContext.getDefault().getSocketFactory();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Could not create default SSLContext", e);
-        }
     }
 }

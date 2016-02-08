@@ -8,11 +8,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 
 @Component
@@ -22,12 +19,8 @@ class HttpClient {
 
     private final OkHttpClient httpClient;
 
-    @Autowired
-    public HttpClient(SSLSocketFactory sslSocketFactory, HostnameVerifier hostnameVerifier) {
-        this.httpClient = new OkHttpClient.Builder()
-                .sslSocketFactory(sslSocketFactory)
-                .hostnameVerifier(hostnameVerifier)
-                .build();
+    public HttpClient() {
+        this.httpClient = new OkHttpClient.Builder().build();
     }
 
     public ResponseWrapper post(String url, String messageBody) {
