@@ -1,13 +1,11 @@
 package au.gov.dto.dibp.appointments.login;
 
 import au.gov.dto.dibp.appointments.client.ClientIdValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +16,7 @@ import java.util.Map;
 @RestController
 public class LoginController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
     private final ClientIdValidator clientIdValidator;
     private final String trackingId;
 
@@ -65,6 +64,7 @@ public class LoginController {
 
     @ExceptionHandler(RuntimeException.class)
     public ModelAndView handleRuntimeException(HttpServletRequest req, RuntimeException exception){
+        LOGGER.error("Unhandled RuntimeException", exception);
         return new ModelAndView("redirect:/login?expired", new HashMap<>());
     }
 }

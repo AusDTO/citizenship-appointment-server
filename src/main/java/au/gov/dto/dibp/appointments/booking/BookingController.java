@@ -15,6 +15,7 @@ import java.util.HashMap;
 @RestController
 public class BookingController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookingController.class);
     private final BookingService bookingService;
 
     @Autowired
@@ -37,11 +38,13 @@ public class BookingController {
 
     @ExceptionHandler(BookingResponseInvalidException.class)
     public ModelAndView handleAppointmentNotBookedError(HttpServletRequest req, BookingResponseInvalidException exception){
+        LOGGER.error("Unhandled BookingResponseInvalidException", exception);
         return new ModelAndView("redirect:/calendar?unavailable", new HashMap<>());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ModelAndView handleRuntimeException(HttpServletRequest req, RuntimeException exception){
+        LOGGER.error("Unhandled RuntimeException", exception);
         return new ModelAndView("redirect:/calendar?error", new HashMap<>());
     }
 }

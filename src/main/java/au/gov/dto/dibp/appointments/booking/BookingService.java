@@ -89,7 +89,7 @@ public class BookingService {
             ResponseWrapper response = senderService.sendRequest(template, data, serviceAddress);
             return response.getStringAttribute(appointmentDatePath);
         }catch(RuntimeException e){
-            throw new BookingResponseInvalidException("Response did not contain the appointment date.");
+            throw new BookingResponseInvalidException("Response did not contain the appointment date.", e);
         }
     }
 

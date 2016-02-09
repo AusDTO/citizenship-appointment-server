@@ -4,6 +4,8 @@ import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.organisation.UnitDetailsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +21,7 @@ import java.util.Map;
 @RestController
 public class CalendarController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CalendarController.class);
     private final AppointmentDetailsService appointmentDetailsService;
     private final UnitDetailsService unitDetailsService;
     private final String trackingId;
@@ -76,6 +79,7 @@ public class CalendarController {
 
     @ExceptionHandler(RuntimeException.class)
     public ModelAndView handleRuntimeException(HttpServletRequest req, RuntimeException exception){
+        LOGGER.error("Unhandled RuntimeException", exception);
         return new ModelAndView("redirect:/calendar?error", new HashMap<>());
     }
 }
