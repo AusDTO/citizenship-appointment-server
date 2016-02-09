@@ -13,9 +13,9 @@ public class GlobalControllerExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
-    @ExceptionHandler(RuntimeException.class)
-    public ModelAndView handleRuntimeException(RuntimeException exception) {
-        LOGGER.error("Unhandled RuntimeException", exception);
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(Exception exception) {
+        LOGGER.error("Unhandled Exception", exception);
         return new ModelAndView("redirect:/error", new HashMap<>());
     }
 }
