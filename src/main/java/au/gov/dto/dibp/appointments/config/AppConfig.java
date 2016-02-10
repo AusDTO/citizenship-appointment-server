@@ -4,6 +4,7 @@ import au.gov.dto.dibp.appointments.initializer.DoSFilter;
 import au.gov.dto.dibp.appointments.initializer.HttpsOnlyFilter;
 import au.gov.dto.dibp.appointments.initializer.LogClientIdFilter;
 import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
+import au.gov.dto.dibp.appointments.initializer.RequestLoggingFilter;
 import au.gov.dto.dibp.appointments.security.context.AuthenticationSerializer;
 import au.gov.dto.dibp.appointments.security.context.SecurityCookieService;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import javax.servlet.http.HttpSessionListener;
 import java.util.ArrayList;
@@ -72,14 +72,7 @@ public class AppConfig {
     }
 
     @Bean
-    public FilterRegistrationBean noHttpSessionFilter() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new NoHttpSessionFilter());
-        registration.addUrlPatterns("/*");
-        return registration;
-    }
-
-    @Bean
+    @Order(3)
     public FilterRegistrationBean logClientIdFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new LogClientIdFilter());
@@ -88,9 +81,18 @@ public class AppConfig {
     }
 
     @Bean
-    public FilterRegistrationBean logAllRequestsAndResponsesFilter() {
+    @Order(4)
+    public FilterRegistrationBean reuqestLoggingFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new CommonsRequestLoggingFilter());
+        registration.setFilter(new RequestLoggingFilter());
+        registration.addUrlPatterns("/*");
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean noHttpSessionFilter() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new NoHttpSessionFilter());
         registration.addUrlPatterns("/*");
         return registration;
     }
