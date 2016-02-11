@@ -18,6 +18,7 @@ import java.util.UUID;
 public class RequestLoggingFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(RequestLoggingFilter.class);
     private static final String UNKNOWN_USER_AGENT = "unknown";
+    public static final String REQUEST_ATTRIBUTE_CORRELATION_ID = "correlationId";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -30,11 +31,12 @@ public class RequestLoggingFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String userAgent = StringUtils.defaultString(request.getHeader("user-agent"), UNKNOWN_USER_AGENT);
         String path = request.getQueryString() == null ? request.getRequestURI() : request.getRequestURI() + "?" + request.getQueryString();
-        String id = UUID.randomUUID().toString();
-        LOG.info("Received request method=[{}] path=[{}] userAgent=[{}] requestId=[{}]", request.getMethod(), path, userAgent, id);
+        String correlationId = UUID.randomUUID().toString();
+        request.setAttribute(REQUEST_ATTRIBUTE_CORRELATION_ID, correlationId);
+        LOG.info("Received request method=[{}] path=[{}] userAgent=[{}] correlationId=[{}]", request.getMethod(), path, userAgent, correlationId);
         filterChain.doFilter(request, response);
         long responseTime = System.currentTimeMillis() - startTime;
-        LOG.info("Returning response statusCode=[{}] responseTime=[{}ms] method=[{}] path=[{}] requestId=[{}]", response.getStatus(), responseTime, request.getMethod(), path, id);
+        LOG.info("Returning response statusCode=[{}] responseTime=[{}ms] method=[{}] path=[{}] correlationId=[{}]", response.getStatus(), responseTime, request.getMethod(), path, correlationId);
     }
 
     @Override
