@@ -29,7 +29,7 @@ class HttpClient {
                 .url(url)
                 .post(body)
                 .build();
-        LOGGER.debug("API Request to be sent for messageId=[{}]: " + messageBody.replaceAll("\\n", ""), messageId);
+        LOGGER.debug("API Request to be sent for messageId=[{}]: " + loggableMessage(messageBody), messageId);
         long startTime = System.currentTimeMillis();
 
         try {
@@ -43,4 +43,10 @@ class HttpClient {
         }
     }
 
+    String loggableMessage(String messageBody) {
+        messageBody = messageBody
+                .replaceAll("\\n", "")
+                .replaceAll("<password>.*</password>", "<password>MASKED</password>");
+        return messageBody;
+    }
 }
