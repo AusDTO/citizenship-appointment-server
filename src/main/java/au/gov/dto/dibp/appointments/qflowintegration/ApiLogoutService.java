@@ -1,6 +1,5 @@
 package au.gov.dto.dibp.appointments.qflowintegration;
 
-import au.gov.dto.dibp.appointments.qflowintegration.HttpClient;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +44,11 @@ class ApiLogoutService {
 
         Map<String, String> messageParams = new HashMap<>();
         messageParams.put("apiSessionId", apiSessionId);
-        messageParams.put("messageUUID", UUID.randomUUID().toString());
+        String messageId = UUID.randomUUID().toString();
+        messageParams.put("messageUUID", messageId);
         messageParams.put("serviceAddress", serviceAddressUser);
         String messageBody = tmpl.execute(messageParams);
 
-        httpClient.post(serviceAddressUser, messageBody);
+        httpClient.post(serviceAddressUser, messageBody, messageId);
     }
 }

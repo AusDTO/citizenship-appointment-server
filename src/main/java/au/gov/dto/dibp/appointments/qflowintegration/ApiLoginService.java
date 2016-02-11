@@ -70,11 +70,12 @@ class ApiLoginService {
         messageParams.put("username", apiUsers.get(index).getUsername());
         messageParams.put("password", apiUsers.get(index).getPassword());
         messageParams.put("forceSignIn", "false");
-        messageParams.put("messageUUID", UUID.randomUUID().toString());
+        String messageId = UUID.randomUUID().toString();
+        messageParams.put("messageUUID", messageId);
         messageParams.put("serviceAddress", serviceAddressUser);
         messageParams.put("ipAddressUUID", UUID.randomUUID().toString());
         String messageBody = tmpl.execute(messageParams);
 
-        return httpClient.post(serviceAddressUser, messageBody);
+        return httpClient.post(serviceAddressUser, messageBody, messageId);
     }
 }

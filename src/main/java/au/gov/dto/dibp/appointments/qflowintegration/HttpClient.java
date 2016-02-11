@@ -23,21 +23,23 @@ class HttpClient {
         this.httpClient = new OkHttpClient.Builder().build();
     }
 
-    public ResponseWrapper post(String url, String messageBody) {
+    public ResponseWrapper post(String url, String messageBody, String messageId) {
         RequestBody body = RequestBody.create(SOAP_MEDIA_TYPE, messageBody);
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .build();
-        LOGGER.debug("Request to be sent: " + messageBody.replaceAll("\\n", ""));
+        LOGGER.debug("API Request to be sent for messageId=[{}]: " + messageBody.replaceAll("\\n", ""), messageId);
+        long startTime = System.currentTimeMillis();
 
         try {
             Response response = httpClient.newCall(request).execute();
             String responseMessage = response.body().string();
-            LOGGER.debug("Response received: " + responseMessage);
+            long timeTakenMillis = System.currentTimeMillis() - startTime;
+            LOGGER.debug("API Response received time=[{}ms] messageId=[{}]: " + responseMessage, timeTakenMillis, messageId);
             return new ResponseWrapper(response.code(), responseMessage);
         } catch (IOException e) {
-            throw new RuntimeException("Error sending SOAP request", e);
+            throw new RuntimeException("Error sending API request messageId=[" + messageId + "]", e);
         }
     }
 

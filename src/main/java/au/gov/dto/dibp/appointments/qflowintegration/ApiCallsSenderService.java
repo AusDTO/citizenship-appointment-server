@@ -32,11 +32,12 @@ class DefaultApiCallsSenderService implements ApiCallsSenderService {
             messageParams.put("apiSessionId", apiSession.getApiSessionId());
             messageParams.put("currentUserId", apiSession.getUserId());
             messageParams.put("serviceAddress", serviceAddress);
-            messageParams.put("messageUUID", UUID.randomUUID().toString());
+            String messageId = UUID.randomUUID().toString();
+            messageParams.put("messageUUID", messageId);
             String requestBody = template.execute(messageParams);
-            ResponseWrapper response = httpClient.post(serviceAddress, requestBody);
+            ResponseWrapper response = httpClient.post(serviceAddress, requestBody, messageId);
             if (response.getCode() != 200){
-                throw new RuntimeException("Invalid server response with code "+ response.getCode() + ": " + response.getMessage());
+                throw new RuntimeException("Invalid server response with statusCode=[" + response.getCode() + "] for messageId=[" + messageId + "]: " + response.getMessage());
             }
             return response;
         }finally {
