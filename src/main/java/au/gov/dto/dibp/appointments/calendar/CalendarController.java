@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,12 +41,15 @@ public class CalendarController {
     public ModelAndView bookingHtml(@AuthenticationPrincipal Client client,
                                     @RequestParam(value = "error", required = false) String error,
                                     @RequestParam(value = "unavailable", required = false) String unavailable,
-                                    HttpServletRequest request) {
+                                    HttpServletRequest request) throws UnsupportedEncodingException {
 
         Map<String, Object> model = new HashMap<>();
         model.put("trackingId", trackingId);
         model.put("clientId", client.getClientId());
-        model.put("location", getUnitLocation(client));
+
+        String unitAddress = getUnitLocation(client);
+        model.put("location", unitAddress);
+        model.put("locationURL", URLEncoder.encode(unitAddress, "UTF-8"));
         model.put("today_date", getUnitCurrentDate(client));
         model.put("current_appointment", getCurrentAppointmentDetails(client));
 

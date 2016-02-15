@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
@@ -32,7 +34,7 @@ public class ConfirmationController {
     }
 
     @RequestMapping(value = "/confirmation", method = RequestMethod.GET, produces = "text/html")
-    public ModelAndView getConfirmationPage(@AuthenticationPrincipal Client client) {
+    public ModelAndView getConfirmationPage(@AuthenticationPrincipal Client client) throws UnsupportedEncodingException {
         AppointmentDetails appointmentDetails = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
 
         if(appointmentDetails == null){
@@ -42,7 +44,9 @@ public class ConfirmationController {
         HashMap<String, Object> model = new HashMap<>();
         model.put("trackingId", trackingId);
         model.put("clientId", client.getClientId());
-        model.put("location", appointmentDetails.getUnitAddress());
+        String unitAddress = appointmentDetails.getUnitAddress();
+        model.put("location", unitAddress);
+        model.put("locationURL", URLEncoder.encode(unitAddress, "UTF-8"));
         model.put("clientId", client.getClientId());
         model.put("hasEmail", client.isEmail());
         model.put("hasMobile", client.isMobile());
