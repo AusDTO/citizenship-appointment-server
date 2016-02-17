@@ -18,10 +18,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping(value = "/barcode")
 public class BarcodeController {
+    private static final Pattern CLIENT_ID_PATTERN = Pattern.compile("^[0-9]{11}$");
+
     private static final String IMAGE_PNG = "image/png";
     private static final int MARGIN_PIXELS = 10;
     private static final int BARCODE_WIDTH = 250;
@@ -31,6 +34,9 @@ public class BarcodeController {
 
     @RequestMapping(value = "/pdf417/{id}", method = RequestMethod.GET, produces = IMAGE_PNG)
     public void barcode417(@PathVariable("id") String id, HttpServletResponse response) throws IOException, WriterException {
+        if (!CLIENT_ID_PATTERN.matcher(id).matches()) {
+            throw new IllegalArgumentException("Invalid clientId for barcode [" + id + "]");
+        }
         response.setContentType(IMAGE_PNG);
         Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>() {{
             put(EncodeHintType.MARGIN, MARGIN_PIXELS);
