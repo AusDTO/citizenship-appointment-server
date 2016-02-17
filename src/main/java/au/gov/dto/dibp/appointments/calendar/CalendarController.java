@@ -46,6 +46,7 @@ public class CalendarController {
         Map<String, Object> model = new HashMap<>();
         model.put("trackingId", trackingId);
         model.put("clientId", client.getClientId());
+        model.put("unitId", client.getUnitId());
 
         String unitAddress = getUnitLocation(client);
         model.put("location", unitAddress);
