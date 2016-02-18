@@ -106,6 +106,7 @@ def commonsLang3Version = '3.4'
 def zxingVersion = '3.2.1'
 def prometheusVersion = '0.0.13'
 def prometheusJmxVersion = '0.6'
+def nimbusJoseJwtVersion = '4.12'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
@@ -126,7 +127,9 @@ dependencies {
             "com.oakfusion:spring-cookie-session:${springCookieSessionVersion}",
             "commons-codec:commons-codec:${commonsCodecVersion}",
             "org.apache.commons:commons-lang3:${commonsLang3Version}",
-            "com.google.zxing:javase:${zxingVersion}"
+            "com.google.zxing:javase:${zxingVersion}",
+            "com.nimbusds:nimbus-jose-jwt:${nimbusJoseJwtVersion}"
+
 
     testCompile "junit:junit:${junitVersion}",
             "org.hamcrest:hamcrest-library:${hamcrestVersion}",
