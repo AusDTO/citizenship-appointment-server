@@ -5,7 +5,6 @@ import au.gov.dto.dibp.appointments.login.LoginClientService;
 import au.gov.dto.dibp.appointments.security.context.CookieBasedSecurityContextRepository;
 import au.gov.dto.dibp.appointments.security.csrf.CookieBasedCsrfTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -38,13 +37,9 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     @Autowired
     private CookieBasedSecurityContextRepository cookieBasedSecurityContextRepository;
 
-    @Autowired
-    @Value("${security.anonymous.token.key}")
-    private String anonymousAuthenticationTokenKey;
-
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/images/**", "/static/**", "/barcode/**");
+        web.ignoring().antMatchers("/images/**", "/static/**", "/barcode/**", "/login", "/session_timeout", "/sessionExpired", "/error");
     }
 
     @Override
@@ -66,8 +61,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .requestCache()
                 .disable()
             .anonymous()
-                .key(anonymousAuthenticationTokenKey)
-                .and()
+                .disable()
             .authorizeRequests()
                 .antMatchers("/", "/login").permitAll()  // no authentication on endpoints '/' and public assets
                 .antMatchers("/admin/**", "/metrics/**").permitAll()  // handled by AdminSecurityConfigurerAdapter

@@ -4,11 +4,8 @@ import au.gov.dto.dibp.appointments.client.Client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,17 +18,11 @@ import java.util.Collections;
  */
 @Component
 public class AuthenticationSerializer {
-    private static final String ANONYMOUS_AUTHENTICATION_TOKEN_PRINCIPAL = "anonymousUser";
-    private static final String ANONYMOUS_ROLE = "ROLE_ANONYMOUS";
-
     private final ObjectMapper objectMapper;
-    private final String anonymousAuthenticationTokenKey;
 
     @Autowired
-    public AuthenticationSerializer(ObjectMapper objectMapper,
-                                    @Value("${security.anonymous.token.key}") String anonymousAuthenticationTokenKey) {
+    public AuthenticationSerializer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.anonymousAuthenticationTokenKey = anonymousAuthenticationTokenKey;
     }
 
     public byte[] serializeToByteArray(Authentication authentication) {
@@ -51,9 +42,7 @@ public class AuthenticationSerializer {
 
     public Authentication deserializeFrom(byte[] bytes) {
         if (bytes == null || new String(bytes, StandardCharsets.UTF_8).isEmpty()) {
-            return new AnonymousAuthenticationToken(anonymousAuthenticationTokenKey,
-                    ANONYMOUS_AUTHENTICATION_TOKEN_PRINCIPAL,
-                    Collections.singletonList(new SimpleGrantedAuthority(ANONYMOUS_ROLE)));
+            return null;
         }
         String clientJson = new String(bytes, StandardCharsets.UTF_8);
         try {
