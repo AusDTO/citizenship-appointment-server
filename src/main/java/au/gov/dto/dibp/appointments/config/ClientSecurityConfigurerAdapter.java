@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.encoding.PlaintextPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,7 +40,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/images/**", "/static/**", "/barcode/**", "/login", "/session_timeout", "/sessionExpired", "/error");
+        web.ignoring().antMatchers(HttpMethod.GET, "/images/**", "/static/**", "/barcode/**", "/login", "/session_timeout", "/sessionExpired", "/error", "/");
     }
 
     @Override
