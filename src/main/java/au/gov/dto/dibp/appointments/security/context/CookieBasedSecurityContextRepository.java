@@ -81,7 +81,7 @@ public class CookieBasedSecurityContextRepository implements SecurityContextRepo
         @Override
         protected void saveContext(SecurityContext context) {
             Cookie securityCookie = securityCookieService.createSecurityCookie(context.getAuthentication());
-            if (securityCookie != null) {
+            if (securityCookie != null && context.getAuthentication() != null) {
                 if (!this.isContextSaved()) {
                     securityCookie.setHttpOnly(true);
                     securityCookie.setSecure(secure);
