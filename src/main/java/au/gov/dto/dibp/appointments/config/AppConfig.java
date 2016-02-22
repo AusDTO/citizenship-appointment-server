@@ -1,16 +1,9 @@
 package au.gov.dto.dibp.appointments.config;
 
-import au.gov.dto.dibp.appointments.initializer.DoSFilter;
-import au.gov.dto.dibp.appointments.initializer.HttpsOnlyFilter;
-import au.gov.dto.dibp.appointments.initializer.LogClientIdFilter;
-import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
-import au.gov.dto.dibp.appointments.initializer.RequestLoggingFilter;
-import au.gov.dto.dibp.appointments.security.context.AuthenticationSerializer;
-import au.gov.dto.dibp.appointments.security.context.SecurityCookieService;
+import au.gov.dto.dibp.appointments.initializer.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
@@ -28,7 +21,6 @@ import java.util.List;
 @ComponentScan(basePackages = "au.gov.dto.dibp.appointments")
 public class AppConfig {
     private static final Logger LOG = LoggerFactory.getLogger(AppConfig.class);
-    private static final String SESSION_COOKIE_NAME = "session";
 
     @Bean
     public ServletContextInitializer noSessionTrackingServletContextInitializer() {
@@ -102,11 +94,5 @@ public class AppConfig {
         ServletListenerRegistrationBean<HttpSessionListener> listenerRegistrationBean = new ServletListenerRegistrationBean<>();
         listenerRegistrationBean.setListener(new HttpSessionCreatedListener());
         return listenerRegistrationBean;
-    }
-
-    @Bean
-    public SecurityCookieService securityCookieService(@Value("${session.encryption.key}") String sessionEncryptionKey,
-                                                       AuthenticationSerializer authenticationSerializer) {
-        return new SecurityCookieService(SESSION_COOKIE_NAME, sessionEncryptionKey, authenticationSerializer);
     }
 }

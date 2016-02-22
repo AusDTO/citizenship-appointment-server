@@ -1,13 +1,18 @@
 package au.gov.dto.dibp.appointments.security.context;
 
+import au.gov.dto.dibp.appointments.client.Client;
 import com.oakfusion.security.AESCodec;
 import com.oakfusion.security.Codec;
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 
 /**
  * Adapted from oakfusion/spring-cookie-session under the MIT license:
@@ -15,47 +20,45 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 public class SecurityCookieService {
-    private static final String DEFAULT_COOKIE_PATH = "/";
 
-    private final String cookieName;
-    private final String cookiePath;
+    private static final String COOKIE_NAME = "session";
+    private static final String COOKIE_PATH = "/";
     private final Codec codec;
     private final AuthenticationSerializer authenticationSerializer;
+    private final JwtClientSerializer jwtClientSerializer;
 
-    public SecurityCookieService(String cookieName, String key, AuthenticationSerializer authenticationSerializer) {
-        this(cookieName, key, DEFAULT_COOKIE_PATH, authenticationSerializer);
-    }
-
-    private SecurityCookieService(String cookieName, String key, String cookiePath, AuthenticationSerializer authenticationSerializer) {
-        this.cookieName = cookieName;
-        this.cookiePath = cookiePath;
-        this.codec = new AESCodec(key);
+    @Autowired
+    public SecurityCookieService(@Value("${session.encryption.key}") String sessionEncryptionKey, AuthenticationSerializer authenticationSerializer, JwtClientSerializer jwtClientSerializer) {
+        this.codec = new AESCodec(sessionEncryptionKey);
         this.authenticationSerializer = authenticationSerializer;
+        this.jwtClientSerializer = jwtClientSerializer;
     }
 
     public Authentication getAuthenticationFrom(Cookie cookie) {
         byte[] decodedFromBase64 = Base64.decodeBase64(cookie.getValue());
-        byte[] decryptedAuthentication = codec.decrypt(decodedFromBase64);
-
-        return authenticationSerializer.deserializeFrom(decryptedAuthentication);
+        try {
+            byte[] decryptedAuthentication = codec.decrypt(decodedFromBase64);
+            return authenticationSerializer.deserializeFrom(decryptedAuthentication);
+        } catch (Exception e) {
+            Client client = jwtClientSerializer.deserialize(cookie.getValue());
+            return client == null ? null : new UsernamePasswordAuthenticationToken(client, null, Collections.emptyList());
+        }
     }
 
-    public Cookie createSecurityCookie(Authentication auth) {
-        byte[] serializedAuthentication = authenticationSerializer.serializeToByteArray(auth);
-        byte[] encryptedAuthentication = codec.encrypt(serializedAuthentication);
-        String encodedWithBase64 = Base64.encodeBase64URLSafeString(encryptedAuthentication);
+    public Cookie createSecurityCookie(Client client) {
+        String payload = jwtClientSerializer.serialize(client);
 
-        Cookie c = new Cookie(cookieName, encodedWithBase64);
-        c.setPath(cookiePath);
+        Cookie cookie = new Cookie(COOKIE_NAME, payload);
+        cookie.setPath(COOKIE_PATH);
 
-        return c;
+        return cookie;
     }
 
     public Cookie getSecurityCookieFrom(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if(cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(cookieName)) {
+                if (cookie.getName().equals(COOKIE_NAME)) {
                     return cookie;
                 }
             }
@@ -65,10 +68,10 @@ public class SecurityCookieService {
     }
 
     public Cookie createLogoutCookie() {
-        Cookie c = new Cookie(cookieName, "");
-        c.setPath(cookiePath);
-        c.setMaxAge(0);
-        return c;
+        Cookie cookie = new Cookie(COOKIE_NAME, "");
+        cookie.setPath(COOKIE_PATH);
+        cookie.setMaxAge(0);
+        return cookie;
     }
 
     public boolean containsSecurityCookie(HttpServletRequest request) {

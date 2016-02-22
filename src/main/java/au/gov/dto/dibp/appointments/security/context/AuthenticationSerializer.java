@@ -26,11 +26,6 @@ public class AuthenticationSerializer {
     }
 
     public byte[] serializeToByteArray(Authentication authentication) {
-        if (authentication == null
-                || authentication.getPrincipal() == null
-                || !Client.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            return "".getBytes(StandardCharsets.UTF_8);
-        }
         Client client = (Client) authentication.getPrincipal();
         try {
             String clientJson = objectMapper.writeValueAsString(client);

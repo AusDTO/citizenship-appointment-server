@@ -1,5 +1,6 @@
 package au.gov.dto.dibp.appointments.security.context;
 
+import au.gov.dto.dibp.appointments.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -40,6 +41,7 @@ public class CookieBasedSecurityContextRepository implements SecurityContextRepo
             Cookie securityCookie = securityCookieService.getSecurityCookieFrom(request);
             if (securityCookie != null) {
 
+                // TODO: Clean up zombie code relating to handling old cookies for anonymous tokens
                 Authentication authentication = securityCookieService.getAuthenticationFrom(securityCookie);
                 if (authentication == null) {
                     Cookie cookie = securityCookieService.createLogoutCookie();
@@ -80,9 +82,12 @@ public class CookieBasedSecurityContextRepository implements SecurityContextRepo
 
         @Override
         protected void saveContext(SecurityContext context) {
-            Cookie securityCookie = securityCookieService.createSecurityCookie(context.getAuthentication());
-            if (securityCookie != null && context.getAuthentication() != null) {
+            if (context.getAuthentication() != null &&
+                    context.getAuthentication().getPrincipal() != null &&
+                    Client.class.isAssignableFrom(context.getAuthentication().getPrincipal().getClass())) {
                 if (!this.isContextSaved()) {
+                    Client client = (Client) context.getAuthentication().getPrincipal();
+                    Cookie securityCookie = securityCookieService.createSecurityCookie(client);
                     securityCookie.setHttpOnly(true);
                     securityCookie.setSecure(secure);
                     securityCookie.setMaxAge(COOKIE_MAX_AGE_SECONDS);
