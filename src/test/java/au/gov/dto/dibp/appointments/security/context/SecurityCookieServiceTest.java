@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.springframework.security.core.Authentication;
 
 import javax.servlet.http.Cookie;
+import java.security.SecureRandom;
 import java.util.Base64;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -55,5 +56,12 @@ public class SecurityCookieServiceTest {
         assertThat(outAuthentication, nullValue());
     }
 
-
+//    @Test
+    public void createSecureKey() throws Exception {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] key = new byte[32];
+        secureRandom.nextBytes(key);
+        String encodedKey = Base64.getEncoder().encodeToString(key);
+        System.out.println("export SESSION_JWT_ENCRYPTION_KEY_BASE64=\"" + encodedKey + "\"");
+    }
 }
