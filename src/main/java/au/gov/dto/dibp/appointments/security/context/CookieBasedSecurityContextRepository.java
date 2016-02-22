@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.security.context;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.security.csrf.CookieBasedCsrfTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -8,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -21,18 +23,21 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class CookieBasedSecurityContextRepository implements SecurityContextRepository {
     private final SecurityCookieService securityCookieService;
+    private final CookieBasedCsrfTokenRepository csrfTokenRepository;
     private static final int COOKIE_MAX_AGE_SECONDS = 60 * 30;
 
     @Autowired
-    public CookieBasedSecurityContextRepository(SecurityCookieService securityCookieService) {
+    public CookieBasedSecurityContextRepository(SecurityCookieService securityCookieService,
+                                                CookieBasedCsrfTokenRepository csrfTokenRepository) {
         this.securityCookieService = securityCookieService;
+        this.csrfTokenRepository = csrfTokenRepository;
     }
 
     @Override
     public SecurityContext loadContext(final HttpRequestResponseHolder requestResponseHolder) {
         HttpServletRequest request = requestResponseHolder.getRequest();
 
-        SaveToCookieResponseWrapper response = new SaveToCookieResponseWrapper(requestResponseHolder.getResponse(), true, request.isSecure());
+        SaveToCookieResponseWrapper response = new SaveToCookieResponseWrapper(request, requestResponseHolder.getResponse(), true);
         requestResponseHolder.setResponse(response);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -73,11 +78,11 @@ public class CookieBasedSecurityContextRepository implements SecurityContextRepo
     }
 
     private class SaveToCookieResponseWrapper extends SaveContextOnUpdateOrErrorResponseWrapper {
-        private final boolean secure;
+        private final HttpServletRequest request;
 
-        public SaveToCookieResponseWrapper(HttpServletResponse response, boolean disableUrlRewriting, boolean secure) {
+        public SaveToCookieResponseWrapper(HttpServletRequest request, HttpServletResponse response, boolean disableUrlRewriting) {
             super(response, disableUrlRewriting);
-            this.secure = secure;
+            this.request = request;
         }
 
         @Override
@@ -86,17 +91,21 @@ public class CookieBasedSecurityContextRepository implements SecurityContextRepo
                     context.getAuthentication().getPrincipal() != null &&
                     Client.class.isAssignableFrom(context.getAuthentication().getPrincipal().getClass())) {
                 if (!this.isContextSaved()) {
+                    CsrfToken csrfToken = csrfTokenRepository.loadToken(request);
+                    if (csrfToken != null) {
+                        csrfTokenRepository.saveToken(csrfToken, request, (HttpServletResponse) getResponse());
+                    }
                     Client client = (Client) context.getAuthentication().getPrincipal();
                     Cookie securityCookie = securityCookieService.createSecurityCookie(client);
                     securityCookie.setHttpOnly(true);
-                    securityCookie.setSecure(secure);
+                    securityCookie.setSecure(request.isSecure());
                     securityCookie.setMaxAge(COOKIE_MAX_AGE_SECONDS);
                     addCookie(securityCookie);
                 }
             } else {
                 Cookie logoutCookie = securityCookieService.createLogoutCookie();
                 logoutCookie.setHttpOnly(true);
-                logoutCookie.setSecure(secure);
+                logoutCookie.setSecure(request.isSecure());
                 addCookie(logoutCookie);
             }
         }
