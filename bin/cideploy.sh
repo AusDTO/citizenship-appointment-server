@@ -15,10 +15,10 @@ set -x
 
 # Update the blue app
 cf unmap-route citizenship-appointment-beta-blue cfapps.io -n citizenship-appointment-beta
-cf push citizenship-appointment-beta-blue --no-hostname --no-manifest --no-route -p build/libs/citizenship-appointments-0.0.1.jar -i 1 -m 512M
+cf push citizenship-appointment-beta-blue -b https://github.com/AusDTO/java-buildpack.git --no-hostname --no-manifest --no-route -p build/libs/citizenship-appointments-0.0.1.jar -i 1 -m 512M
 cf map-route citizenship-appointment-beta-blue cfapps.io -n citizenship-appointment-beta
 
 # Update the green app
 cf unmap-route citizenship-appointment-beta-green cfapps.io -n citizenship-appointment-beta
-cf push citizenship-appointment-beta-green --no-hostname --no-manifest --no-route -p build/libs/citizenship-appointments-0.0.1.jar -i 1 -m 512M
+cf push citizenship-appointment-beta-green -b https://github.com/AusDTO/java-buildpack.git --no-hostname --no-manifest --no-route -p build/libs/citizenship-appointments-0.0.1.jar -i 1 -m 512M
 cf map-route citizenship-appointment-beta-green cfapps.io -n citizenship-appointment-beta
