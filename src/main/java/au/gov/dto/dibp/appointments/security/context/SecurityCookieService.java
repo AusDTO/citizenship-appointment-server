@@ -18,7 +18,7 @@ import java.util.Collections;
 public class SecurityCookieService {
 
     static final String COOKIE_NAME = "session";
-    private static final String COOKIE_PATH = "/";
+    static final String COOKIE_PATH = "/";
     private final JwtClientSerializer jwtClientSerializer;
 
     @Autowired
