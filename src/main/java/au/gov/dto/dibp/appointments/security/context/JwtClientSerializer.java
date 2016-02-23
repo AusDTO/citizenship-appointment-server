@@ -10,9 +10,6 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.nimbusds.jwt.proc.BadJWTException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,7 +24,6 @@ import java.util.Date;
 @Component
 public class JwtClientSerializer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JwtClientSerializer.class);
     private static final int SESSION_TIME_IN_MINUTES = 30;
     private final byte[] sessionJwtEncryptionKey;
     private final ObjectMapper objectMapper;
