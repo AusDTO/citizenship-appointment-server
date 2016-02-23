@@ -45,8 +45,6 @@ public class CookieBasedSecurityContextRepository implements SecurityContextRepo
         if (request.getCookies() != null) {
             Cookie securityCookie = securityCookieService.getSecurityCookieFrom(request);
             if (securityCookie != null) {
-
-                // TODO: Clean up zombie code relating to handling old cookies for anonymous tokens
                 Authentication authentication = securityCookieService.getAuthenticationFrom(securityCookie);
                 if (authentication == null) {
                     Cookie cookie = securityCookieService.createLogoutCookie();
