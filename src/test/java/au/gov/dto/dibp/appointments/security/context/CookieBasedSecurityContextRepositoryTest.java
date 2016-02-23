@@ -1,16 +1,20 @@
 package au.gov.dto.dibp.appointments.security.context;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.security.csrf.CookieBasedCsrfTokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 
 import javax.servlet.ServletResponseWrapper;
 import javax.servlet.http.Cookie;
 import java.util.Base64;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -48,7 +52,7 @@ public class CookieBasedSecurityContextRepositoryTest {
     @Test
     public void returnsSecurityContextWithAuthenticationForAuthenticatedRequest() throws Exception {
         CookieBasedSecurityContextRepository repository = createCookieBasedSecurityContextRepository();
-        JwtClientSerializer jwtClientSerializer = new JwtClientSerializer(Base64.getEncoder().encodeToString(new byte[32]), new ObjectMapper(), new ExpirationJwtClaimsVerifier());
+        JwtClientSerializer jwtClientSerializer = createJwtClientSerializer();
         Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
         String payload = jwtClientSerializer.serialize(client);
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -95,7 +99,80 @@ public class CookieBasedSecurityContextRepositoryTest {
         assertTrue(sessionCookie.isHttpOnly());
     }
 
+    @Test
+    public void addSessionCookieOnResponseForNonEmptySecurityContext() throws Exception {
+        CookieBasedSecurityContextRepository repository = createCookieBasedSecurityContextRepository();
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
+        securityContext.setAuthentication(new UsernamePasswordAuthenticationToken(client, null, Collections.emptyList()));
+        String payload = createJwtClientSerializer().serialize(client);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSecure(true);
+        request.setCookies(new Cookie(SecurityCookieService.COOKIE_NAME,payload));
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        HttpRequestResponseHolder requestResponseHolder = new HttpRequestResponseHolder(request, response);
+        repository.loadContext(requestResponseHolder);
+
+        repository.saveContext(securityContext, requestResponseHolder.getRequest(), requestResponseHolder.getResponse());
+
+        Cookie sessionCookie = response.getCookie(SecurityCookieService.COOKIE_NAME);
+        assertThat(sessionCookie.getMaxAge(), equalTo(1800));
+        assertThat(sessionCookie.getValue().length(), greaterThan(0));
+        assertTrue(sessionCookie.getSecure());
+        assertTrue(sessionCookie.isHttpOnly());
+    }
+
+    @Test
+    public void addCsrfCookieOnResponseForNonEmptySecurityContext() throws Exception {
+        CookieBasedSecurityContextRepository repository = createCookieBasedSecurityContextRepository();
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
+        securityContext.setAuthentication(new UsernamePasswordAuthenticationToken(client, null, Collections.emptyList()));
+        String payload = createJwtClientSerializer().serialize(client);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSecure(true);
+        request.setCookies(new Cookie(SecurityCookieService.COOKIE_NAME, payload));
+        request.setCookies(new Cookie(CookieBasedCsrfTokenRepository.CSRF_COOKIE_AND_PARAMETER_NAME, "csrfTokenValue"));
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        HttpRequestResponseHolder requestResponseHolder = new HttpRequestResponseHolder(request, response);
+        repository.loadContext(requestResponseHolder);
+
+        repository.saveContext(securityContext, requestResponseHolder.getRequest(), requestResponseHolder.getResponse());
+
+        Cookie csrfCookie = response.getCookie(CookieBasedCsrfTokenRepository.CSRF_COOKIE_AND_PARAMETER_NAME);
+        assertThat(csrfCookie.getMaxAge(), equalTo(1800));
+        assertThat(csrfCookie.getValue(), equalTo("csrfTokenValue"));
+        assertTrue(csrfCookie.getSecure());
+        assertTrue(csrfCookie.isHttpOnly());
+    }
+
+    @Test
+    public void expireSessionCookieForEmptySecurityContext() throws Exception {
+        CookieBasedSecurityContextRepository repository = createCookieBasedSecurityContextRepository();
+        SecurityContext emptySecurityContext = SecurityContextHolder.createEmptyContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSecure(true);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        HttpRequestResponseHolder requestResponseHolder = new HttpRequestResponseHolder(request, response);
+        repository.loadContext(requestResponseHolder);
+
+        repository.saveContext(emptySecurityContext, requestResponseHolder.getRequest(), requestResponseHolder.getResponse());
+
+        Cookie sessionCookie = response.getCookie(SecurityCookieService.COOKIE_NAME);
+        assertThat(sessionCookie.getMaxAge(), equalTo(0));
+        assertThat(sessionCookie.getValue(), isEmptyString());
+        assertTrue(sessionCookie.getSecure());
+        assertTrue(sessionCookie.isHttpOnly());
+    }
+
+    private JwtClientSerializer createJwtClientSerializer() {
+        return new JwtClientSerializer(Base64.getEncoder().encodeToString(new byte[32]), new ObjectMapper(), new ExpirationJwtClaimsVerifier());
+    }
+
     private CookieBasedSecurityContextRepository createCookieBasedSecurityContextRepository() {
-        return new CookieBasedSecurityContextRepository(new SecurityCookieService(new JwtClientSerializer(Base64.getEncoder().encodeToString(new byte[32]), new ObjectMapper(), new ExpirationJwtClaimsVerifier())), null);
+        return new CookieBasedSecurityContextRepository(new SecurityCookieService(createJwtClientSerializer()), new CookieBasedCsrfTokenRepository());
     }
 }

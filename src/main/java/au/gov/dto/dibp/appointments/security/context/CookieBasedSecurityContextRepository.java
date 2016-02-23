@@ -36,37 +36,37 @@ public class CookieBasedSecurityContextRepository implements SecurityContextRepo
     @Override
     public SecurityContext loadContext(final HttpRequestResponseHolder requestResponseHolder) {
         HttpServletRequest request = requestResponseHolder.getRequest();
+        HttpServletResponse response = requestResponseHolder.getResponse();
+        SaveToCookieResponseWrapper responseWrapper = new SaveToCookieResponseWrapper(request, response, true);
+        requestResponseHolder.setResponse(responseWrapper);
 
-        SaveToCookieResponseWrapper response = new SaveToCookieResponseWrapper(request, requestResponseHolder.getResponse(), true);
-        requestResponseHolder.setResponse(response);
-
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-
-        if (request.getCookies() != null) {
-            Cookie securityCookie = securityCookieService.getSecurityCookieFrom(request);
-            if (securityCookie != null) {
-                Authentication authentication = securityCookieService.getAuthenticationFrom(securityCookie);
-                if (authentication == null) {
-                    Cookie cookie = securityCookieService.createLogoutCookie();
-                    cookie.setHttpOnly(true);
-                    cookie.setSecure(request.isSecure());
-                    requestResponseHolder.getResponse().addCookie(cookie);
-                }
-
-                context.setAuthentication(authentication);
-                return context;
-            }
+        Authentication authentication = getAuthenticationFrom(request);
+        if (authentication == null) {
+            addLogoutCookie(requestResponseHolder);
         }
 
-        return context;
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(authentication);
+        return securityContext;
+    }
+
+    private void addLogoutCookie(HttpRequestResponseHolder requestResponseHolder) {
+        Cookie cookie = securityCookieService.createLogoutCookie();
+        cookie.setHttpOnly(true);
+        cookie.setSecure(requestResponseHolder.getRequest().isSecure());
+        requestResponseHolder.getResponse().addCookie(cookie);
+    }
+
+    private Authentication getAuthenticationFrom(HttpServletRequest request) {
+        Cookie cookie = securityCookieService.getSecurityCookieFrom(request);
+        return cookie == null ? null : securityCookieService.getAuthenticationFrom(cookie);
     }
 
     @Override
-    public void saveContext(SecurityContext context, HttpServletRequest request, HttpServletResponse response) {
+    public void saveContext(SecurityContext securityContext, HttpServletRequest request, HttpServletResponse response) {
         SaveToCookieResponseWrapper responseWrapper = (SaveToCookieResponseWrapper) response;
-
         if (!responseWrapper.isContextSaved()) {
-            responseWrapper.saveContext(context);
+            responseWrapper.saveContext(securityContext);
         }
     }
 

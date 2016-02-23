@@ -23,7 +23,7 @@ import java.security.SecureRandom;
 @Component
 public class CookieBasedCsrfTokenRepository implements CsrfTokenRepository {
     private static final String CSRF_HEADER_NAME = "X-CSRF-TOKEN";
-    private static final String CSRF_COOKIE_AND_PARAMETER_NAME = "_csrf";
+    public static final String CSRF_COOKIE_AND_PARAMETER_NAME = "_csrf";
     private static final int COOKIE_MAX_AGE_SECONDS = 60 * 30;
 
     private final SecureRandom secureRandom = new SecureRandom(); // expensive to create, do it only once
