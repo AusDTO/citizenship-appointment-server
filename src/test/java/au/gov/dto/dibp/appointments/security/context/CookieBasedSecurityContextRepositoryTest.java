@@ -22,12 +22,11 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class CookieBasedSecurityContextRepositoryTest {
-
     @Test
     public void containsContextReturnsTrueIfSessionCookieExists() throws Exception {
         CookieBasedSecurityContextRepository repository = createCookieBasedSecurityContextRepository();
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        mockHttpServletRequest.setCookies(new Cookie(CookieBasedSecurityContextRepository.COOKIE_NAME,""));
+        mockHttpServletRequest.setCookies(new Cookie(SecurityContextSerializer.COOKIE_NAME,""));
 
         assertTrue(repository.containsContext(mockHttpServletRequest));
     }
@@ -58,7 +57,7 @@ public class CookieBasedSecurityContextRepositoryTest {
         Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
         String payload = jwtClientSerializer.serialize(client);
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie(CookieBasedSecurityContextRepository.COOKIE_NAME,payload));
+        request.setCookies(new Cookie(SecurityContextSerializer.COOKIE_NAME,payload));
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         SecurityContext securityContext = repository.loadContext(new HttpRequestResponseHolder(request, response));
@@ -72,7 +71,7 @@ public class CookieBasedSecurityContextRepositoryTest {
     public void returnsEmptySecurityContextForExpiredAuthToken() throws Exception {
         CookieBasedSecurityContextRepository repository = createCookieBasedSecurityContextRepository();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie(CookieBasedSecurityContextRepository.COOKIE_NAME, "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..v3OyQykgTQI5U7gP.dKsmMKX1MHGoMx2rXrCCWOCbyax-J8JS6gu63OBXEDm7Ab926OwlwlZcvoOZGW5nO7ZR95h2pe8pQs8s8cqWJUO4L4dGI9jTj4jK_Lsy9cPWDY4BMzs2bVBuasn88OQYjC-3zuZyvPKfQHrSVS9OjTaMLeMBwMfKP-k3IysOUfUtWUNcRb86v7VCnOd0ATljXUN8DekK8iZ0wD5AtBJVaOQLbaNWiXGY2pnA2eOW9cI_vPbCqqn4ZW-r7sEy6UzHgXYgRAr4bKb7abVtRvO1Xg3CcpquE597Om0bKJIk-VVCz7fVzpz5rkp16vzN-RKBJBs2MK-UsXKD9Lkgedh5w--Q4muiWrAqA5_Tx36mvkESlzR5pbsKu84ZweE5dfen47q_BWaZguVb8jFJB1pofpEgNiZ1C1K8aKIO03CIR-cOOfvoPrsdte-0M4F5bq4KwLna8fYm9D3OeJN3sai3Ba2KKPtLsfz-F5jJlCOV44JE-F9Pqa1xfdpD_S5UenWFi9IUsM912BoCTX4ouEMP6ZUVHwKgTeFjInJXe6iJVqvhPfrWUeVUBmBURy_8XGrzW12GqN_Qp_-275gQ_jlQfyMsdtkLdMp9YxpIbPb4Whq0ey5eKvy924Z4aWKQcw6SrVPAhFjXbvtwGVJYv2lzQ2vQIDE9g1dxqPpRvAG_qb_4M3Xfhtjo2W1Md-U1Oo5cfDsrbqeeegeYDH_AA5t5tJxLDB7TtR8xtjFb52WNItxcKeMnb6jegAwWlEjAkAqY.1d7Z0BNKOegXeUI_fY8yQg"));
+        request.setCookies(new Cookie(SecurityContextSerializer.COOKIE_NAME, "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..v3OyQykgTQI5U7gP.dKsmMKX1MHGoMx2rXrCCWOCbyax-J8JS6gu63OBXEDm7Ab926OwlwlZcvoOZGW5nO7ZR95h2pe8pQs8s8cqWJUO4L4dGI9jTj4jK_Lsy9cPWDY4BMzs2bVBuasn88OQYjC-3zuZyvPKfQHrSVS9OjTaMLeMBwMfKP-k3IysOUfUtWUNcRb86v7VCnOd0ATljXUN8DekK8iZ0wD5AtBJVaOQLbaNWiXGY2pnA2eOW9cI_vPbCqqn4ZW-r7sEy6UzHgXYgRAr4bKb7abVtRvO1Xg3CcpquE597Om0bKJIk-VVCz7fVzpz5rkp16vzN-RKBJBs2MK-UsXKD9Lkgedh5w--Q4muiWrAqA5_Tx36mvkESlzR5pbsKu84ZweE5dfen47q_BWaZguVb8jFJB1pofpEgNiZ1C1K8aKIO03CIR-cOOfvoPrsdte-0M4F5bq4KwLna8fYm9D3OeJN3sai3Ba2KKPtLsfz-F5jJlCOV44JE-F9Pqa1xfdpD_S5UenWFi9IUsM912BoCTX4ouEMP6ZUVHwKgTeFjInJXe6iJVqvhPfrWUeVUBmBURy_8XGrzW12GqN_Qp_-275gQ_jlQfyMsdtkLdMp9YxpIbPb4Whq0ey5eKvy924Z4aWKQcw6SrVPAhFjXbvtwGVJYv2lzQ2vQIDE9g1dxqPpRvAG_qb_4M3Xfhtjo2W1Md-U1Oo5cfDsrbqeeegeYDH_AA5t5tJxLDB7TtR8xtjFb52WNItxcKeMnb6jegAwWlEjAkAqY.1d7Z0BNKOegXeUI_fY8yQg"));
         MockHttpServletResponse response = new MockHttpServletResponse();
         HttpRequestResponseHolder requestResponseHolder = new HttpRequestResponseHolder(request, response);
 
@@ -86,7 +85,7 @@ public class CookieBasedSecurityContextRepositoryTest {
         CookieBasedSecurityContextRepository repository = createCookieBasedSecurityContextRepository();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSecure(true);
-        request.setCookies(new Cookie(CookieBasedSecurityContextRepository.COOKIE_NAME, "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..v3OyQykgTQI5U7gP.dKsmMKX1MHGoMx2rXrCCWOCbyax-J8JS6gu63OBXEDm7Ab926OwlwlZcvoOZGW5nO7ZR95h2pe8pQs8s8cqWJUO4L4dGI9jTj4jK_Lsy9cPWDY4BMzs2bVBuasn88OQYjC-3zuZyvPKfQHrSVS9OjTaMLeMBwMfKP-k3IysOUfUtWUNcRb86v7VCnOd0ATljXUN8DekK8iZ0wD5AtBJVaOQLbaNWiXGY2pnA2eOW9cI_vPbCqqn4ZW-r7sEy6UzHgXYgRAr4bKb7abVtRvO1Xg3CcpquE597Om0bKJIk-VVCz7fVzpz5rkp16vzN-RKBJBs2MK-UsXKD9Lkgedh5w--Q4muiWrAqA5_Tx36mvkESlzR5pbsKu84ZweE5dfen47q_BWaZguVb8jFJB1pofpEgNiZ1C1K8aKIO03CIR-cOOfvoPrsdte-0M4F5bq4KwLna8fYm9D3OeJN3sai3Ba2KKPtLsfz-F5jJlCOV44JE-F9Pqa1xfdpD_S5UenWFi9IUsM912BoCTX4ouEMP6ZUVHwKgTeFjInJXe6iJVqvhPfrWUeVUBmBURy_8XGrzW12GqN_Qp_-275gQ_jlQfyMsdtkLdMp9YxpIbPb4Whq0ey5eKvy924Z4aWKQcw6SrVPAhFjXbvtwGVJYv2lzQ2vQIDE9g1dxqPpRvAG_qb_4M3Xfhtjo2W1Md-U1Oo5cfDsrbqeeegeYDH_AA5t5tJxLDB7TtR8xtjFb52WNItxcKeMnb6jegAwWlEjAkAqY.1d7Z0BNKOegXeUI_fY8yQg"));
+        request.setCookies(new Cookie(SecurityContextSerializer.COOKIE_NAME, "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..v3OyQykgTQI5U7gP.dKsmMKX1MHGoMx2rXrCCWOCbyax-J8JS6gu63OBXEDm7Ab926OwlwlZcvoOZGW5nO7ZR95h2pe8pQs8s8cqWJUO4L4dGI9jTj4jK_Lsy9cPWDY4BMzs2bVBuasn88OQYjC-3zuZyvPKfQHrSVS9OjTaMLeMBwMfKP-k3IysOUfUtWUNcRb86v7VCnOd0ATljXUN8DekK8iZ0wD5AtBJVaOQLbaNWiXGY2pnA2eOW9cI_vPbCqqn4ZW-r7sEy6UzHgXYgRAr4bKb7abVtRvO1Xg3CcpquE597Om0bKJIk-VVCz7fVzpz5rkp16vzN-RKBJBs2MK-UsXKD9Lkgedh5w--Q4muiWrAqA5_Tx36mvkESlzR5pbsKu84ZweE5dfen47q_BWaZguVb8jFJB1pofpEgNiZ1C1K8aKIO03CIR-cOOfvoPrsdte-0M4F5bq4KwLna8fYm9D3OeJN3sai3Ba2KKPtLsfz-F5jJlCOV44JE-F9Pqa1xfdpD_S5UenWFi9IUsM912BoCTX4ouEMP6ZUVHwKgTeFjInJXe6iJVqvhPfrWUeVUBmBURy_8XGrzW12GqN_Qp_-275gQ_jlQfyMsdtkLdMp9YxpIbPb4Whq0ey5eKvy924Z4aWKQcw6SrVPAhFjXbvtwGVJYv2lzQ2vQIDE9g1dxqPpRvAG_qb_4M3Xfhtjo2W1Md-U1Oo5cfDsrbqeeegeYDH_AA5t5tJxLDB7TtR8xtjFb52WNItxcKeMnb6jegAwWlEjAkAqY.1d7Z0BNKOegXeUI_fY8yQg"));
         MockHttpServletResponse response = new MockHttpServletResponse();
         HttpRequestResponseHolder requestResponseHolder = new HttpRequestResponseHolder(request, response);
 
@@ -94,7 +93,7 @@ public class CookieBasedSecurityContextRepositoryTest {
 
         ServletResponseWrapper responseWrapper = (ServletResponseWrapper) requestResponseHolder.getResponse();
         MockHttpServletResponse wrappedResponse = (MockHttpServletResponse) responseWrapper.getResponse();
-        Cookie sessionCookie = wrappedResponse.getCookie(CookieBasedSecurityContextRepository.COOKIE_NAME);
+        Cookie sessionCookie = wrappedResponse.getCookie(SecurityContextSerializer.COOKIE_NAME);
         assertThat(sessionCookie.getMaxAge(), equalTo(0));
         assertThat(sessionCookie.getValue(), isEmptyString());
         assertTrue(sessionCookie.getSecure());
@@ -110,7 +109,7 @@ public class CookieBasedSecurityContextRepositoryTest {
         String payload = createJwtClientSerializer().serialize(client);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSecure(true);
-        request.setCookies(new Cookie(CookieBasedSecurityContextRepository.COOKIE_NAME,payload));
+        request.setCookies(new Cookie(SecurityContextSerializer.COOKIE_NAME,payload));
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         HttpRequestResponseHolder requestResponseHolder = new HttpRequestResponseHolder(request, response);
@@ -118,7 +117,7 @@ public class CookieBasedSecurityContextRepositoryTest {
 
         repository.saveContext(securityContext, requestResponseHolder.getRequest(), requestResponseHolder.getResponse());
 
-        Cookie sessionCookie = response.getCookie(CookieBasedSecurityContextRepository.COOKIE_NAME);
+        Cookie sessionCookie = response.getCookie(SecurityContextSerializer.COOKIE_NAME);
         assertThat(sessionCookie.getMaxAge(), equalTo(1800));
         assertThat(sessionCookie.getValue().length(), greaterThan(0));
         assertTrue(sessionCookie.getSecure());
@@ -134,7 +133,7 @@ public class CookieBasedSecurityContextRepositoryTest {
         String payload = createJwtClientSerializer().serialize(client);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSecure(true);
-        request.setCookies(new Cookie(CookieBasedSecurityContextRepository.COOKIE_NAME, payload));
+        request.setCookies(new Cookie(SecurityContextSerializer.COOKIE_NAME, payload));
         request.setCookies(new Cookie(CookieBasedCsrfTokenRepository.CSRF_COOKIE_AND_PARAMETER_NAME, "csrfTokenValue"));
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -160,7 +159,7 @@ public class CookieBasedSecurityContextRepositoryTest {
         String payload = createJwtClientSerializer().serialize(client);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSecure(true);
-        request.setCookies(new Cookie(CookieBasedSecurityContextRepository.COOKIE_NAME, payload));
+        request.setCookies(new Cookie(SecurityContextSerializer.COOKIE_NAME, payload));
         MockHttpServletResponse response = new MockHttpServletResponse();
         CsrfToken token = csrfTokenRepository.generateToken(request);
         csrfTokenRepository.saveToken(token, request, response);
@@ -191,7 +190,7 @@ public class CookieBasedSecurityContextRepositoryTest {
 
         repository.saveContext(emptySecurityContext, requestResponseHolder.getRequest(), requestResponseHolder.getResponse());
 
-        Cookie sessionCookie = response.getCookie(CookieBasedSecurityContextRepository.COOKIE_NAME);
+        Cookie sessionCookie = response.getCookie(SecurityContextSerializer.COOKIE_NAME);
         assertThat(sessionCookie.getMaxAge(), equalTo(0));
         assertThat(sessionCookie.getValue(), isEmptyString());
         assertTrue(sessionCookie.getSecure());
@@ -207,6 +206,6 @@ public class CookieBasedSecurityContextRepositoryTest {
     }
 
     private CookieBasedSecurityContextRepository createCookieBasedSecurityContextRepository(CookieBasedCsrfTokenRepository csrfTokenRepository) {
-        return new CookieBasedSecurityContextRepository(csrfTokenRepository, createJwtClientSerializer());
+        return new CookieBasedSecurityContextRepository(csrfTokenRepository, new SecurityContextSerializer(createJwtClientSerializer()));
     }
 }
