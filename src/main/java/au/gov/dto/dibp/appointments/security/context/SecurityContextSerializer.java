@@ -29,7 +29,7 @@ public class SecurityContextSerializer {
     }
 
     public SecurityContext deserialize(HttpServletRequest request, HttpServletResponse response) {
-        Client client = deserialiseClient(request);
+        Client client = getClientFromSessionCookie(request);
         if (client == null) {
             response.addCookie(createLogoutCookie(request));
             return SecurityContextHolder.createEmptyContext();
@@ -59,7 +59,7 @@ public class SecurityContextSerializer {
         return getSessionCookie(request) != null;
     }
 
-    private Client deserialiseClient(HttpServletRequest request) {
+    private Client getClientFromSessionCookie(HttpServletRequest request) {
         Cookie sessionCookie = getSessionCookie(request);
         return sessionCookie == null ? null : jwtClientSerializer.deserialize(sessionCookie.getValue());
     }
