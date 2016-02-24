@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.security.context;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -22,6 +23,7 @@ public class SecurityContextSerializer {
 
     private final JwtClientSerializer jwtClientSerializer;
 
+    @Autowired
     public SecurityContextSerializer(JwtClientSerializer jwtClientSerializer) {
         this.jwtClientSerializer = jwtClientSerializer;
     }
