@@ -1,5 +1,9 @@
 package au.gov.dto.dibp.appointments.booking;
 
+import au.gov.dto.dibp.appointments.booking.exceptions.BookingResponseInvalidException;
+import au.gov.dto.dibp.appointments.booking.exceptions.NoCalendarExistsException;
+import au.gov.dto.dibp.appointments.booking.exceptions.SlotAlreadyTakenException;
+import au.gov.dto.dibp.appointments.booking.exceptions.UserNotEligibleToBookException;
 import au.gov.dto.dibp.appointments.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +43,25 @@ public class BookingController {
     @ExceptionHandler(BookingResponseInvalidException.class)
     public ModelAndView handleAppointmentNotBookedError(HttpServletRequest req, BookingResponseInvalidException exception){
         LOGGER.error("Unhandled BookingResponseInvalidException", exception);
+        return new ModelAndView("redirect:/calendar?error", new HashMap<>());
+    }
+
+    @ExceptionHandler(SlotAlreadyTakenException.class)
+    public ModelAndView handleSlotAlreadyTakenException(HttpServletRequest req, SlotAlreadyTakenException exception){
+        LOGGER.warn("Unhandled SlotAlreadyTakenException", exception);
         return new ModelAndView("redirect:/calendar?unavailable", new HashMap<>());
+    }
+
+    @ExceptionHandler(NoCalendarExistsException.class)
+    public ModelAndView handleNoCalendarExistsException(HttpServletRequest req, NoCalendarExistsException exception){
+        LOGGER.warn("Unhandled NoCalendarExistsException", exception);
+        return new ModelAndView("redirect:/calendar?unavailable", new HashMap<>());
+    }
+
+    @ExceptionHandler(UserNotEligibleToBookException.class)
+    public ModelAndView handleUserNotEligibleToBookException(HttpServletRequest req, UserNotEligibleToBookException exception){
+        LOGGER.warn("Unhandled UserNotEligibleToBookException", exception);
+        return new ModelAndView("redirect:/calendar?error", new HashMap<>());
     }
 
     @ExceptionHandler(RuntimeException.class)

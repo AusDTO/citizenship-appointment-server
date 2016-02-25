@@ -31,6 +31,29 @@ public class ResponseWrapper {
         }
     }
 
+    public boolean isFault() {
+        NodeList nodeList = responseBody.getElementsByTagName("Fault");
+        return nodeList.getLength() == 0;
+    }
+
+    public String getFaultText(){
+        try {
+            XPathExpression expr = getXpath().compile("//Fault/Reason/Text");
+            return (String) expr.evaluate(this.responseBody, XPathConstants.STRING);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error evaluating Xpath: //Fault/Reason/Text", e);
+        }
+    }
+
+    public String getErrorCode(){
+        try {
+            XPathExpression expr = getXpath().compile("//ErrorNumber");
+            return (String) expr.evaluate(this.responseBody, XPathConstants.STRING);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error evaluating Xpath: //ErrorNumber", e);
+        }
+    }
+
     public String getStringAttribute(String thepath) {
         try {
             XPathExpression expr = getXpath().compile(thepath);

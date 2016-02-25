@@ -1,10 +1,6 @@
-package au.gov.dto.dibp.appointments.booking;
+package au.gov.dto.dibp.appointments.booking.exceptions;
 
 public class BookingResponseInvalidException extends RuntimeException {
-    public BookingResponseInvalidException(String message) {
-        super(message);
-    }
-
     public BookingResponseInvalidException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -2,8 +2,13 @@ package au.gov.dto.dibp.appointments.booking;
 
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
+import au.gov.dto.dibp.appointments.booking.exceptions.BookingResponseInvalidException;
+import au.gov.dto.dibp.appointments.booking.exceptions.NoCalendarExistsException;
+import au.gov.dto.dibp.appointments.booking.exceptions.SlotAlreadyTakenException;
+import au.gov.dto.dibp.appointments.booking.exceptions.UserNotEligibleToBookException;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiResponseNotSuccessfulException;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import au.gov.dto.dibp.appointments.util.TemplateLoader;
 import com.samskivert.mustache.Template;
@@ -88,9 +93,23 @@ public class BookingService {
         try {
             ResponseWrapper response = senderService.sendRequest(template, data, serviceAddress);
             return response.getStringAttribute(appointmentDatePath);
-        }catch(RuntimeException e){
-            throw new BookingResponseInvalidException("Response did not contain the appointment date.", e);
+        } catch (ApiResponseNotSuccessfulException e){
+            throw getMeaningfulExceptionFromFault(e);
         }
+    }
+
+    private RuntimeException getMeaningfulExceptionFromFault(ApiResponseNotSuccessfulException exception){
+        ResponseWrapper response = exception.getResponse();
+
+        String errorCode = response.getErrorCode();
+        if("58725".equals(errorCode)) {
+            return new SlotAlreadyTakenException("The slot was already taken.", exception);
+        } else if("58710".equals(errorCode)) {
+            return new NoCalendarExistsException("The calendar does not exist for the selected date and service.", exception);
+//        } else if("???".equals(errorCode)) {
+//            return new UserNotEligibleToBookException("The user is not eligible to book an appointment.", exception);
+        }
+        return new BookingResponseInvalidException("Unknown fault occurred. " + response.getMessage(), exception);
     }
 
     private class SetAppointment {
