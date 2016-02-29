@@ -13,6 +13,7 @@ public class SecurityHeaderInterceptor  extends HandlerInterceptorAdapter {
         response.addHeader("Content-Security-Policy", "default-src 'self'; " +
                 "script-src 'self' www.google-analytics.com;" +
                 "img-src 'self' www.google-analytics.com;");
+        response.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
         super.postHandle(request, response, handler, modelAndView);
     }
 }
