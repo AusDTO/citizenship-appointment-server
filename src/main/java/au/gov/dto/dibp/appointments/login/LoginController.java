@@ -4,7 +4,6 @@ import au.gov.dto.dibp.appointments.client.ClientIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,13 +17,10 @@ public class LoginController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
     private final ClientIdValidator clientIdValidator;
-    private final String trackingId;
 
     @Autowired
-    public LoginController(ClientIdValidator clientIdValidator,
-                           @Value("${analytics.tracking.id}") String trackingId) {
+    public LoginController(ClientIdValidator clientIdValidator) {
         this.clientIdValidator = clientIdValidator;
-        this.trackingId = trackingId;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/html")
@@ -35,7 +31,6 @@ public class LoginController {
             HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("trackingId", trackingId);
         if (error != null) {
             model.put("error", true);
         }
@@ -56,10 +51,7 @@ public class LoginController {
 
     @RequestMapping(value = "/session_timeout", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView sessionTimeoutHtml() {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("trackingId", trackingId);
-       return new ModelAndView("session_timeout", model);
+       return new ModelAndView("session_timeout", new HashMap<>());
     }
 
     @ExceptionHandler(RuntimeException.class)

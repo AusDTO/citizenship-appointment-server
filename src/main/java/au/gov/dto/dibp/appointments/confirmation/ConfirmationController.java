@@ -5,7 +5,6 @@ import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,13 +23,10 @@ public class ConfirmationController {
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
 
     private final AppointmentDetailsService appointmentDetailsService;
-    private final String trackingId;
 
     @Autowired
-    public ConfirmationController(AppointmentDetailsService appointmentDetailsService,
-                                  @Value("${analytics.tracking.id}") String trackingId){
+    public ConfirmationController(AppointmentDetailsService appointmentDetailsService){
         this.appointmentDetailsService = appointmentDetailsService;
-        this.trackingId = trackingId;
     }
 
     @RequestMapping(value = "/confirmation", method = RequestMethod.GET, produces = "text/html")
@@ -42,9 +38,6 @@ public class ConfirmationController {
         }
 
         HashMap<String, Object> model = new HashMap<>();
-        model.put("trackingId", trackingId);
-        model.put("clientId", client.getClientId());
-        model.put("unitId", client.getUnitId());
 
         String unitAddress = appointmentDetails.getUnitAddress();
         model.put("location", unitAddress);
