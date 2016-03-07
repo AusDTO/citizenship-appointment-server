@@ -16,6 +16,8 @@ apply plugin: 'findbugs'                     // https://docs.gradle.org/current/
 apply plugin: 'java'                         // https://docs.gradle.org/current/userguide/java_plugin.html
 apply plugin: 'org.unbroken-dome.test-sets'  // https://github.com/unbroken-dome/gradle-testsets-plugin
 apply plugin: 'spring-boot'                  // http://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html
+apply plugin: "jacoco"                       // https://docs.gradle.org/current/userguide/jacoco_plugin.html
+
 
 node {
     version = '4.2.6'
@@ -35,6 +37,14 @@ findbugs {
     effort = "max"
     ignoreFailures = false
     reportLevel = "high"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/reports/jacoco/jacocoHtml"
+    }
 }
 
 def javaVersion = '1.8'
@@ -74,6 +84,7 @@ tasks.integrationTest.group = 'Verification'
 tasks.integrationTest.description = 'Runs the integration tests.'
 //tasks.integrationTest.outputs.upToDateWhen { false }  // Run all integration tests every time, even if no changes have been made
 
+check.dependsOn jacocoTestReport     // Run jacoco code coverage report
 check.dependsOn integrationTest      // The check task fails the build if there are failing integration tests
 integrationTest.shouldRunAfter test  // Run unit tests before integration tests
 
