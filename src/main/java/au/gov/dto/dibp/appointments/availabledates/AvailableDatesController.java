@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,4 +39,11 @@ public class AvailableDatesController {
         return availableDates.getAvailableDates();
     }
 
+    @RequestMapping(value = "/get_available_dates_for_plaintext.json", method = RequestMethod.GET, produces = "application/json")
+    public List<AvailableDate> getAvailableDatesForPlaintext(@AuthenticationPrincipal Client client) {
+        AvailableDates availableDates = availableDatesService.getAvailabilityForNextYear(client.getServiceId());
+        List<AvailableDate> availableDateArray = new ArrayList<>(availableDates.getAvailableDates().values());
+        Collections.sort(availableDateArray, (c1, c2) -> c2.getCalendarDate().compareTo(c2.getCalendarDate()));
+        return availableDateArray;
+    }
 }

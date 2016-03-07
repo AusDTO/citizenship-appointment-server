@@ -187,7 +187,7 @@ task copyBundledAssets(type: Copy,
         description: 'Copy bundled assets from the client',
         group: 'Build Setup'){
     from {
-        fileTree("node_modules/citizenship-appointment-client/dist/").files
+        fileTree("node_modules/citizenship-appointment-client/dist/")
     }
     into {
         "src/main/resources/public/static"
