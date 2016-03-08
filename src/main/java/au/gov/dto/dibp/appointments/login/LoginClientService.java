@@ -3,8 +3,9 @@ package au.gov.dto.dibp.appointments.login;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.client.ClientIdValidator;
 import au.gov.dto.dibp.appointments.organisation.ServiceDetails;
-import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.organisation.ServiceDetailsService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiResponseNotSuccessfulException;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import au.gov.dto.dibp.appointments.util.TemplateLoader;
 import com.samskivert.mustache.Template;
@@ -59,8 +60,15 @@ public class LoginClientService implements UserDetailsService {
         Map<String, String> data = new HashMap<>();
         data.put("personalId", username);
 
-        ResponseWrapper response = senderService.sendRequest(getClientByPersonalIdTemplate, data, serviceAddressCustomer);
-        return parseGetCustomerByClientIdResponse(response);
+        try {
+            ResponseWrapper response = senderService.sendRequest(getClientByPersonalIdTemplate, data, serviceAddressCustomer);
+            return parseGetCustomerByClientIdResponse(response);
+        } catch (ApiResponseNotSuccessfulException exception) {
+            if ("51010".equals(exception.getResponse().getErrorCode())) {
+                throw new UsernameNotFoundException("Could not find matching client", exception);
+            }
+            throw exception;
+        }
     }
 
     private Client parseGetCustomerByClientIdResponse(ResponseWrapper response) {
