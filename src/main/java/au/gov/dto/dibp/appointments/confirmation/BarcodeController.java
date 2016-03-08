@@ -1,5 +1,6 @@
 package au.gov.dto.dibp.appointments.confirmation;
 
+import au.gov.dto.dibp.appointments.util.InputValidationException;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -35,7 +36,7 @@ public class BarcodeController {
     @RequestMapping(value = "/pdf417/{id}", method = RequestMethod.GET, produces = IMAGE_PNG)
     public void barcode417(@PathVariable("id") String id, HttpServletResponse response) throws IOException, WriterException {
         if (!CLIENT_ID_PATTERN.matcher(id).matches()) {
-            throw new IllegalArgumentException("Invalid clientId for barcode [" + id + "]");
+            throw new InputValidationException("Invalid clientId for barcode [" + id + "]");
         }
         response.setContentType(IMAGE_PNG);
         Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>() {{

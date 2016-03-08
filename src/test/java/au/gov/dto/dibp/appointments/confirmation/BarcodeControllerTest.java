@@ -1,5 +1,6 @@
 package au.gov.dto.dibp.appointments.confirmation;
 
+import au.gov.dto.dibp.appointments.util.InputValidationException;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -26,7 +27,7 @@ public class BarcodeControllerTest {
         try {
             new BarcodeController().barcode417(tooShortClientId, response);
             fail("Should not reach this statement");
-        } catch (IllegalArgumentException e) {
+        } catch (InputValidationException e) {
             // expected
         }
     }
@@ -39,7 +40,7 @@ public class BarcodeControllerTest {
         try {
             new BarcodeController().barcode417(tooLongClientId, response);
             fail("Should not reach this statement");
-        } catch (IllegalArgumentException e) {
+        } catch (InputValidationException e) {
             // expected
         }
     }
@@ -52,7 +53,7 @@ public class BarcodeControllerTest {
         try {
             new BarcodeController().barcode417(invalidClientId, response);
             fail("Should not reach this statement");
-        } catch (IllegalArgumentException e) {
+        } catch (InputValidationException e) {
             // expected
         }
     }

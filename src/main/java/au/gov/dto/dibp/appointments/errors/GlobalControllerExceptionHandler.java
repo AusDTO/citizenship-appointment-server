@@ -1,5 +1,6 @@
 package au.gov.dto.dibp.appointments.errors;
 
+import au.gov.dto.dibp.appointments.util.InputValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -22,6 +23,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     boolean shouldLogAsWarning(Exception exception) {
-        return exception instanceof HttpRequestMethodNotSupportedException;
+        return exception instanceof HttpRequestMethodNotSupportedException
+                || exception instanceof InputValidationException;
     }
 }

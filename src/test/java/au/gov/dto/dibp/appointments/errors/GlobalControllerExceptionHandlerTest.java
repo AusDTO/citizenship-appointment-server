@@ -1,5 +1,6 @@
 package au.gov.dto.dibp.appointments.errors;
 
+import au.gov.dto.dibp.appointments.util.InputValidationException;
 import org.junit.Test;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
@@ -8,10 +9,10 @@ import static org.junit.Assert.assertTrue;
 
 public class GlobalControllerExceptionHandlerTest {
     @Test
-    public void testHttpRequestMethodNotSupportedExceptionShouldLogAsWarn() throws Exception {
-        HttpRequestMethodNotSupportedException exception = new HttpRequestMethodNotSupportedException("message");
+    public void testExceptionShouldLogAsError() throws Exception {
+        Exception exception = new Exception("message");
         boolean shouldLogAsWarning = new GlobalControllerExceptionHandler().shouldLogAsWarning(exception);
-        assertTrue(shouldLogAsWarning);
+        assertFalse(shouldLogAsWarning);
     }
 
     @Test
@@ -22,9 +23,16 @@ public class GlobalControllerExceptionHandlerTest {
     }
 
     @Test
-    public void testExceptionShouldLogAsError() throws Exception {
-        Exception exception = new Exception("message");
+    public void testHttpRequestMethodNotSupportedExceptionShouldLogAsWarn() throws Exception {
+        HttpRequestMethodNotSupportedException exception = new HttpRequestMethodNotSupportedException("message");
         boolean shouldLogAsWarning = new GlobalControllerExceptionHandler().shouldLogAsWarning(exception);
-        assertFalse(shouldLogAsWarning);
+        assertTrue(shouldLogAsWarning);
+    }
+
+    @Test
+    public void testInputValidationExceptionShouldLogAsWarn() throws Exception {
+        InputValidationException exception = new InputValidationException("message");
+        boolean shouldLogAsWarning = new GlobalControllerExceptionHandler().shouldLogAsWarning(exception);
+        assertTrue(shouldLogAsWarning);
     }
 }
