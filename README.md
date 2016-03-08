@@ -34,10 +34,9 @@ At least one set of API user credentials must be supplied. `x` is a sequential n
 
 #### Other
 
-- `SESSION_ENCRYPTION_KEY`: Encryption key for storing the user's security context in a cookie. Should be at least 16 characters.
+- `SESSION_JWT_ENCRYPTION_KEY_BASE64`: 256-bit Base64 encoded encryption and signature key for storing the user's security context in a cookie
 - `ANALYTICS_TRACKING_ID`: Analytics tracking ID, may be left blank
 - `SECURITY_ADMIN_PASSWORD`: Password for the read-only monitoring endpoints
-- `SECURITY_ANONYMOUS_TOKEN_KEY`: A key for use in anonymous authentication tokens
 
 ### Running the application
 
