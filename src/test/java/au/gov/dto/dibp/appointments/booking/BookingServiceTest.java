@@ -4,6 +4,7 @@ import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.booking.exceptions.NoCalendarExistsException;
 import au.gov.dto.dibp.appointments.booking.exceptions.SlotAlreadyTakenException;
+import au.gov.dto.dibp.appointments.booking.exceptions.UserNotEligibleToBookException;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiResponseNotSuccessfulException;
@@ -68,6 +69,28 @@ public class BookingServiceTest {
         service.bookAnAppointment(getStandardClient(), apptTime);
     }
 
+    @Test(expected = UserNotEligibleToBookException.class)
+    public void test_bookAnAppointment_when_userIsNotEligibleToBook_should_throwUserNotEligibleToBookException() {
+        service = new BookingService(getApiCallsSenderServiceReturningUserNotEligibleToBook(),
+                getAppointmentDetailsServiceRespondingWithNoAppointment(),
+                new FakeTemplateLoader(),
+                "serviceUrl", "processUrl");
+
+        LocalDateTime apptTime = LocalDateTime.of(2015, 12, 30, 13, 20, 0);
+        service.bookAnAppointment(getStandardClient(), apptTime);
+    }
+
+    @Test(expected = UserNotEligibleToBookException.class)
+    public void test_bookAnAppointment_when_userIsNotEligibleToReschedule_should_throwUserNotEligibleToBookException() {
+        service = new BookingService(getApiCallsSenderServiceReturningUserNotEligibleToBook(),
+                getAppointmentDetailsServiceRespondingWithAppointmentDetails(),
+                new FakeTemplateLoader(),
+                "serviceUrl", "processUrl");
+
+        LocalDateTime apptTime = LocalDateTime.of(2015, 12, 30, 13, 20, 0);
+        service.bookAnAppointment(getStandardClient(), apptTime);
+    }
+
 
     private AppointmentDetailsService getAppointmentDetailsServiceRespondingWithNoAppointment(){
         return new AppointmentDetailsService(null, null, new FakeTemplateLoader(), null){
@@ -120,6 +143,17 @@ public class BookingServiceTest {
                 throw new ApiResponseNotSuccessfulException("", getFaultCalendarClosedResponse());
             } else if(requestTemplate.toString().startsWith("RescheduleAppointment")){
                 throw new ApiResponseNotSuccessfulException("", getFaultSlotTakenResponse());
+            }
+            return null;
+        };
+    }
+
+    private ApiCallsSenderService getApiCallsSenderServiceReturningUserNotEligibleToBook(){
+        return (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> {
+            if(requestTemplate.toString().startsWith("SetAppointment")){
+                return getUserNotEligibleToBookResponse();
+            } else if(requestTemplate.toString().startsWith("RescheduleAppointment")){
+                return getUserNotEligibleToRescheduleResponse();
             }
             return null;
         };
@@ -232,5 +266,65 @@ public class BookingServiceTest {
         "    </s:Body>\n" +
         "</s:Envelope>";
         return new ResponseWrapper(500, response);
+    }
+
+    private ResponseWrapper getUserNotEligibleToBookResponse(){
+        String response =
+        "<s:Body>\n" +
+        "   <SetAppointmentResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
+        "       <SetAppointmentResult xmlns:b=\"http://schemas.datacontract.org/2004/07/QFlow.Library\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+        "           <b:AppointmentId>0</b:AppointmentId>\n" +
+        "           <b:CalendarId>0</b:CalendarId>\n" +
+        "           <b:CaseId>0</b:CaseId>\n" +
+        "           <b:CustomerTreatmentPlanId>0</b:CustomerTreatmentPlanId>\n" +
+        "           <b:ProcessId>0</b:ProcessId>\n" +
+        "           <b:QCode i:nil=\"true\"/>\n" +
+        "           <b:QNumber>0</b:QNumber>\n" +
+        "           <b:ScriptResults>\n" +
+        "               <b:Messages>\n" +
+        "                   <b:ScriptMessage>\n" +
+        "                       <b:Message>\n" +
+        "                           (BR_AQMS_1000) - The appointment cannot be set or rescheduled, because the customer has previously passed a Citizenship Test for this Appointment Type.\n" +
+        "                       </b:Message>\n" +
+        "                       <b:Type>Error</b:Type>\n" +
+        "                   </b:ScriptMessage>\n" +
+        "               </b:Messages>\n" +
+        "               <b:ReturnCode>1</b:ReturnCode>\n" +
+        "           </b:ScriptResults>\n" +
+        "           <b:SetAppointmentData i:nil=\"true\"/>\n" +
+        "       </SetAppointmentResult>\n" +
+        "   </SetAppointmentResponse>\n" +
+        " </s:Body>";
+        return new ResponseWrapper(200, response);
+    }
+
+    private ResponseWrapper getUserNotEligibleToRescheduleResponse(){
+        String response =
+        "<s:Body>\n" +
+        "   <RescheduleAppointmentResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
+        "       <RescheduleAppointmentResult xmlns:b=\"http://schemas.datacontract.org/2004/07/QFlow.Library\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+        "           <b:AppointmentId>0</b:AppointmentId>\n" +
+        "           <b:CalendarId>0</b:CalendarId>\n" +
+        "           <b:CaseId>0</b:CaseId>\n" +
+        "           <b:CustomerTreatmentPlanId>0</b:CustomerTreatmentPlanId>\n" +
+        "           <b:ProcessId>0</b:ProcessId>\n" +
+        "           <b:QCode i:nil=\"true\"/>\n" +
+        "           <b:QNumber>0</b:QNumber>\n" +
+        "           <b:ScriptResults>\n" +
+        "               <b:Messages>\n" +
+        "                   <b:ScriptMessage>\n" +
+        "                       <b:Message>\n" +
+        "                           (BR_AQMS_1000) - The appointment cannot be set or rescheduled, because the customer has previously passed a Citizenship Test for this Appointment Type.\n" +
+        "                       </b:Message>\n" +
+        "                       <b:Type>Error</b:Type>\n" +
+        "                   </b:ScriptMessage>\n" +
+        "               </b:Messages>\n" +
+        "               <b:ReturnCode>1</b:ReturnCode>\n" +
+        "           </b:ScriptResults>\n" +
+        "           <b:RescheduleAppointmentData i:nil=\"true\"/>\n" +
+        "       </RescheduleAppointmentResult>\n" +
+        "   </RescheduleAppointmentResponse>\n" +
+        " </s:Body>";
+        return new ResponseWrapper(200, response);
     }
 }
