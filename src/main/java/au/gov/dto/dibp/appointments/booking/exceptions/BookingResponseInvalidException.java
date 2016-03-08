@@ -4,4 +4,8 @@ public class BookingResponseInvalidException extends RuntimeException {
     public BookingResponseInvalidException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public BookingResponseInvalidException(String message) {
+        super(message);
+    }
 }

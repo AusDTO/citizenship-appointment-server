@@ -12,6 +12,7 @@ import au.gov.dto.dibp.appointments.qflowintegration.ApiResponseNotSuccessfulExc
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import au.gov.dto.dibp.appointments.util.TemplateLoader;
 import com.samskivert.mustache.Template;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +93,11 @@ public class BookingService {
     private String setScheduledAppointmentTime(Template template, Map<String, String> data, String serviceAddress, String appointmentDatePath){
         try {
             ResponseWrapper response = senderService.sendRequest(template, data, serviceAddress);
-            return response.getStringAttribute(appointmentDatePath);
+            String scheduledAppointmentTime = response.getStringAttribute(appointmentDatePath);
+            if(StringUtils.isBlank(scheduledAppointmentTime)){
+                checkForUserNotEligibleException(response);
+            }
+            return scheduledAppointmentTime;
         } catch (ApiResponseNotSuccessfulException e){
             throw getMeaningfulExceptionFromFault(e);
         }
@@ -106,16 +111,23 @@ public class BookingService {
             return new SlotAlreadyTakenException("The slot was already taken.", exception);
         } else if("58710".equals(errorCode)) {
             return new NoCalendarExistsException("The calendar does not exist for the selected date and service.", exception);
-//        } else if("???".equals(errorCode)) {
-//            return new UserNotEligibleToBookException("The user is not eligible to book an appointment.", exception);
         }
         return new BookingResponseInvalidException("Unknown fault occurred. " + response.getMessage(), exception);
+    }
+
+    private void checkForUserNotEligibleException(ResponseWrapper response){
+        final String exceptionMessage = response.getStringAttribute(EXCEPTION_MESSAGE);
+        if(exceptionMessage.contains("The appointment cannot be set or rescheduled")) {
+            throw new UserNotEligibleToBookException("The user is not eligible to book an appointment. "+ exceptionMessage);
+        }
+        throw new BookingResponseInvalidException("Unknown fault occurred while parsing response. Error message provided: " + exceptionMessage);
     }
 
     private class SetAppointment {
         public static final String REQUEST_TEMPLATE_PATH = "SetAppointment.mustache";
         public static final String APPOINTMENT_DATE = "//SetAppointmentResponse/SetAppointmentResult/SetAppointmentData/DateAndTime";
     }
+    private static final String EXCEPTION_MESSAGE = "//ScriptResults/Messages/ScriptMessage/Message";
 
     private class RescheduleAppointment {
         public static final String REQUEST_TEMPLATE_PATH = "RescheduleAppointment.mustache";
