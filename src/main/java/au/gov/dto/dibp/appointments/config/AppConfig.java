@@ -1,12 +1,23 @@
 package au.gov.dto.dibp.appointments.config;
 
-import au.gov.dto.dibp.appointments.initializer.*;
+import au.gov.dto.dibp.appointments.initializer.DoSFilter;
+import au.gov.dto.dibp.appointments.initializer.HttpsOnlyFilter;
+import au.gov.dto.dibp.appointments.initializer.LogClientIdFilter;
+import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
+import au.gov.dto.dibp.appointments.initializer.RequestLoggingFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
+import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.jetty.JettyServerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +36,25 @@ public class AppConfig {
     @Bean
     public ServletContextInitializer noSessionTrackingServletContextInitializer() {
         return servletContext -> servletContext.setSessionTrackingModes(Collections.emptySet());
+    }
+
+    @Bean
+    public EmbeddedServletContainerCustomizer disableServerHeader() {
+        return container -> {
+            if (container instanceof JettyEmbeddedServletContainerFactory) {
+                ((JettyEmbeddedServletContainerFactory) container).addServerCustomizers(new JettyServerCustomizer() {
+                    @Override
+                    public void customize(Server server) {
+                        for (Connector connector : server.getConnectors()) {
+                            if (connector instanceof ServerConnector) {
+                                HttpConnectionFactory connectionFactory = connector.getConnectionFactory(HttpConnectionFactory.class);
+                                connectionFactory.getHttpConfiguration().setSendServerVersion(false);
+                            }
+                        }
+                    }
+                });
+            }
+        };
     }
 
     @Bean
