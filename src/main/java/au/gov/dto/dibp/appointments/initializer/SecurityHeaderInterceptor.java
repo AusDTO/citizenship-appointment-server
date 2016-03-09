@@ -23,6 +23,7 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
         addStrictTransportSecurityHeader(response);
         addPublicKeyPinsHeader(response);
 //        addPublicKeyPinsReportOnlyHeader(response);
+        addXFrameOptionsHeader(response);
         super.postHandle(request, response, handler, modelAndView);
     }
 
@@ -48,5 +49,9 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
         if (StringUtils.isNotBlank(certificateFingerprintSha256)) {
             response.addHeader("Public-Key-Pins-Report-Only", "pin-sha256='" + certificateFingerprintSha256 + "'");
         }
+    }
+
+    private void addXFrameOptionsHeader(HttpServletResponse response) {
+        response.addHeader("X-Frame-Options", "DENY");
     }
 }
