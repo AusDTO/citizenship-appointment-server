@@ -28,7 +28,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new SecurityHeaderInterceptor());
+        String certificateFingerprintSha256 = System.getenv("CERTIFICATE_FINGERPRINT_SHA256_BASE64");
+        registry.addInterceptor(new SecurityHeaderInterceptor(certificateFingerprintSha256));
     }
 
 }
