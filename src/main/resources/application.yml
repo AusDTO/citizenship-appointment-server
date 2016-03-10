@@ -11,6 +11,7 @@ server:
 management:
   contextPath: /admin
   port: ${port:8083}
+  add-application-context-header: false
 
 endpoints:
   enabled: false
