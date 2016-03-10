@@ -35,9 +35,11 @@ At least one set of API user credentials must be supplied. `x` is a sequential n
 #### Other
 
 - `SESSION_JWT_ENCRYPTION_KEY_BASE64`: 256-bit Base64 encoded encryption and signature key for storing the user's security context in a cookie
-- `CERTIFICATE_FINGERPRINT_SHA256_BASE64`: Base64 encoded SHA-256 fingerprint of the public key certificate of the public host, used for [HPKP](https://developer.mozilla.org/en/docs/Web/Security/Public_Key_Pinning), optional
-- `ANALYTICS_TRACKING_ID`: Analytics tracking ID, may be left blank
 - `SECURITY_ADMIN_PASSWORD`: Password for the read-only monitoring endpoints
+- `ANALYTICS_TRACKING_ID`: Analytics tracking ID, optional
+- `PUBLIC_KEY_FINGERPRINT_BASE64_1` and `PUBLIC_KEY_FINGERPRINT_BASE64_2`: Base64 encoded SHA-256 fingerprints of the Subject Public Key Information (SPKI) in the public key certificate and the backup certificate signature request for the public host, used for [HTTP Public Key Pinning (HPKP)](https://developer.mozilla.org/en/docs/Web/Security/Public_Key_Pinning), optional, but both must be present to activate HPKP
+- `HPKP_REPORT_URI`: URI for web browsers to send reports on HPKP violations, optional 
+- `CSP_REPORT_URI`: URI for web browsers to send reports on [Content Security Policy (CSP)](http://content-security-policy.com/) violations, optional 
 
 ##### Commands
 

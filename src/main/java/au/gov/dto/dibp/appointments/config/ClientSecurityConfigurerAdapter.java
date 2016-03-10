@@ -81,7 +81,13 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 .permitAll()  // no authentication on logout endpoint
                 .and()
             .exceptionHandling()
-                .accessDeniedPage("/sessionExpired");
+                .accessDeniedPage("/sessionExpired")
+                .and()
+            .headers()
+                .httpStrictTransportSecurity().disable()
+                .contentTypeOptions().disable()
+                .frameOptions().disable()
+                .xssProtection().disable();
     }
 
     @Bean
