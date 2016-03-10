@@ -38,7 +38,8 @@ At least one set of API user credentials must be supplied. `x` is a sequential n
 - `SECURITY_ADMIN_PASSWORD`: Password for the read-only monitoring endpoints
 - `ANALYTICS_TRACKING_ID`: Analytics tracking ID, optional
 - `PUBLIC_KEY_FINGERPRINT_BASE64_1` and `PUBLIC_KEY_FINGERPRINT_BASE64_2`: Base64 encoded SHA-256 fingerprints of the Subject Public Key Information (SPKI) in the public key certificate and the backup certificate signature request for the public host, used for [HTTP Public Key Pinning (HPKP)](https://developer.mozilla.org/en/docs/Web/Security/Public_Key_Pinning), optional, but both must be present to activate HPKP
-- `HPKP_REPORT_URI`: URI for web browsers to send reports on HPKP violations, optional 
+- `HPKP_REPORT_URI_ENFORCED`: URI for web browsers to send reports on HPKP violations for enforced policies, optional 
+- `HPKP_REPORT_URI_REPORT_ONLY`: URI for web browsers to send reports on HPKP violations for report-only policies, optional 
 - `CSP_REPORT_URI`: URI for web browsers to send reports on [Content Security Policy (CSP)](http://content-security-policy.com/) violations, optional 
 
 ##### Commands

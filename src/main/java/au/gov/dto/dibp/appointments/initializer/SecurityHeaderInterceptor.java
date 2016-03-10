@@ -16,19 +16,22 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
     static final long HSTS_MAX_AGE_SECONDS = 31536000L; // 1 year
     static final long HPKP_MAX_AGE_SECONDS = 10L;
 
-    private final String certificateFingerprintBase64_1;
-    private final String certificateFingerprintBase64_2;
-    private final String hpkpReportUri;
+    private final String publicKeyFingerprintBase64_1;
+    private final String publicKeyFingerprintBase64_2;
+    private final String hpkpReportUriEnforced;
+    private final String hpkpReportUriReportOnly;
     private final String cspReportUri;
 
     @Autowired
-    public SecurityHeaderInterceptor(@Value("${public.key.fingerprint.base64.1:}") String certificateFingerprintBase64_1,
-                                     @Value("${public.key.fingerprint.base64.2:}") String certificateFingerprintBase64_2,
-                                     @Value("${hpkp.report.uri:}") String hpkpReportUri,
+    public SecurityHeaderInterceptor(@Value("${public.key.fingerprint.base64.1:}") String publicKeyFingerprintBase64_1,
+                                     @Value("${public.key.fingerprint.base64.2:}") String publicKeyFingerprintBase64_2,
+                                     @Value("${hpkp.report.uri.enforced:}") String hpkpReportUriEnforced,
+                                     @Value("${hpkp.report.uri.report.only:}") String hpkpReportUriReportOnly,
                                      @Value("${csp.report.uri:}") String cspReportUri) {
-        this.certificateFingerprintBase64_1 = certificateFingerprintBase64_1;
-        this.certificateFingerprintBase64_2 = certificateFingerprintBase64_2;
-        this.hpkpReportUri = hpkpReportUri;
+        this.publicKeyFingerprintBase64_1 = publicKeyFingerprintBase64_1;
+        this.publicKeyFingerprintBase64_2 = publicKeyFingerprintBase64_2;
+        this.hpkpReportUriEnforced = hpkpReportUriEnforced;
+        this.hpkpReportUriReportOnly = hpkpReportUriReportOnly;
         this.cspReportUri = cspReportUri;
     }
 
@@ -62,20 +65,20 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
      * See https://tools.ietf.org/html/rfc7469
      */
     private void addPublicKeyPinsHeader(HttpServletResponse response) {
-        if (StringUtils.isNotBlank(certificateFingerprintBase64_1) && StringUtils.isNotBlank(certificateFingerprintBase64_2)) {
-            String headerValue = String.format("pin-sha256='%s'; pin-sha256='%s'; max-age=%d", certificateFingerprintBase64_1, certificateFingerprintBase64_2, HPKP_MAX_AGE_SECONDS);
-            if (StringUtils.isNotBlank(hpkpReportUri)) {
-                headerValue += String.format("; report-uri='%s'", hpkpReportUri);
+        if (StringUtils.isNotBlank(publicKeyFingerprintBase64_1) && StringUtils.isNotBlank(publicKeyFingerprintBase64_2)) {
+            String headerValue = String.format("pin-sha256='%s'; pin-sha256='%s'; max-age=%d", publicKeyFingerprintBase64_1, publicKeyFingerprintBase64_2, HPKP_MAX_AGE_SECONDS);
+            if (StringUtils.isNotBlank(hpkpReportUriEnforced)) {
+                headerValue += String.format("; report-uri='%s'", hpkpReportUriEnforced);
             }
             response.setHeader("Public-Key-Pins", headerValue);
         }
     }
 
     private void addPublicKeyPinsReportOnlyHeader(HttpServletResponse response) {
-        if (StringUtils.isNotBlank(certificateFingerprintBase64_1) && StringUtils.isNotBlank(certificateFingerprintBase64_2)) {
-            String headerValue = String.format("pin-sha256='%s'; pin-sha256='%s'", certificateFingerprintBase64_1, certificateFingerprintBase64_2);
-            if (StringUtils.isNotBlank(hpkpReportUri)) {
-                headerValue += String.format("; report-uri='%s'", hpkpReportUri);
+        if (StringUtils.isNotBlank(publicKeyFingerprintBase64_1) && StringUtils.isNotBlank(publicKeyFingerprintBase64_2)) {
+            String headerValue = String.format("pin-sha256='%s'; pin-sha256='%s'", publicKeyFingerprintBase64_1, publicKeyFingerprintBase64_2);
+            if (StringUtils.isNotBlank(hpkpReportUriReportOnly)) {
+                headerValue += String.format("; report-uri='%s'", hpkpReportUriReportOnly);
             }
             response.setHeader("Public-Key-Pins-Report-Only", headerValue);
         }

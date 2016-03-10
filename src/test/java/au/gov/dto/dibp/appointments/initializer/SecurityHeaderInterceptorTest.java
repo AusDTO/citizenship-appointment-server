@@ -15,7 +15,7 @@ public class SecurityHeaderInterceptorTest {
     @Test
     public void cspReportUriNotAddedWhenNotProvided() throws Exception {
         String cspReportUri = "";
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "https://example.com/hpkp_report", cspReportUri);
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "https://example.com/hpkp_report", "https://example.com/hpkp_report_only", cspReportUri);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -27,7 +27,7 @@ public class SecurityHeaderInterceptorTest {
 
     @Test
     public void cspReportUriAddedWhenProvided() throws Exception {
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "https://example.com/hpkp_report", "https://example.com/csp_report");
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "https://example.com/hpkp_report", "https://example.com/hpkp_report_only", "https://example.com/csp_report");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -39,7 +39,7 @@ public class SecurityHeaderInterceptorTest {
 
     @Test
     public void hstsHeaderAlwaysAdded() throws Exception {
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "", "");
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "", "https://example.com/hpkp_report_only", "");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -51,7 +51,7 @@ public class SecurityHeaderInterceptorTest {
 
     @Test
     public void xFrameOptionsHeaderAlwaysAdded() throws Exception {
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "", "");
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "", "https://example.com/hpkp_report_only", "");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -63,7 +63,7 @@ public class SecurityHeaderInterceptorTest {
 
     @Test
     public void xXssProtectionHeaderAlwaysAdded() throws Exception {
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "", "");
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "", "https://example.com/hpkp_report_only", "");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -75,7 +75,7 @@ public class SecurityHeaderInterceptorTest {
 
     @Test
     public void xContentTypeOptionsHeaderAlwaysAdded() throws Exception {
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "", "");
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("", "", "", "https://example.com/hpkp_report_only", "");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -88,7 +88,7 @@ public class SecurityHeaderInterceptorTest {
     @Test
     public void hpkpHeadersNotAddedIfFingerprint1NotProvided() throws Exception {
         String fingerprint1 = "";
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor(fingerprint1, "fingerprint2=", "https://example.com/hpkp_report", "https://example.com/csp_report");
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor(fingerprint1, "fingerprint2=", "https://example.com/hpkp_report", "https://example.com/hpkp_report_only", "https://example.com/csp_report");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -100,7 +100,7 @@ public class SecurityHeaderInterceptorTest {
     @Test
     public void hpkpHeadersNotAddedIfFingerprint2NotProvided() throws Exception {
         String fingerprint2 = "";
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("fingerprint1=", fingerprint2, "https://example.com/hpkp_report", "https://example.com/csp_report");
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("fingerprint1=", fingerprint2, "https://example.com/hpkp_report", "https://example.com/hpkp_report_only", "https://example.com/csp_report");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -110,9 +110,10 @@ public class SecurityHeaderInterceptorTest {
     }
 
     @Test
-    public void hpkpHeadersAddedEvenIfHpkpReportUriNotProvided() throws Exception {
-        String hpkpReportUri = "";
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("fingerprint1=", "fingerprint2=", hpkpReportUri, "https://example.com/csp_report");
+    public void hpkpHeadersAddedEvenIfHpkpReportUrisNotProvided() throws Exception {
+        String hpkpReportUriEnforced = "";
+        String hpkpReportUriReportOnly = "";
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("fingerprint1=", "fingerprint2=", hpkpReportUriEnforced, hpkpReportUriReportOnly, "https://example.com/csp_report");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -127,8 +128,8 @@ public class SecurityHeaderInterceptorTest {
     }
 
     @Test
-    public void hpkpHeadersAddedWithHpkpReportUriWhenProvided() throws Exception {
-        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("fingerprint1=", "fingerprint2=", "https://example.com/hpkp_report", "https://example.com/csp_report");
+    public void hpkpHeadersAddedWithHpkpReportUrisWhenProvided() throws Exception {
+        SecurityHeaderInterceptor interceptor = new SecurityHeaderInterceptor("fingerprint1=", "fingerprint2=", "https://example.com/hpkp_report", "https://example.com/hpkp_report_only", "https://example.com/csp_report");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
@@ -139,6 +140,6 @@ public class SecurityHeaderInterceptorTest {
 
         List<String> publicKeyPinsReportOnlyHeaders = response.getHeaders("Public-Key-Pins-Report-Only");
         assertThat(publicKeyPinsReportOnlyHeaders.size(), equalTo(1));
-        assertThat(publicKeyPinsReportOnlyHeaders.get(0), equalTo("pin-sha256='fingerprint1='; pin-sha256='fingerprint2='; report-uri='https://example.com/hpkp_report'"));
+        assertThat(publicKeyPinsReportOnlyHeaders.get(0), equalTo("pin-sha256='fingerprint1='; pin-sha256='fingerprint2='; report-uri='https://example.com/hpkp_report_only'"));
     }
 }
