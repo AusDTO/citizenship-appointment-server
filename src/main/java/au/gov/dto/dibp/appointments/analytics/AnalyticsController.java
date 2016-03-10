@@ -27,7 +27,8 @@ public class AnalyticsController {
     private final TemplateLoader templateLoader;
 
     @Autowired
-    public AnalyticsController(TemplateLoader templateLoader, @Value("${analytics.tracking.id}") String trackingId){
+    public AnalyticsController(TemplateLoader templateLoader,
+                               @Value("${analytics.tracking.id:}") String trackingId){
         this.templateLoader = templateLoader;
         this.trackingId = trackingId;
     }
