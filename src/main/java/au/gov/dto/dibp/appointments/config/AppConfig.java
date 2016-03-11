@@ -1,10 +1,6 @@
 package au.gov.dto.dibp.appointments.config;
 
-import au.gov.dto.dibp.appointments.initializer.DoSFilter;
-import au.gov.dto.dibp.appointments.initializer.HttpsOnlyFilter;
-import au.gov.dto.dibp.appointments.initializer.LogClientIdFilter;
-import au.gov.dto.dibp.appointments.initializer.NoHttpSessionFilter;
-import au.gov.dto.dibp.appointments.initializer.RequestLoggingFilter;
+import au.gov.dto.dibp.appointments.initializer.*;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -104,7 +100,16 @@ public class AppConfig {
 
     @Bean
     @Order(4)
-    public FilterRegistrationBean reuqestLoggingFilter() {
+    public FilterRegistrationBean logRequestPathFilter() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new LogRequestPathFilter());
+        registration.addUrlPatterns("/*");
+        return registration;
+    }
+
+    @Bean
+    @Order(5)
+    public FilterRegistrationBean requestLoggingFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new RequestLoggingFilter());
         registration.addUrlPatterns("/*");
