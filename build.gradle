@@ -105,10 +105,9 @@ repositories {
 }
 
 def hamcrestVersion = '1.3'
-def jmustacheVersion = '1.12'
 def junitVersion = '4.12'
-def springBootVersion = '1.3.2.RELEASE'
-def okhttpVersion = '3.0.1'
+def springBootVersion = '1.3.3.RELEASE'
+def okhttpVersion = '3.2.0'
 def metricsVersion = '3.1.2'
 def commonsIoVersion = '2.4'
 def commonsCodecVersion = '1.10'
@@ -121,6 +120,7 @@ def nimbusJoseJwtVersion = '4.12'
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-jetty:${springBootVersion}",
+            "org.springframework.boot:spring-boot-starter-mustache:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}",
             "io.dropwizard.metrics:metrics-jetty9:${metricsVersion}",
@@ -132,13 +132,11 @@ dependencies {
             "io.prometheus:simpleclient_logback:${prometheusVersion}",
             "io.prometheus:simpleclient_servlet:${prometheusVersion}",
             "io.prometheus.jmx:collector:${prometheusJmxVersion}",
-            "com.samskivert:jmustache:${jmustacheVersion}",
             "com.squareup.okhttp3:okhttp:${okhttpVersion}",
             "commons-codec:commons-codec:${commonsCodecVersion}",
             "org.apache.commons:commons-lang3:${commonsLang3Version}",
             "com.google.zxing:javase:${zxingVersion}",
             "com.nimbusds:nimbus-jose-jwt:${nimbusJoseJwtVersion}"
-
 
     testCompile "junit:junit:${junitVersion}",
             "org.hamcrest:hamcrest-library:${hamcrestVersion}",
@@ -220,5 +218,5 @@ processResources.dependsOn copyServerTempl, copyImageAssets, copyDefaultFavicon,
 task wrapper(type: Wrapper,
         description: 'Create Gradle wrapper scripts.',
         group: 'Build Setup') {
-    gradleVersion = '2.10'
+    gradleVersion = '2.11'
 }
