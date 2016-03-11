@@ -33,9 +33,21 @@ public class AnalyticsController {
         this.trackingId = trackingId;
     }
 
-    @RequestMapping(value = "/analytics.js", method = RequestMethod.GET, produces = "application/javascript")
+    @RequestMapping(value = "/analytics_basic.js", method = RequestMethod.GET, produces = "application/javascript")
     public @ResponseBody
-    ResponseEntity<String> bookingHtml(@AuthenticationPrincipal Client client) {
+    ResponseEntity<String> getAnalyticsCodeForNotAuthUser() {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("trackingId", trackingId);
+        Template template = templateLoader.loadTemplate("analytics.mustache");
+        String requestBody = template.execute(model);
+
+        return new ResponseEntity<>(requestBody,  new HttpHeaders(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/analytics_auth.js", method = RequestMethod.GET, produces = "application/javascript")
+    public @ResponseBody
+    ResponseEntity<String> getAnalyticsCodeForAuthUser(@AuthenticationPrincipal Client client) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("trackingId", trackingId);

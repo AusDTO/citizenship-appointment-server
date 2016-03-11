@@ -40,7 +40,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(HttpMethod.GET, "/images/**", "/static/**", "/barcode/**", "/analytics.js", "/login", "/session_timeout", "/sessionExpired", "/error", "/");
+        web.ignoring().antMatchers(HttpMethod.GET, "/images/**", "/static/**", "/barcode/**", "/analytics_basic.js", "/login", "/session_timeout", "/sessionExpired", "/error", "/");
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .anonymous()
                 .disable()
             .authorizeRequests()
-                .antMatchers("/analytics.js", "/", "/login").permitAll()  // no authentication on endpoints '/' and public assets
+                .antMatchers("/analytics_basic.js", "/", "/login").permitAll()  // no authentication on endpoints '/' and public assets
                 .antMatchers("/admin/**", "/metrics/**").permitAll()  // handled by AdminSecurityConfigurerAdapter
                 .anyRequest().authenticated()  // all other endpoints require authentication
                 .and()
