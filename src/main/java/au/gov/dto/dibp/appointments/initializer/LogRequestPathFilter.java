@@ -25,8 +25,7 @@ public class LogRequestPathFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         try {
             HttpServletRequest request = (HttpServletRequest) servletRequest;
-            String requestPath = request.getRequestURI();
-            MDC.put(MDC_KEY_REQUEST_PATH, requestPath);
+            MDC.put(MDC_KEY_REQUEST_PATH, request.getRequestURI());
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             MDC.remove(MDC_KEY_REQUEST_PATH);
