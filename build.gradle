@@ -174,13 +174,20 @@ task copyServerTempl(type: Copy,
 task copyImageAssets(type: Copy,
         description: 'Copy image assets from the client',
         group: 'Build Setup'){
-        from {
-            fileTree("node_modules/citizenship-appointment-client/images/").files
-        }
-        into {
-            "src/main/resources/public/images"
-        }
+    from {
+        fileTree("node_modules/citizenship-appointment-client/images/").files
+    }
+    into {
+        "src/main/resources/public/images"
+    }
+}
 
+task copyDefaultFavicon(type: Copy,
+        description: 'Copy default favicon from the client',
+        group: 'Build Setup'){
+    from 'node_modules/citizenship-appointment-client/images'
+    into 'src/main/resources/public'
+    include 'favicon.ico'
 }
 
 task copyBundledAssets(type: Copy,
@@ -206,8 +213,9 @@ bootRun.dependsOn copySpringLoaded
 
 copyBundledAssets.dependsOn npmInstall
 copyImageAssets.dependsOn npmInstall
+copyDefaultFavicon.dependsOn npmInstall
 copyServerTempl.dependsOn npmInstall
-processResources.dependsOn copyServerTempl, copyImageAssets, copyBundledAssets
+processResources.dependsOn copyServerTempl, copyImageAssets, copyDefaultFavicon, copyBundledAssets
 
 task wrapper(type: Wrapper,
         description: 'Create Gradle wrapper scripts.',
