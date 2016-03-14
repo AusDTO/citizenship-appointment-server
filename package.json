@@ -5,5 +5,9 @@
   "description": "",
   "dependencies": {
     "citizenship-appointment-client": "AusDTO/citizenship-appointment-client#21c2bcded"
+  },
+  "devDependencies": {
+    "casperjs": "^1.1.0-beta5",
+    "phantomjs-prebuilt": "^2.1.5"
   }
 }

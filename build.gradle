@@ -71,6 +71,7 @@ configurations {
     all*.exclude group: 'org.eclipse.jetty.websocket'  // No need for websocket support
     all*.exclude module: 'jetty-jsp'                   // No need for JSP support
     all*.exclude module: 'slf4j-simple'                // Use logback
+    all*.exclude module: 'slf4j-log4j12'                // Use logback
     all*.exclude module: 'spring-boot-starter-tomcat'  // Never include Tomcat (use Jetty instead)
 
     springloaded
@@ -102,6 +103,9 @@ tasks.withType(FindBugs) {
 
 repositories {
     mavenCentral()
+    maven {
+        url 'http://raonifn.github.com/repository/releases/'
+    }
 }
 
 def hamcrestVersion = '1.3'
@@ -142,7 +146,8 @@ dependencies {
             "org.hamcrest:hamcrest-library:${hamcrestVersion}",
             "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
             "com.squareup.okhttp3:mockwebserver:${okhttpVersion}",
-            "commons-io:commons-io:${commonsIoVersion}"
+            "commons-io:commons-io:${commonsIoVersion}",
+            "com.github.raonifn:casperjs-junit:0.4.0"
 
     springloaded "org.springframework:springloaded:${springLoadedVersion}"
 }
@@ -201,7 +206,7 @@ task copyBundledAssets(type: Copy,
 
 
 clean.doFirst {
-    delete "${projectDir}/node_modules"
+    delete "${projectDir}/node_modules/citizenship-appointment-client"
     delete "${projectDir}/src/main/resources/templates"
     delete "${projectDir}/src/main/resources/public"
 }
