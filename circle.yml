@@ -1,11 +1,11 @@
 machine:
   java:
     version: oraclejdk8
-  post:
+dependencies:
+  pre:
     - rm -f jce_policy-8.zip
     - "curl -o jce_policy-8.zip -v -j -k -L -H 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip"
     - unzip -j -o -d $JAVA_HOME/jre/lib/security jce_policy-8.zip
-dependencies:
   override:
     - ./gradlew dependencies
 test:
