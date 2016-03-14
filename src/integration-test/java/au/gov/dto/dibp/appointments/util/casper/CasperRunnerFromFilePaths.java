@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.casper;
+package au.gov.dto.dibp.appointments.util.casper;
 
 import com.github.raonifn.casperjs.junit.CasperJSTestCase;
 import com.github.raonifn.casperjs.junit.CasperRunner;
@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CasperRunnerFromFilePaths extends CasperRunner {
-
     private final Class<?> clazz;
 
     public CasperRunnerFromFilePaths(Class<?> clazz) throws InitializationError {
@@ -20,13 +19,11 @@ public class CasperRunnerFromFilePaths extends CasperRunner {
 
     @Override
     protected List<CasperJSTestCase> getChildren() {
-        CasperJSTestCase casperJSTestCase = new CasperJSTestCase();
-
         try {
-            casperJSTestCase.setUrl(clazz, new File("node_modules/citizenship-appointment-client/test/monitor/bookAppointment.js").toURI().toURL());
+            CasperJsTestCase testCase = new CasperJsTestCase(clazz, new File("node_modules/citizenship-appointment-client/test/monitor/bookAppointment.js").toURI().toURL());
+            return Arrays.asList(testCase);
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Invalid URL for CasperJS test script", e);
         }
-        return Arrays.asList(casperJSTestCase);
     }
 }

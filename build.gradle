@@ -70,8 +70,8 @@ configurations {
     all*.exclude group: 'org.apache.tomcat.embed'      // Never include Tomcat (use Jetty instead)
     all*.exclude group: 'org.eclipse.jetty.websocket'  // No need for websocket support
     all*.exclude module: 'jetty-jsp'                   // No need for JSP support
+    all*.exclude module: 'slf4j-log4j12'               // Use logback
     all*.exclude module: 'slf4j-simple'                // Use logback
-    all*.exclude module: 'slf4j-log4j12'                // Use logback
     all*.exclude module: 'spring-boot-starter-tomcat'  // Never include Tomcat (use Jetty instead)
 
     springloaded
@@ -120,6 +120,7 @@ def zxingVersion = '3.2.1'
 def prometheusVersion = '0.0.13'
 def prometheusJmxVersion = '0.6'
 def nimbusJoseJwtVersion = '4.12'
+def casperjsJunitVersion = '0.4.0'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
@@ -147,7 +148,7 @@ dependencies {
             "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
             "com.squareup.okhttp3:mockwebserver:${okhttpVersion}",
             "commons-io:commons-io:${commonsIoVersion}",
-            "com.github.raonifn:casperjs-junit:0.4.0"
+            "com.github.raonifn:casperjs-junit:${casperjsJunitVersion}"
 
     springloaded "org.springframework:springloaded:${springLoadedVersion}"
 }
@@ -203,7 +204,6 @@ task copyBundledAssets(type: Copy,
         "src/main/resources/public/static"
     }
 }
-
 
 clean.doFirst {
     delete "${projectDir}/node_modules/citizenship-appointment-client"
