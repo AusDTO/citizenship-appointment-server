@@ -2,10 +2,8 @@ package au.gov.dto.dibp.appointments;
 
 import au.gov.dto.dibp.appointments.util.casper.CasperRunnerFromFilePaths;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
-@Ignore
 @RunWith(CasperRunnerFromFilePaths.class)
 public class MonitorTest {
 
