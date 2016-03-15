@@ -10,8 +10,6 @@ dependencies:
     - ./gradlew dependencies
 test:
   override:
-    - ./gradlew check
-  post:
-    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
-    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
-    - find . -type f -regex ".*/build/integrationTest-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - ./gradlew test &> /dev/null
+    - ./gradlew integrationTest &> /dev/null
+    - ./gradlew assemble

@@ -94,9 +94,9 @@ tasks.withType(Test) {
     reports.html.destination = file("${reporting.baseDir}/${name}")
 
     // Suppress log output on build servers
-    if ([System.getenv('CI'), System.getenv('TRAVIS'), System.getenv('CIRCLECI')].contains('true')) {
-        systemProperty 'logging.config', 'src/integration-test/resources/logback-noout.xml'
-        systemProperty 'logback.configurationFile', 'src/integration-test/resources/logback-noout.xml'
+    if ([System.getenv('CI'), System.getenv('TRAVIS'), System.getenv('CIRCLECI')].contains('true') || System.getenv('SHOW_TEST_LOG') != 'true') {
+        systemProperty 'logging.config', 'src/integration-test/resources/logback-noout.xml'             // override when running Spring Boot application
+        systemProperty 'logback.configurationFile', 'src/integration-test/resources/logback-noout.xml'  // override when not running Spring Boot application
     }
 }
 
