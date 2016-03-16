@@ -1,4 +1,4 @@
-package au.gov.dto.dibp.appointments.config;
+package au.gov.dto.dibp.appointments.monitoring;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class MetricsConfig {
     @Bean
     public ServletRegistrationBean systemPublicMetricsServlet(SystemPublicMetrics publicMetrics) {
-        return new ServletRegistrationBean(createMetricsServlet(publicMetrics), "/metrics/system");
+        return new ServletRegistrationBean(createMetricsServlet(publicMetrics), "/monitoring/system");
     }
 
     private MetricsServlet createMetricsServlet(PublicMetrics publicMetrics) {

@@ -34,9 +34,7 @@ public class AdminSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter
                 .and()
             .requestCache()
                 .disable()
-            .antMatcher("/admin/**").authorizeRequests().anyRequest().hasAnyRole(ROLE_ADMIN)
-                .and()
-            .antMatcher("/metrics/**").authorizeRequests().anyRequest().hasAnyRole(ROLE_ADMIN)
+            .antMatcher("/monitoring/**").authorizeRequests().anyRequest().hasAnyRole(ROLE_ADMIN)
                 .and()
             .httpBasic();
     }
