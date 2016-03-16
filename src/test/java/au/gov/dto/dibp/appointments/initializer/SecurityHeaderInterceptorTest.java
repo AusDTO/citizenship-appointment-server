@@ -34,7 +34,7 @@ public class SecurityHeaderInterceptorTest {
 
         List<String> headers = response.getHeaders("Content-Security-Policy");
         assertThat(headers.size(), equalTo(1));
-        assertThat(headers.get(0), equalTo(CONTENT_SECURITY_POLICY_VALUE + "; report-uri='https://example.com/csp_report'"));
+        assertThat(headers.get(0), equalTo(CONTENT_SECURITY_POLICY_VALUE + "; report-uri https://example.com/csp_report"));
     }
 
     @Test
