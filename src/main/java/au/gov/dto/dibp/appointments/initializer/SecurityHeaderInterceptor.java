@@ -50,7 +50,7 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
     private void addContentSecurityPolicyHeader(HttpServletResponse response) {
         String headerValue = CONTENT_SECURITY_POLICY_VALUE;
         if (StringUtils.isNotBlank(cspReportUri)) {
-            headerValue += String.format("; report-uri='%s'", cspReportUri);
+            headerValue += String.format("; report-uri %s", cspReportUri);
         }
         response.setHeader("Content-Security-Policy", headerValue);
     }
