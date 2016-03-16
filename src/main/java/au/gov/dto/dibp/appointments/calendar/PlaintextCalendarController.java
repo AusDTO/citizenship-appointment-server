@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -54,8 +55,10 @@ public class PlaintextCalendarController {
                                     HttpServletRequest request) {
 
         Map<String, Object> model = getCommonModelData(client, error);
-        model.put("available_dates", availableDatesController.getAvailableDatesForPlaintext(client));
-
+        final List availableDates = availableDatesController.getAvailableDatesForPlaintext(client);
+        if(availableDates != null && !availableDates.isEmpty()){
+            model.put("available_dates", availableDates);
+        }
         return new ModelAndView("calendar_nojs", model);
     }
 
