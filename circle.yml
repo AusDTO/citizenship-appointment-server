@@ -28,3 +28,12 @@ deployment:
       - cf target -o $CF_ORG_DEV &> /dev/null
       - cf target -s $CF_SPACE_DEV &> /dev/null
       - URL=$CF_APP_URL_DEV ./bin/cideploy.sh &> /dev/null
+  production:
+    tag: /release-.*/
+    owner: AusDTO
+    commands:
+      - cf api $CF_API_PROD --skip-ssl-validation &> /dev/null
+      - cf auth $CF_USER_PROD $CF_PASSWORD_PROD &> /dev/null
+      - cf target -o $CF_ORG_PROD &> /dev/null
+      - cf target -s $CF_SPACE_PROD &> /dev/null
+      - URL=$CF_APP_URL_PROD ./bin/cideploy.sh &> /dev/null
