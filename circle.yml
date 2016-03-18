@@ -21,7 +21,7 @@ test:
 deployment:
   development:
     branch: master
-    owner: ausdto
+    owner: AusDTO
     commands:
       - cf api $CF_API_DEV --skip-ssl-validation &> /dev/null
       - cf auth $CF_USER_DEV $CF_PASSWORD_DEV &> /dev/null
