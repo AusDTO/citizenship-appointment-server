@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.login;
 
 import au.gov.dto.dibp.appointments.client.ClientIdValidator;
+import au.gov.dto.dibp.appointments.session.LogoutCookieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,9 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/session_timeout", method = RequestMethod.GET, produces = "text/html")
-    public ModelAndView sessionTimeoutHtml() {
-       return new ModelAndView("session_timeout", new HashMap<>());
+    public ModelAndView sessionTimeoutHtml(HttpServletRequest request, HttpServletResponse response) {
+        response.addCookie(LogoutCookieService.getLogoutCookie(request));
+        return new ModelAndView("session_timeout", new HashMap<>());
     }
 
     @ExceptionHandler(RuntimeException.class)

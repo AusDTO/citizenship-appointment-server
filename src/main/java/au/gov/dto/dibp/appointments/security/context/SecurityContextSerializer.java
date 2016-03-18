@@ -1,6 +1,7 @@
 package au.gov.dto.dibp.appointments.security.context;
 
 import au.gov.dto.dibp.appointments.client.Client;
+import au.gov.dto.dibp.appointments.session.LogoutCookieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +32,7 @@ public class SecurityContextSerializer {
     public SecurityContext deserialize(HttpServletRequest request, HttpServletResponse response) {
         Client client = getClientFromSessionCookie(request);
         if (client == null) {
-            response.addCookie(createLogoutCookie(request));
+            response.addCookie(LogoutCookieService.getLogoutCookie(request));
             return SecurityContextHolder.createEmptyContext();
         }
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -42,7 +43,7 @@ public class SecurityContextSerializer {
 
     public void serialize(SecurityContext securityContext, HttpServletRequest request, HttpServletResponse response) {
         if (securityContext.getAuthentication() == null) {
-            response.addCookie(createLogoutCookie(request));
+            response.addCookie(LogoutCookieService.getLogoutCookie(request));
             return;
         }
         Client client = (Client) securityContext.getAuthentication().getPrincipal();
@@ -70,15 +71,6 @@ public class SecurityContextSerializer {
         }
         Optional<Cookie> maybeCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals(COOKIE_NAME)).findFirst();
         return maybeCookie.isPresent() ? maybeCookie.get() : null;
-    }
-
-    private Cookie createLogoutCookie(HttpServletRequest request) {
-        Cookie cookie = new Cookie(COOKIE_NAME, "");
-        cookie.setPath(COOKIE_PATH);
-        cookie.setMaxAge(0);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(request.isSecure());
-        return cookie;
     }
 
     private Authentication createAuthentication(Client client) {
