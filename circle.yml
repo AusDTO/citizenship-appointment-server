@@ -2,11 +2,11 @@ machine:
   java:
     version: oraclejdk8
   post:
-    # Install Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files
+    # Install Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files for build
     - rm -f jce_policy-8.zip
     - "curl -o jce_policy-8.zip -v -j -k -L -H 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip"
     - sudo unzip -j -o -d $JAVA_HOME/jre/lib/security jce_policy-8.zip
-    # Install Cloud Foundry command line client
+    # Install Cloud Foundry command line client for deployment
     - "curl -v -L -o cf-cli_amd64.deb 'https://cli.run.pivotal.io/stable?release=debian64&source=github'"
     - sudo dpkg -i cf-cli_amd64.deb
     - cf -v
@@ -18,3 +18,13 @@ test:
     - ./gradlew test &> /dev/null
     - ./gradlew integrationTest &> /dev/null
     - ./gradlew assemble
+deployment:
+  development:
+    branch: master
+    owner: ausdto
+    commands:
+      - cf api $CF_API_DEV --skip-ssl-validation &> /dev/null
+      - cf auth $CF_USER_DEV $CF_PASSWORD_DEV &> /dev/null
+      - cf target -o $CF_ORG_DEV &> /dev/null
+      - cf target -s $CF_SPACE_DEV &> /dev/null
+      - URL=$CF_APP_URL_DEV ./bin/cideploy.sh &> /dev/null
