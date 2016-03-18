@@ -84,6 +84,12 @@ To run all tests:
 
     ./gradlew check
 
+### Security checks
+ 
+Check dependencies against known publicly disclosed security vulnerabilities published by NIST in NVD Data Feeds:
+
+    ./gradlew dependencyCheck --info
+
 ### Other
 
 To view other build tasks:
