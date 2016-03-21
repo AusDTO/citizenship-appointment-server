@@ -2,13 +2,15 @@ package au.gov.dto.dibp.appointments.availabletimes;
 
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.util.CalendarIdValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.Map;
 
 @RestController
 public class AvailableTimesController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvailableTimesController.class);
 
     private final AvailableTimesService availableTimesService;
     private final CalendarIdValidator calendarIdValidator;
@@ -61,5 +64,15 @@ public class AvailableTimesController {
         map.put("times", timesWithLabels);
         map.put("date", date);
         return map;
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ModelAndView handleNoCalendarExistsException(HttpServletRequest request, HttpServletResponse response, RuntimeException exception){
+        LOGGER.warn("Unhandled RuntimeException", exception);
+
+        if (response.getStatus() == 200) {
+            response.setStatus(500);
+        }
+        return new ModelAndView("error_page", new HashMap<>());
     }
 }
