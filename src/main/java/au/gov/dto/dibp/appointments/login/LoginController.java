@@ -27,6 +27,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView loginHtml(
             @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "system_error", required = false) String system_error,
             @RequestParam(value = "expired", required = false) String expired,
             @RequestParam(value = "id", required = false) String clientId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -34,6 +35,9 @@ public class LoginController {
         Map<String, Object> model = new HashMap<>();
         if (error != null) {
             model.put("error", true);
+        }
+        if (system_error != null) {
+            model.put("system_error", true);
         }
         if (expired != null) {
             model.put("expired", true);

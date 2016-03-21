@@ -1,6 +1,6 @@
 package au.gov.dto.dibp.appointments.qflowintegration;
 
-class ApiLoginException extends RuntimeException {
+public class ApiLoginException extends RuntimeException {
     public ApiLoginException(String message) {
         super(message);
     }

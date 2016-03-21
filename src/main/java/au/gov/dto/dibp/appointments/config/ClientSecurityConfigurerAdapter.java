@@ -2,6 +2,7 @@ package au.gov.dto.dibp.appointments.config;
 
 import au.gov.dto.dibp.appointments.initializer.CustomAuthenticationProvider;
 import au.gov.dto.dibp.appointments.login.LoginClientService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiLoginException;
 import au.gov.dto.dibp.appointments.security.context.CookieBasedSecurityContextRepository;
 import au.gov.dto.dibp.appointments.security.csrf.CookieBasedCsrfTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Authentication configuration for clients (citizenship applicants).
@@ -28,6 +31,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_FAILURE_URL = "/login?error";
+    private static final String LOGIN_SYSTEM_ERROR_URL = "/login?system_error";
 
     @Autowired
     private LoginClientService loginClientService;
@@ -45,8 +49,6 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        SimpleUrlAuthenticationFailureHandler authenticationFailureHandler = new SimpleUrlAuthenticationFailureHandler(LOGIN_FAILURE_URL);
-        authenticationFailureHandler.setAllowSessionCreation(false);
 
         http
             .sessionManagement()
@@ -72,7 +74,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 .loginPage("/login") // custom login page
                 .passwordParameter("familyName") // form element name
                 .defaultSuccessUrl("/calendar")
-                .failureHandler(authenticationFailureHandler)
+                .failureHandler(getLoginExceptionFailureHandler())
                 .permitAll()  // no authentication on login endpoint
                 .and()
             .logout()
@@ -88,6 +90,18 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 .contentTypeOptions().disable()
                 .frameOptions().disable()
                 .xssProtection().disable();
+    }
+
+    private ExceptionMappingAuthenticationFailureHandler getLoginExceptionFailureHandler(){
+        ExceptionMappingAuthenticationFailureHandler authenticationFailureHandler = new ExceptionMappingAuthenticationFailureHandler();
+        authenticationFailureHandler.setAllowSessionCreation(false);
+        authenticationFailureHandler.setDefaultFailureUrl(LOGIN_FAILURE_URL);
+
+        Map<String, String> failureUrlMap = new HashMap<String, String>();
+        failureUrlMap.put(ApiLoginException.class.getName(), LOGIN_SYSTEM_ERROR_URL);
+        authenticationFailureHandler.setExceptionMappings(failureUrlMap);
+
+        return authenticationFailureHandler;
     }
 
     @Bean
