@@ -44,7 +44,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(HttpMethod.GET, "/images/**", "/static/**", "/barcode/**", "/analytics_basic.js", "/login", "/session_timeout", "/sessionExpired", "/error", "/");
+        web.ignoring().antMatchers(HttpMethod.GET, "/images/**", "/static/**", "/barcode/**", "/analytics_basic.js", "/login", "/session_timeout", "/sessionExpired", "/error", "/cookies", "/");
     }
 
     @Override
