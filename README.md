@@ -52,11 +52,11 @@ Get fingerprint of public key certificate as a Base64 encoded SHA-265 digest of 
 
 To simply run the application:
 
-    ./gradlew run
+    ./go startApp
     
 You can optionally supply the port number to use as an environment variable:
 
-    PORT=8080 ./gradlew run
+    PORT=8080 ./go run
 
 The port defaults to 8083. Use `PORT=0` to select a random port.
 
@@ -68,30 +68,30 @@ To run or debug the application from your IDE, use the `Application` class as th
 
 To run the full build:
 
-    ./gradlew clean build
+    ./go fullBuild
 
 ### Testing
 
 To run unit tests:
 
-    ./gradlew test
+    ./go test
 
 To run integration tests:
 
-    ./gradlew integrationTest
+    ./go integrationTest
 
 To run all tests:
 
-    ./gradlew check
+    ./go allTests
 
 ### Security checks
  
 Check dependencies against known publicly disclosed security vulnerabilities published by NIST in NVD Data Feeds:
 
-    ./gradlew dependencyCheck --info
+    ./go dependencyCheck --info
 
 ### Other
 
 To view other build tasks:
 
-    ./gradlew tasks
+    ./go tasks

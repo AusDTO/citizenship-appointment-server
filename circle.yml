@@ -12,12 +12,11 @@ machine:
     - cf -v
 dependencies:
   override:
-    - ./gradlew dependencies
+    - ./go dependencies
 test:
   override:
-    - ./gradlew test &> /dev/null
-    - ./gradlew integrationTest &> /dev/null
-    - ./gradlew assemble
+    - ./go silentTests &> /dev/null
+    - ./go assemble
 deployment:
   development:
     branch: master

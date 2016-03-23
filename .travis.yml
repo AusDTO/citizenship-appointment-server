@@ -3,6 +3,6 @@ jdk:
   - oraclejdk8
 sudo: false
 script:
-  - ./gradlew test --info
+  - ./go test --info
 notifications:
   email: false
