@@ -35,4 +35,4 @@ deployment:
       - cf auth $CF_USER_PROD $CF_PASSWORD_PROD &> /dev/null
       - cf target -o $CF_ORG_PROD &> /dev/null
       - cf target -s $CF_SPACE_PROD &> /dev/null
-      - URL=$CF_APP_URL_PROD ./bin/cideploy.sh &> /dev/null
+      - ./bin/cideploy-prod.sh &> /dev/null
