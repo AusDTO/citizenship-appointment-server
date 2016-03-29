@@ -120,11 +120,11 @@ public class SecurityHeaderInterceptorTest {
 
         List<String> publicKeyPinsHeaders = response.getHeaders("Public-Key-Pins");
         assertThat(publicKeyPinsHeaders.size(), equalTo(1));
-        assertThat(publicKeyPinsHeaders.get(0), equalTo("pin-sha256='fingerprint1='; pin-sha256='fingerprint2='; max-age=" + HPKP_MAX_AGE_SECONDS));
+        assertThat(publicKeyPinsHeaders.get(0), equalTo("pin-sha256=\"fingerprint1=\"; pin-sha256=\"fingerprint2=\"; max-age=" + HPKP_MAX_AGE_SECONDS));
 
         List<String> publicKeyPinsReportOnlyHeaders = response.getHeaders("Public-Key-Pins-Report-Only");
         assertThat(publicKeyPinsReportOnlyHeaders.size(), equalTo(1));
-        assertThat(publicKeyPinsReportOnlyHeaders.get(0), equalTo("pin-sha256='fingerprint1='; pin-sha256='fingerprint2='"));
+        assertThat(publicKeyPinsReportOnlyHeaders.get(0), equalTo("pin-sha256=\"fingerprint1=\"; pin-sha256=\"fingerprint2=\""));
     }
 
     @Test
@@ -136,10 +136,10 @@ public class SecurityHeaderInterceptorTest {
 
         List<String> publicKeyPinsHeaders = response.getHeaders("Public-Key-Pins");
         assertThat(publicKeyPinsHeaders.size(), equalTo(1));
-        assertThat(publicKeyPinsHeaders.get(0), equalTo("pin-sha256='fingerprint1='; pin-sha256='fingerprint2='; max-age=" + HPKP_MAX_AGE_SECONDS + "; report-uri='https://example.com/hpkp_report'"));
+        assertThat(publicKeyPinsHeaders.get(0), equalTo("pin-sha256=\"fingerprint1=\"; pin-sha256=\"fingerprint2=\"; max-age=" + HPKP_MAX_AGE_SECONDS + "; report-uri=\"https://example.com/hpkp_report\""));
 
         List<String> publicKeyPinsReportOnlyHeaders = response.getHeaders("Public-Key-Pins-Report-Only");
         assertThat(publicKeyPinsReportOnlyHeaders.size(), equalTo(1));
-        assertThat(publicKeyPinsReportOnlyHeaders.get(0), equalTo("pin-sha256='fingerprint1='; pin-sha256='fingerprint2='; report-uri='https://example.com/hpkp_report_only'"));
+        assertThat(publicKeyPinsReportOnlyHeaders.get(0), equalTo("pin-sha256=\"fingerprint1=\"; pin-sha256=\"fingerprint2=\"; report-uri=\"https://example.com/hpkp_report_only\""));
     }
 }

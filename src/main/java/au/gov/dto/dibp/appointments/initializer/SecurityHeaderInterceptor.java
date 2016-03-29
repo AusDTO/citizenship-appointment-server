@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
     static final String CONTENT_SECURITY_POLICY_VALUE = "default-src 'self'; script-src 'self' www.google-analytics.com; img-src 'self' www.google-analytics.com";
     static final long HSTS_MAX_AGE_SECONDS = 31536000L; // 1 year
-    static final long HPKP_MAX_AGE_SECONDS = 10L;
+    static final long HPKP_MAX_AGE_SECONDS = 30L;
 
     private final String publicKeyFingerprintBase64_1;
     private final String publicKeyFingerprintBase64_2;
@@ -66,9 +66,9 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
      */
     private void addPublicKeyPinsHeader(HttpServletResponse response) {
         if (StringUtils.isNotBlank(publicKeyFingerprintBase64_1) && StringUtils.isNotBlank(publicKeyFingerprintBase64_2)) {
-            String headerValue = String.format("pin-sha256='%s'; pin-sha256='%s'; max-age=%d", publicKeyFingerprintBase64_1, publicKeyFingerprintBase64_2, HPKP_MAX_AGE_SECONDS);
+            String headerValue = String.format("pin-sha256=\"%s\"; pin-sha256=\"%s\"; max-age=%d", publicKeyFingerprintBase64_1, publicKeyFingerprintBase64_2, HPKP_MAX_AGE_SECONDS);
             if (StringUtils.isNotBlank(hpkpReportUriEnforced)) {
-                headerValue += String.format("; report-uri='%s'", hpkpReportUriEnforced);
+                headerValue += String.format("; report-uri=\"%s\"", hpkpReportUriEnforced);
             }
             response.setHeader("Public-Key-Pins", headerValue);
         }
@@ -76,9 +76,9 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
 
     private void addPublicKeyPinsReportOnlyHeader(HttpServletResponse response) {
         if (StringUtils.isNotBlank(publicKeyFingerprintBase64_1) && StringUtils.isNotBlank(publicKeyFingerprintBase64_2)) {
-            String headerValue = String.format("pin-sha256='%s'; pin-sha256='%s'", publicKeyFingerprintBase64_1, publicKeyFingerprintBase64_2);
+            String headerValue = String.format("pin-sha256=\"%s\"; pin-sha256=\"%s\"", publicKeyFingerprintBase64_1, publicKeyFingerprintBase64_2);
             if (StringUtils.isNotBlank(hpkpReportUriReportOnly)) {
-                headerValue += String.format("; report-uri='%s'", hpkpReportUriReportOnly);
+                headerValue += String.format("; report-uri=\"%s\"", hpkpReportUriReportOnly);
             }
             response.setHeader("Public-Key-Pins-Report-Only", headerValue);
         }
