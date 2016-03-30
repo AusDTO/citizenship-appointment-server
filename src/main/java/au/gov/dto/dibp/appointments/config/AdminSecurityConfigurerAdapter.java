@@ -9,9 +9,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 
 /**
  * Authentication configuration for read-only admin pages that expose application metrics for monitoring purposes.
+ *
+ * When accessing these URLs in an environment with a load balancer present, HTTPS is required.
  */
 @Configuration
 @Order(1) // must have lower value (higher priority) than ClientSecurityConfigurerAdapter
@@ -34,7 +37,10 @@ public class AdminSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter
                 .and()
             .requestCache()
                 .disable()
-            .antMatcher("/monitoring/**").authorizeRequests().anyRequest().hasAnyRole(ROLE_ADMIN)
+            .antMatcher("/monitoring/**")
+                .authorizeRequests()
+                .requestMatchers(new RequestHeaderRequestMatcher("x-forwarded-proto", "https"))
+                .hasAnyRole(ROLE_ADMIN)
                 .and()
             .httpBasic();
     }
