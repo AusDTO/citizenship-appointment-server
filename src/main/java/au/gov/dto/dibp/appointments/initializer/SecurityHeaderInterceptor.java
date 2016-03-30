@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
     static final String CONTENT_SECURITY_POLICY_VALUE = "default-src 'self'; script-src 'self' www.google-analytics.com; img-src 'self' www.google-analytics.com";
     static final long HSTS_MAX_AGE_SECONDS = 31536000L; // 1 year
-    static final long HPKP_MAX_AGE_SECONDS = 30L;
+    static final long HPKP_MAX_AGE_SECONDS = 2592000L;
 
     private final String publicKeyFingerprintBase64_1;
     private final String publicKeyFingerprintBase64_2;
