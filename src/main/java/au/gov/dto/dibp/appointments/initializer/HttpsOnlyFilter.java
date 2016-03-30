@@ -18,7 +18,8 @@ import java.net.URISyntaxException;
 /**
  * Force HTTPS in environments that support it.
  *
- * Inspects the X-Forwarded-Proto header to decide. This header is set by load a
+ * Inspects the X-Forwarded-Proto header to decide. This header is set by load balancers to inform
+ * the proxied application of the protocol used by the client request.
  */
 public class HttpsOnlyFilter implements Filter {
     @Override
