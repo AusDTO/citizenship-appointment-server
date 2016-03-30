@@ -6,7 +6,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.List;
 
 import static au.gov.dto.dibp.appointments.initializer.SecurityHeaderInterceptor.CONTENT_SECURITY_POLICY_VALUE;
-import static au.gov.dto.dibp.appointments.initializer.SecurityHeaderInterceptor.HPKP_MAX_AGE_SECONDS;
 import static au.gov.dto.dibp.appointments.initializer.SecurityHeaderInterceptor.HSTS_MAX_AGE_SECONDS;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -117,10 +116,11 @@ public class SecurityHeaderInterceptorTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
-
-        List<String> publicKeyPinsHeaders = response.getHeaders("Public-Key-Pins");
-        assertThat(publicKeyPinsHeaders.size(), equalTo(1));
-        assertThat(publicKeyPinsHeaders.get(0), equalTo("pin-sha256=\"fingerprint1=\"; pin-sha256=\"fingerprint2=\"; max-age=" + HPKP_MAX_AGE_SECONDS));
+        
+// To be uncommented when PKPRO is OK
+//        List<String> publicKeyPinsHeaders = response.getHeaders("Public-Key-Pins");
+//        assertThat(publicKeyPinsHeaders.size(), equalTo(1));
+//        assertThat(publicKeyPinsHeaders.get(0), equalTo("pin-sha256=\"fingerprint1=\"; pin-sha256=\"fingerprint2=\"; max-age=" + HPKP_MAX_AGE_SECONDS));
 
         List<String> publicKeyPinsReportOnlyHeaders = response.getHeaders("Public-Key-Pins-Report-Only");
         assertThat(publicKeyPinsReportOnlyHeaders.size(), equalTo(1));
@@ -133,10 +133,10 @@ public class SecurityHeaderInterceptorTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
-
-        List<String> publicKeyPinsHeaders = response.getHeaders("Public-Key-Pins");
-        assertThat(publicKeyPinsHeaders.size(), equalTo(1));
-        assertThat(publicKeyPinsHeaders.get(0), equalTo("pin-sha256=\"fingerprint1=\"; pin-sha256=\"fingerprint2=\"; max-age=" + HPKP_MAX_AGE_SECONDS + "; report-uri=\"https://example.com/hpkp_report\""));
+// To be uncommented when PKPRO is OK
+//        List<String> publicKeyPinsHeaders = response.getHeaders("Public-Key-Pins");
+//        assertThat(publicKeyPinsHeaders.size(), equalTo(1));
+//        assertThat(publicKeyPinsHeaders.get(0), equalTo("pin-sha256=\"fingerprint1=\"; pin-sha256=\"fingerprint2=\"; max-age=" + HPKP_MAX_AGE_SECONDS + "; report-uri=\"https://example.com/hpkp_report\""));
 
         List<String> publicKeyPinsReportOnlyHeaders = response.getHeaders("Public-Key-Pins-Report-Only");
         assertThat(publicKeyPinsReportOnlyHeaders.size(), equalTo(1));
