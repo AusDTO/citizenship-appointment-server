@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
-    static final String CONTENT_SECURITY_POLICY_VALUE = "default-src 'self'; script-src 'self' www.google-analytics.com; img-src 'self' www.google-analytics.com";
+    static final String CONTENT_SECURITY_POLICY_VALUE = "default-src 'self'; script-src 'self' www.google-analytics.com http://*.hotjar.com https://*.hotjar.com https://cdn.jsdelivr.net; img-src 'self' www.google-analytics.com; connect-src 'self' http://insights.hotjar.com wss://ins4.hotjar.com;";
     static final long HSTS_MAX_AGE_SECONDS = 31536000L; // 1 year
     static final long HPKP_MAX_AGE_SECONDS = 1800L;
 
