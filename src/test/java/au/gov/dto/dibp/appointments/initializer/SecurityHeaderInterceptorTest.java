@@ -45,7 +45,7 @@ public class SecurityHeaderInterceptorTest {
 
         List<String> headers = response.getHeaders("Strict-Transport-Security");
         assertThat(headers.size(), equalTo(1));
-        assertThat(headers.get(0), equalTo("max-age=" + HSTS_MAX_AGE_SECONDS));
+        assertThat(headers.get(0), equalTo("max-age=" + HSTS_MAX_AGE_SECONDS +"; includeSubDomains; preload"));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class SecurityHeaderInterceptorTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         interceptor.postHandle(null, response, null, null);
-        
+
 // To be uncommented when PKPRO is OK
 //        List<String> publicKeyPinsHeaders = response.getHeaders("Public-Key-Pins");
 //        assertThat(publicKeyPinsHeaders.size(), equalTo(1));

@@ -56,7 +56,7 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
     }
 
     private void addStrictTransportSecurityHeader(HttpServletResponse response) {
-        response.setHeader("Strict-Transport-Security", "max-age=" + HSTS_MAX_AGE_SECONDS);
+        response.setHeader("Strict-Transport-Security", "max-age=" + HSTS_MAX_AGE_SECONDS +"; includeSubDomains; preload");
     }
 
     /**
