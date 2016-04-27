@@ -39,7 +39,7 @@ public class SecurityHeaderInterceptor extends HandlerInterceptorAdapter {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         addContentSecurityPolicyHeader(response);
         addStrictTransportSecurityHeader(response);
-        //addPublicKeyPinsHeader(response);
+        addPublicKeyPinsHeader(response);
         addPublicKeyPinsReportOnlyHeader(response);
         addXFrameOptionsHeader(response);
         addXXssProtectionHeader(response);
