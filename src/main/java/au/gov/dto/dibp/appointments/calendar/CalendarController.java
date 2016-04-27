@@ -37,6 +37,7 @@ public class CalendarController {
     public ModelAndView bookingHtml(@AuthenticationPrincipal Client client,
                                     @RequestParam(value = "error", required = false) String error,
                                     @RequestParam(value = "unavailable", required = false) String unavailable,
+                                    @RequestParam(value = "not_eligible", required = false) String notEligible,
                                     HttpServletRequest request) {
 
         Map<String, Object> model = new HashMap<>();
@@ -61,6 +62,9 @@ public class CalendarController {
         }
         if (unavailable != null) {
             model.put("unavailable", true);
+        }
+        if (notEligible != null) {
+            model.put("not_eligible", true);
         }
         return new ModelAndView("calendar_page", model);
     }

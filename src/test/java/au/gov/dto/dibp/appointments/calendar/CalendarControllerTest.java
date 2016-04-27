@@ -57,49 +57,56 @@ CalendarControllerTest {
 
     @Test
     public void test_bookingHtml_should_passTheLocationToTheModel(){
-        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, mock(HttpServletRequest.class));
+        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, null, mock(HttpServletRequest.class));
 
         assertThat(result.getModel().get("location"), is(UNIT_ADDRESS));
     }
 
     @Test
     public void test_bookingHtml_should_passTodayDateToTheModel(){
-        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, mock(HttpServletRequest.class));
+        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, null, mock(HttpServletRequest.class));
 
         assertThat(result.getModel().get("today_date"), is(UNIT_LOCALTIME));
     }
 
     @Test
     public void test_bookingHtml_should_passCurrentUserAppointmentToTheModel(){
-        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, mock(HttpServletRequest.class));
+        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, null, mock(HttpServletRequest.class));
 
         assertThat(result.getModel().get("current_appointment"), is("Monday 18 January, 1:20 PM"));
     }
 
     @Test
     public void test_bookingHtml_should_passErrorToTheModelIfPresent(){
-        final ModelAndView result = controller.bookingHtml(getStandardClient(), "Some error", null, mock(HttpServletRequest.class));
+        final ModelAndView result = controller.bookingHtml(getStandardClient(), "Some error", null, null, mock(HttpServletRequest.class));
 
         assertThat(result.getModel().get("error"), is(true));
     }
 
     @Test
     public void test_bookingHtml_should_notPopulateErrorInTheModelIfNotPresent(){
-        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, mock(HttpServletRequest.class));
+        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, null, mock(HttpServletRequest.class));
 
         assertThat(result.getModel().get("error"), is(nullValue()));
     }
 
     @Test
     public void test_bookingHtml_should_passUnavailableErrorToTheModelIfPresent(){
-        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, "Some error", mock(HttpServletRequest.class));
+        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, "Some error", null, mock(HttpServletRequest.class));
 
         assertThat(result.getModel().get("unavailable"), is(true));
     }
 
     @Test
+    public void test_bookingHtml_should_passUserNotEligibleErrorToTheModelIfPresent(){
+        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, "some error", mock(HttpServletRequest.class));
+
+        assertThat(result.getModel().get("not_eligible"), is(true));
+    }
+
+    @Test
     public void test_bookingHtml_should_notPopulateUnavailableErrorInTheModelIfNotPresent(){
-        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, mock(HttpServletRequest.class));
+        final ModelAndView result = controller.bookingHtml(getStandardClient(), null, null, null, mock(HttpServletRequest.class));
 
         assertThat(result.getModel().get("unavailable"), is(nullValue()));
     }

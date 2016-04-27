@@ -61,7 +61,7 @@ public class BookingController {
     @ExceptionHandler(UserNotEligibleToBookException.class)
     public ModelAndView handleUserNotEligibleToBookException(HttpServletRequest req, UserNotEligibleToBookException exception){
         LOGGER.warn("Unhandled UserNotEligibleToBookException", exception);
-        return new ModelAndView("redirect:/calendar?error", new HashMap<>());
+        return new ModelAndView("redirect:/calendar?not_eligible", new HashMap<>());
     }
 
     @ExceptionHandler(RuntimeException.class)
