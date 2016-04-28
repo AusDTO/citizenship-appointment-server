@@ -50,13 +50,13 @@ You will need a few environment variables set in order to run the application (t
     
 The above environment variables are essential to run the application. 
 
-MONITOR_BASE_URL, MONITOR_CLIENT_ID, MONITOR_FAMILY_NAME are storing the details of a sample user that can log in to the system, they are used to run an e2e test checking the ability to book while connected to the booking system.
+MONITOR_BASE_URL, MONITOR_CLIENT_ID, MONITOR_FAMILY_NAME are storing the details of a sample user that can log in to the system as real clients would, they are used to run an e2e test checking the ability to book an appointment while integrated with the booking system.
 
 SERVICE_ADDRESS_CUSTOMER, SERVICE_ADDRESS_USER, SERVICE_ADDRESS_CALENDAR, SERVICE_ADDRESS_PROCESS, SERVICE_ADDRESS_UNIT,SERVICE_ADDRESS_APPOINTMENT_TYPE and SERVICE_ADDRESS_SERVICE are the endpoints of the booking system we are integrating with to store the data about the appointments. 
     
-USER_USERNAME_*x*, USER_PASSWORD_*x*, USER_ID_*x*, (where x should be a number) is for managing the users that the system uses to obtain authentication with the API of the booking system.
+USER_USERNAME_*x*, USER_PASSWORD_*x*, USER_ID_*x*, (where x should be a number, incremental from 1) is for managing the users that the system uses to obtain authentication with the API of the booking system.
 
-SECURITY_ADMIN_PASSWORD is for the monitoring endpoint.
+SECURITY_ADMIN_PASSWORD is for the monitoring endpoint that the system exposes to retrieve basic health information.
 
 SESSION_ENCRYPTION_KEY, SESSION_JWT_ENCRYPTION_KEY_BASE64 and SECURITY_ANONYMOUS_TOKEN_KEY are needed for various security mechanisms we implemented.
 
@@ -65,11 +65,11 @@ ANALYTICS_TRACKING_ID is for the Google Analytics account we integrated with the
 
 ##Running the application
 
-Once all the above steps are done in the main folder of the project execute
+Once Java is installed, code checked out and variables set, go to the main folder of the project and execute
 
     ./go fullBuild
 
-This will download any required dependencies and run all the tests if everything is successful.
+This will download any required dependencies and run all the tests. It should succeed if all is configured properly.
 
 ##Next steps
 
