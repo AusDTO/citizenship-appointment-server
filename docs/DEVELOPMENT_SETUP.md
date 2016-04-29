@@ -6,8 +6,8 @@ How to start as a developer. Brief description of what you would need to have in
 
 You will need to:
 
-* have git to checkout this repo [how to install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* have Java installed [how to install Java?](https://java.com/en/download/help/download_options.xml)
+* have git to checkout this repo ([how to install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
+* have Java 8 installed ([how to install Java?](https://java.com/en/download/help/download_options.xml))
 
 An essential part of the system is integration with a booking service that stores all the data about users, appointments etc. In order to be able to run this application without an integration to a real system, we created a dummy version of it, so this server application can be run without being dependent on the licence we have. The address of the stub is:
         
@@ -78,3 +78,19 @@ All the commands you can run can be found in the go script located in the root f
     ./go startApp
 
 will start the application. Happy coding!
+
+##Some useful info
+
+###Codebase
+
+We have split our codebase into packages based on the functionality it is responsible to, not based on the layers. So for example if you are looking for the code responsible for obtaining available dates, the *availabledates* package will be the place to go.
+
+The client project is pulled as a dependency (see package.json) whenever the *./go fullBuild* is executed. The file structure of images, JavaScript and css is flattened and copied into the */resources/public* directory. The file structure of the Mustache templates is flattened and copied into */resources/templates* directory. Any changes that you make to those files will be overwritten as soon as you run or build the application with the files from the client based on the commit hash in *package.json*.
+
+###Development process
+
+Once you are done with all the changes in your code, make sure you have enough tests covering your functionality. Execute 
+
+    ./go fullBuild
+    
+to run all the tests and check that none of the existing functionality was not broken. As a part of this, integrationTests are executed, along with end2end tests run by casper (all in */src/test* and */src/integration-test* folders). If the build passes, you are free to push the code.
