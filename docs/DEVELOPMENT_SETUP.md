@@ -1,4 +1,4 @@
-#Devlopment Setup
+#Development Setup
 
 How to start as a developer. Brief description of what you would need to have installed and what dependencies you should have configured to successfully run and contribute to the project.
 
