@@ -18,7 +18,17 @@ test:
     - ./go silentTests &> /dev/null
     - ./go assemble
 deployment:
-  development:
+  cfapps-staging:
+    branch: master
+    owner: AusDTO
+    commands:
+      - cf api api.run.pivotal.io &> /dev/null
+      - cf auth $CF_USER_PWS $CF_PASSWORD_PWS &> /dev/null
+      - cf target -o $CF_ORG_PWS &> /dev/null
+      - cf target -s $CF_SPACE_PWS &> /dev/null
+      - ./bin/cideploy-pws.sh &> /dev/null
+
+  staging:
     branch: master
     owner: AusDTO
     commands:
@@ -27,6 +37,7 @@ deployment:
       - cf target -o $CF_ORG_DEV &> /dev/null
       - cf target -s $CF_SPACE_DEV &> /dev/null
       - URL=$CF_APP_URL_DEV ./bin/cideploy.sh &> /dev/null
+
   production:
     tag: /release-.*/
     owner: AusDTO
