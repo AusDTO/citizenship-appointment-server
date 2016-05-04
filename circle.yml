@@ -18,20 +18,17 @@ test:
     - ./go silentTests &> /dev/null
     - ./go assemble
 deployment:
-  cfapps-staging:
+  staging:
     branch: master
     owner: AusDTO
     commands:
+      # deploy to PWS
       - cf api api.run.pivotal.io &> /dev/null
       - cf auth $CF_USER_PWS $CF_PASSWORD_PWS &> /dev/null
       - cf target -o $CF_ORG_PWS &> /dev/null
       - cf target -s $CF_SPACE_PWS &> /dev/null
       - ./bin/cideploy-pws.sh &> /dev/null
-
-  staging:
-    branch: master
-    owner: AusDTO
-    commands:
+      # deploy to Cloud Foundry
       - cf api $CF_API_DEV --skip-ssl-validation &> /dev/null
       - cf auth $CF_USER_DEV $CF_PASSWORD_DEV &> /dev/null
       - cf target -o $CF_ORG_DEV &> /dev/null
