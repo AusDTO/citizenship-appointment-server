@@ -1,0 +1,12 @@
+sensu-server:
+  image: ausdto/monitoring-stack
+  ports:
+    - "5672:5672"
+    - "3000:3000"
+
+appointments-border-gov-au:
+  build: .
+  hostname: appointments-border-gov-au
+  links:
+    - sensu-server
+

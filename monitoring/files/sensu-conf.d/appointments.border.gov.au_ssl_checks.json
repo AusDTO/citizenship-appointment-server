@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "appointments.border.gov.au_sslcheck": {
+      "handlers": ["default", "slack"],
+      "slack": {
+        "channels": [ "#webops" ]
+      },
+      "command": "/opt/sensu/embedded/bin/check-https-cert.rb --url https://appointments.border.gov.au --critical 15 --warning 30",
+      "interval": 300,
+      "standalone": true
+    }
+  }
+}
