@@ -6,7 +6,9 @@ sensu-server:
 
 appointments-border-gov-au:
   build: .
-  hostname: appointments-border-gov-au
+  hostname: appointments-border-gov-au-${ENV}
   links:
     - sensu-server
-
+  environment:
+    - URL
+    - PAGELOAD_URI=/login
