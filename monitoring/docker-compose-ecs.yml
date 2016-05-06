@@ -8,4 +8,5 @@ gov-au:
     - RABBITMQ_PASSWORD
     - RABBITMQ_VHOST
     - URL
-    - ENV
+    - PAGELOAD_URI=/login
+
