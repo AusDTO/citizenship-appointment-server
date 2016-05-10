@@ -1,6 +1,6 @@
-gov-au:
-  image: AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/ausdtomonitoring-appointments-border-gov-au:IMAGE_TAG
-  hostname: appointments-border-gov-au
+DOCKER_CONTAINER_NAME:
+  image: AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/ausdtomonitoring-DOCKER_IMAGE_NAME:IMAGE_TAG
+  hostname: DOCKER_CONTAINER_NAME
   environment:
     - RABBITMQ_HOST
     - RABBITMQ_PORT
@@ -9,4 +9,3 @@ gov-au:
     - RABBITMQ_VHOST
     - URL
     - PAGELOAD_URI=/login
-

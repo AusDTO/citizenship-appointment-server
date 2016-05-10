@@ -1,5 +1,5 @@
 FROM ubuntu
-MAINTAINER Michael Richardson <michael@michaelandhelen.com>
+MAINTAINER Michael Richardson <weboperations@digital.gov.au>
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y wget
 
