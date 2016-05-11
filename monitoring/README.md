@@ -27,7 +27,7 @@ The Sensu stack includes the following components.
 * **_sensu-api_** (RESTful) - provides access to monitoring data
 * **_dashboard_** - view the real-time state of sensu-clients and check results.
 
-![Alt text](/sensu-architecture.png?raw=true "Sensu Architecture")
+![Alt text](./sensu-architecture.png?raw=true "Sensu Architecture")
 
 Teams need only concern themselves with the **sensu-client** which will run their desired checks.
 
@@ -127,7 +127,7 @@ Browse to the dashboard to view the results of the check script.
  * Default dashboard credentials are `sensu`/`sensu`
 
 
-![Alt text](/sensu-dashboard.png?raw=true "Sensu Dashboard")
+![Alt text](./sensu-dashboard.png?raw=true "Sensu Dashboard")
 
  
 ---
