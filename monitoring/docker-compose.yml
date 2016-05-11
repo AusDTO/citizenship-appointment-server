@@ -11,4 +11,7 @@ appointments-border-gov-au:
     - sensu-server
   environment:
     - URL
+    - SECURITY_ADMIN_USERNAME
+    - SECURITY_ADMIN_PASSWORD
     - PAGELOAD_URI=/login
+    - BACKEND_PING_URI=/monitoring/backend
