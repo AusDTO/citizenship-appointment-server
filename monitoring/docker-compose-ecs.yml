@@ -1,6 +1,6 @@
 DOCKER_CONTAINER_NAME:
-  image: AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/ausdtomonitoring-DOCKER_IMAGE_NAME:IMAGE_TAG
-  hostname: DOCKER_CONTAINER_NAME
+  image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/ausdtomonitoring-${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
+  hostname: ${DOCKER_CONTAINER_NAME}
   mem_limit: 262144000
   environment:
     - RABBITMQ_HOST
