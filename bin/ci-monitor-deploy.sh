@@ -23,9 +23,15 @@ echo "All environment variables are supplied"
 
 set -e
 
-export IMAGE_TAG=$(git show-ref -s refs/remotes/origin/HEAD)
+GIT_REF=$(git show-ref -s refs/remotes/origin/HEAD)
 
 echo "Creating a new ECS template and updating the service"
+sed -ie "s/IMAGE_TAG/$GIT_REF/" $DOCKER_COMPOSE_FILE_PATH
+sed -ie "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/" $DOCKER_COMPOSE_FILE_PATH
+sed -ie "s/AWS_REGION/$AWS_REGION/" $DOCKER_COMPOSE_FILE_PATH
+sed -ie "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/" $DOCKER_COMPOSE_FILE_PATH
+sed -ie "s/DOCKER_CONTAINER_NAME/$DOCKER_CONTAINER_NAME/" $DOCKER_COMPOSE_FILE_PATH
+sed -ie "s/DOCKER_IMAGE_NAME/$DOCKER_IMAGE_NAME/" $DOCKER_COMPOSE_FILE_PATH
 
 ecs-cli configure --cluster monitoring
 ecs-cli compose --file $DOCKER_COMPOSE_FILE_PATH --project-name $DOCKER_CONTAINER_NAME service up

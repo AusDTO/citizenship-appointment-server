@@ -45,7 +45,7 @@ deployment:
       - cf target -s $CF_SPACE_DEV &> /dev/null
       - URL=$CF_APP_URL_DEV ./bin/cideploy.sh &> /dev/null
       # deploy monitoring for staging to AWS
-      - URL=$PRODUCTION_URL DOCKER_COMPOSE_FILE_PATH=./monitoring/docker-compose-ecs.yml DOCKER_IMAGE_NAME=appointments-border-gov-au DOCKER_CONTAINER_NAME=appointments-border-gov-au ./bin/ci-monitor-deploy.sh
+      - URL=$PRODUCTION_URL DOCKER_COMPOSE_FILE_PATH=./monitoring/docker-compose-ecs.yml DOCKER_IMAGE_NAME=appointments-border-gov-au DOCKER_CONTAINER_NAME=appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
 #      - ENV=production URL=$PRODUCTION_URL DOCKER_COMPOSE_FILE_PATH=./monitoring/docker-compose-ecs.yml ./bin/ci-monitor-deploy.sh
   production:
     tag: /release-.*/
