@@ -9,7 +9,7 @@ machine:
     - "curl -o jce_policy-8.zip -v -j -k -L -H 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip"
     - sudo unzip -j -o -d $JAVA_HOME/jre/lib/security jce_policy-8.zip
     # Install Cloud Foundry command line client for deployment
-    - "curl -v -L -o cf-cli_amd64.deb 'https://cli.run.pivotal.io/stable?release=debian64&source=github'"
+    - "curl -v -L -o cf-cli_amd64.deb 'https://cli.run.pivotal.io/stable?release=debian64&version=6.17.0&source=github'"
     - sudo dpkg -i cf-cli_amd64.deb
     - cf -v
     # AWS cli (used for docker push to ecr)
@@ -26,7 +26,7 @@ test:
     - ./go silentTests &> /dev/null
     - ./go assemble
     # build monitoring image
-    - DOCKERFILE_PATH=./monitoring/Dockerfile DOCKER_IMAGE_NAME=appointments-border-gov-au ./bin/ci-monitor-build.sh
+    - DOCKERFILE_PATH=./monitoring/Dockerfile DOCKER_IMAGE_NAME=appointments-border-gov-au ./bin/ci-monitor-build.sh &> /dev/null
 deployment:
   staging:
     branch: master
@@ -45,7 +45,7 @@ deployment:
       - cf target -s $CF_SPACE_DEV &> /dev/null
       - URL=$CF_APP_URL_DEV ./bin/cideploy.sh &> /dev/null
       # deploy monitoring for staging to AWS
-      - URL=$PRODUCTION_URL DOCKER_COMPOSE_FILE_PATH=./monitoring/docker-compose-ecs.yml DOCKER_IMAGE_NAME=appointments-border-gov-au DOCKER_CONTAINER_NAME=appointments-border-gov-au ./bin/ci-monitor-deploy.sh
+      - URL=$PRODUCTION_URL DOCKER_COMPOSE_FILE_PATH=./monitoring/docker-compose-ecs.yml DOCKER_IMAGE_NAME=appointments-border-gov-au DOCKER_CONTAINER_NAME=appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
 #      - ENV=production URL=$PRODUCTION_URL DOCKER_COMPOSE_FILE_PATH=./monitoring/docker-compose-ecs.yml ./bin/ci-monitor-deploy.sh
   production:
     tag: /release-.*/
