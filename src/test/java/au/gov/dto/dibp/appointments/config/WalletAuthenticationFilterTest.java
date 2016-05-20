@@ -24,7 +24,7 @@ public class WalletAuthenticationFilterTest {
     @Test
     public void shouldCreateAuthenticationInSecurityContextFromQueryString() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setQueryString("?id=123&otherid=abc");
+        request.setQueryString("id=123&otherid=abc");
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
 

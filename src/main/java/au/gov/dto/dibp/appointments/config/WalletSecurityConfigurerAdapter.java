@@ -41,6 +41,8 @@ public class WalletSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 .antMatchers(HttpMethod.POST, "/wallet/v1/devices/**")
                 .antMatchers(HttpMethod.DELETE, "/wallet/v1/devices/**")
                 .antMatchers("/wallet/v1/passes/**")
+                .antMatchers("/wallet/pass/**")
+                .antMatchers("/wallet/pass*")
                 .and()
             .authorizeRequests()
                 .anyRequest()
