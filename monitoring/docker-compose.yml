@@ -13,5 +13,9 @@ appointments-border-gov-au:
     - URL
     - SECURITY_ADMIN_USERNAME
     - SECURITY_ADMIN_PASSWORD
+    - MONITOR_CLIENT_ID
+    - MONITOR_FAMILY_NAME
     - PAGELOAD_URI=/login
     - BACKEND_PING_URI=/monitoring/backend
+    - MONITOR_BASE_URL=${URL}
+    - PHANTOMJS_EXECUTABLE=node_modules/.bin/phantomjs
