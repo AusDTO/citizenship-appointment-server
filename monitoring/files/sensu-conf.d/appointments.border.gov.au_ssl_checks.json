@@ -3,7 +3,7 @@
     "appointments.border.gov.au_sslcheck": {
       "handlers": ["default", "slack"],
       "slack": {
-        "channels": [ "#webops, #citizenship-bookings" ]
+        "channels": [ "#webops", "#citizenship-bookings" ]
       },
       "command": "/opt/sensu/embedded/bin/check-https-cert.rb --url ${URL} --critical 15 --warning 30",
       "interval": 300,
