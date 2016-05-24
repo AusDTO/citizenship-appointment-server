@@ -4,7 +4,6 @@ import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -75,7 +74,7 @@ public class PassControllerTest {
     }
 
     private PassBuilder stubPassBuilder() {
-        return new PassBuilder(new ObjectMapper(), null, null, null, null) {
+        return new PassBuilder(null, null, null, null) {
             @Override
             public Pass createAppointmentPassForClient(Client client, AppointmentDetails appointment, URL walletWebServiceUrl) {
                 return new Pass(null, null, null, null) {

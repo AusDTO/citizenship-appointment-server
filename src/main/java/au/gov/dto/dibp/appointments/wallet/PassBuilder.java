@@ -61,12 +61,11 @@ class PassBuilder {
     private final String privateKeyPassPhrase;
 
     @Autowired
-    public PassBuilder(ObjectMapper objectMapper,
-                       @Value("${wallet.pass.type.identifier}") String passTypeIdentifier,
+    public PassBuilder(@Value("${wallet.pass.type.identifier}") String passTypeIdentifier,
                        @Value("${wallet.team.identifier}") String teamIdentifier,
                        @Value("${wallet.private.key.p12.base64}") String privateKeyP12Base64,
                        @Value("${wallet.private.key.passphrase}") String privateKeyPassPhrase) {
-        this.objectMapper = objectMapper;
+        this.objectMapper = new ObjectMapper();  // ensure jpasskit has its own ObjectMapper instance
         this.passTypeIdentifier = passTypeIdentifier;
         this.teamIdentifier = teamIdentifier;
         this.privateKeyP12Base64 = privateKeyP12Base64;
