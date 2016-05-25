@@ -32,6 +32,25 @@ At least one set of API user credentials must be supplied. `x` is a sequential n
 - `USER_PASSWORD_x`: Password of API user `x`
 - `USER_ID_x`: ID of API user `x`
 
+#### Wallet
+
+These environment variables are used for the Apple Wallet implementation:
+
+- `WALLET_PASS_TYPE_IDENTIFIER`: Use the same value supplied when setting up your Pass Type ID. It should start with `pass.`, e.g. `pass.com.apple.devpubs.example`
+- `WALLET_TEAM_IDENTIFIER`: Your iOS developer account team identifier, e.g., `A93A5CM278`
+- `WALLET_PRIVATE_KEY_P12_BASE64`: The Base64 encoded contents of a PKCS #12 file containing your Pass Type ID private key and certificate. See below for instructions on how to obtain this. 
+- `WALLET_PRIVATE_KEY_PASSPHRASE`: The passphrase required to access the contents of the PKCS #12 file containing your Pass Type ID private key and certificate. 
+
+To obtain the value for WALLET_PRIVATE_KEY_P12_BASE64, export your Pass Type ID certificate and corresponding private key as a `.p12` file.
+
+The password you supply when you export should be set as the `WALLET_PRIVATE_KEY_PASSPHRASE` environment variable.
+ 
+Run this command to extract the value to set as the `WALLET_PRIVATE_KEY_P12_BASE64` environment variable, where `export.p12` is the name of the `.p12` file you exported:
+
+    base64 -i export.p12 -o -
+    
+On Mac OS you can optionally pipe the output of this command to `pbcopy` to add the result to your clipboard.
+
 #### Other
 
 - `SESSION_JWT_ENCRYPTION_KEY_BASE64`: 256-bit Base64 encoded encryption and signature key for storing the user's security context in a cookie

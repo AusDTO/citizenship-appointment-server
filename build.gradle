@@ -128,6 +128,8 @@ def prometheusVersion = '0.0.13'
 def prometheusJmxVersion = '0.6'
 def nimbusJoseJwtVersion = '4.12'
 def casperjsJunitVersion = '0.4.0'
+def userAgentUtilsVersion = '1.19'
+def jpasskitVersion = '0.0.8'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
@@ -148,9 +150,11 @@ dependencies {
             "commons-codec:commons-codec:${commonsCodecVersion}",
             "org.apache.commons:commons-lang3:${commonsLang3Version}",
             "com.google.zxing:javase:${zxingVersion}",
-            "com.nimbusds:nimbus-jose-jwt:${nimbusJoseJwtVersion}"
+            "com.nimbusds:nimbus-jose-jwt:${nimbusJoseJwtVersion}",
+            "eu.bitwalker:UserAgentUtils:${userAgentUtilsVersion}",
+            "de.brendamour:jpasskit:${jpasskitVersion}"
 
-    testCompile "junit:junit:${junitVersion}",
+            testCompile "junit:junit:${junitVersion}",
             "org.hamcrest:hamcrest-library:${hamcrestVersion}",
             "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
             "com.squareup.okhttp3:mockwebserver:${okhttpVersion}",

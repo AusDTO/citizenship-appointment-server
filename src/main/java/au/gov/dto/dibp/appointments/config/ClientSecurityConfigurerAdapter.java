@@ -27,7 +27,7 @@ import java.util.Map;
  * Authentication configuration for clients (citizenship applicants).
  */
 @Configuration
-@Order(2)  // must have higher value (lower priority) than AdminSecurityConfigurerAdapter
+@Order(3)  // must have higher value (lower priority) than AdminSecurityConfigurerAdapter
 @EnableWebSecurity
 public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_FAILURE_URL = "/login?error";
@@ -49,7 +49,6 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -68,6 +67,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .authorizeRequests()
                 .antMatchers("/analytics_basic.js", "/", "/login").permitAll()  // no authentication on endpoints '/' and public assets
                 .antMatchers("/monitoring/**").permitAll()  // handled by AdminSecurityConfigurerAdapter
+                .antMatchers("/wallet/**").permitAll()  // handled by WalletSecurityConfigurerAdapter
                 .anyRequest().authenticated()  // all other endpoints require authentication
                 .and()
             .formLogin()
