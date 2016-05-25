@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -32,7 +30,7 @@ public class PassControllerTest {
 
         new PassController(null, null, "passTypeIdentifier").retrievePass(null, request, response);
 
-        assertThat(response.getRedirectedUrl(), equalTo("/wallet/barcode.html"));
+        assertThat(response.getRedirectedUrl(), equalTo("/wallet/pass/barcode.html"));
     }
 
     @Test
@@ -124,8 +122,8 @@ public class PassControllerTest {
             public Pass createAppointmentPassForClient(Client client, AppointmentDetails appointment, URL walletWebServiceUrl) {
                 return new Pass(null, null, null, null) {
                     @Override
-                    public InputStream getInputStream() {
-                        return new ByteArrayInputStream(new byte[0]);
+                    public byte[] getBytes() {
+                        return new byte[0];
                     }
                 };
             }

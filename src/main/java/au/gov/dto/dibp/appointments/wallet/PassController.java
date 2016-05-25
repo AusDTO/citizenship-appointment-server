@@ -27,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -59,7 +60,7 @@ class PassController {
         String userAgentHeader = request.getHeader("user-agent");
         if (!isSupportedDevice(userAgentHeader)) {
             LOG.info("Redirecting unsupported Wallet device, User-Agent=[{}]", userAgentHeader);
-            response.sendRedirect("/wallet/barcode.html");
+            response.sendRedirect("/wallet/pass/barcode.html");
             return;
         }
         response.sendRedirect(String.format("/wallet/v1/passes/%s/citizenship?id=%s&otherid=%s", passTypeIdentifier, client.getClientId(), client.getCustomerId()));
@@ -78,10 +79,12 @@ class PassController {
         }
         URL walletWebServiceUrl = getWalletWebServiceUrl(request);
         Pass pass = passBuilder.createAppointmentPassForClient(client, appointment, walletWebServiceUrl);
+        byte[] passAsBytes = pass.getBytes();
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentLength(passAsBytes.length);
         responseHeaders.setContentType(new MediaType("application", "vnd.apple.pkpass"));
         responseHeaders.setContentDispositionFormData("attachment", "appointment.pkpass");
-        return new ResponseEntity<>(new InputStreamResource(pass.getInputStream()), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(new InputStreamResource(new ByteArrayInputStream(passAsBytes)), responseHeaders, HttpStatus.OK);
     }
 
     private boolean isValid(AppointmentDetails appointment) {
