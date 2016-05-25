@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +32,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Controller
 class PassController {
@@ -70,13 +73,19 @@ class PassController {
                                                HttpServletRequest request) throws IOException, URISyntaxException {
         LOG.info("Creating pass for clientId=[{}]", client.getClientId());
         AppointmentDetails appointment = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
-        // TODO validate appointment is not in the past
+        if (!isValid(appointment)) {
+            return new ResponseEntity<>(new ByteArrayResource(new byte[0]), HttpStatus.BAD_REQUEST);
+        }
         URL walletWebServiceUrl = getWalletWebServiceUrl(request);
         Pass pass = passBuilder.createAppointmentPassForClient(client, appointment, walletWebServiceUrl);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(new MediaType("application", "vnd.apple.pkpass"));
         responseHeaders.setContentDispositionFormData("attachment", "appointment.pkpass");
         return new ResponseEntity<>(new InputStreamResource(pass.getInputStream()), responseHeaders, HttpStatus.OK);
+    }
+
+    private boolean isValid(AppointmentDetails appointment) {
+        return appointment.getDateTimeWithTimeZone().plus(12L, ChronoUnit.HOURS).isAfter(ZonedDateTime.now());
     }
 
     private boolean isSupportedDevice(String userAgentValue) {
