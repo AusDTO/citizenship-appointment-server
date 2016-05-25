@@ -1,6 +1,8 @@
 package au.gov.dto.dibp.appointments.appointmentdetails;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class AppointmentDetails {
 
@@ -54,5 +56,9 @@ public class AppointmentDetails {
 
     public String getUnitTimeZoneIANA() {
         return unitTimeZoneIANA;
+    }
+
+    public ZonedDateTime getDateTimeWithTimeZone() {
+        return appointmentDate.atZone(ZoneId.of(unitTimeZoneIANA));
     }
 }
