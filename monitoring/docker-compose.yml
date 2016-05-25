@@ -17,5 +17,4 @@ appointments-border-gov-au:
     - MONITOR_FAMILY_NAME
     - PAGELOAD_URI=/login
     - BACKEND_PING_URI=/monitoring/backend
-    - MONITOR_BASE_URL=${URL}
     - PHANTOMJS_EXECUTABLE=node_modules/.bin/phantomjs
