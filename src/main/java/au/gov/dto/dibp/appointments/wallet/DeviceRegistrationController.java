@@ -59,6 +59,6 @@ class DeviceRegistrationController {
     }
 
     private boolean isValid(String argument) {
-        return argument != null && argument.matches("^\\w+$");
+        return argument != null && argument.length() <= 500 && argument.matches("^\\w+$");
     }
 }

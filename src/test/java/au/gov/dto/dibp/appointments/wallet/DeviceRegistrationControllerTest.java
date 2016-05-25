@@ -2,6 +2,7 @@ package au.gov.dto.dibp.appointments.wallet;
 
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,10 +56,30 @@ public class DeviceRegistrationControllerTest {
     }
 
     @Test
+    public void registrationShouldRejectTooLongDeviceLibraryIdentifier() throws Exception {
+        String tooLongDeviceLibraryIdentifier = StringUtils.repeat("a", 501);
+        ResponseEntity<String> responseEntity = new DeviceRegistrationController(null).registerDevice(null, tooLongDeviceLibraryIdentifier, new HashMap<String, Object>() {{
+            put("pushToken", "validPushToken");
+        }});
+
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
     public void registrationShouldRejectInvalidPushToken() throws Exception {
         String invalidPushToken = "<bad>request</bad>";
         ResponseEntity<String> responseEntity = new DeviceRegistrationController(null).registerDevice(null, "validDeviceLibraryIdentifier", new HashMap<String, Object>() {{
             put("pushToken", invalidPushToken);
+        }});
+
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void registrationShouldRejectTooLongPushToken() throws Exception {
+        String tooLongPushToken = StringUtils.repeat("a", 501);
+        ResponseEntity<String> responseEntity = new DeviceRegistrationController(null).registerDevice(null, "validDeviceLibraryIdentifier", new HashMap<String, Object>() {{
+            put("pushToken", tooLongPushToken);
         }});
 
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
