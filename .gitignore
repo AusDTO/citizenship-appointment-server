@@ -35,3 +35,5 @@ tmp
 node_modules/
 src/main/resources/templates/
 src/main/resources/public/
+
+monitoring/docker-compose-ecs.yml

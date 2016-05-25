@@ -45,7 +45,7 @@ deployment:
       - cf target -s $CF_SPACE_DEV &> /dev/null
       - URL=$CF_APP_URL_DEV ./bin/cideploy.sh &> /dev/null
       # deploy monitoring for staging to AWS
-      - URL=$PRODUCTION_URL DOCKER_COMPOSE_FILE_PATH=./monitoring/docker-compose-ecs.yml DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au DOCKER_CONTAINER_NAME=appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
+      - URL=$STAGING_URL_PWS DOCKER_COMPOSE_TEMPLATE_PATH=./monitoring/docker-compose-ecs.yml.template DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au DOCKER_CONTAINER_NAME=staging-appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
   production:
     tag: /release-.*/
     owner: AusDTO
@@ -55,3 +55,5 @@ deployment:
       - cf target -o $CF_ORG_PROD &> /dev/null
       - cf target -s $CF_SPACE_PROD &> /dev/null
       - ./bin/cideploy-prod.sh &> /dev/null
+      # deploy monitoring for production to AWS
+      - URL=$PRODUCTION_URL DOCKER_COMPOSE_TEMPLATE_PATH=./monitoring/docker-compose-ecs.yml.template DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au DOCKER_CONTAINER_NAME=appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
