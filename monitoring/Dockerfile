@@ -1,7 +1,7 @@
 FROM ubuntu:xenial
 MAINTAINER Michael Richardson <weboperations@digital.gov.au>
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y wget # nodejs npm git-core libfontconfig
+RUN apt-get update && apt-get upgrade -y && apt-get install -y wget nodejs npm git-core libfontconfig
 
 RUN wget -q -O /usr/bin/confd https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64 && \
 chmod +x /usr/bin/confd
@@ -20,8 +20,8 @@ ADD files/sensu-conf.d /etc/sensu/conf.d
 ADD files/confd /etc/confd
 ADD files/go.sh /go.sh
 
-#RUN ln -s /usr/bin/nodejs /usr/bin/node
-#
-#RUN npm install casperjs phantomjs-prebuilt AusDTO/citizenship-appointment-client
+RUN ln -s /usr/bin/nodejs /usr/bin/node
+
+RUN npm install casperjs phantomjs-prebuilt AusDTO/citizenship-appointment-client
 
 CMD ["/go.sh"]
