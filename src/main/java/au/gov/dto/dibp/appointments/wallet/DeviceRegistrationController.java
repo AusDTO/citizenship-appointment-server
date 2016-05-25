@@ -34,7 +34,10 @@ class DeviceRegistrationController {
                                                  @PathVariable String deviceLibraryIdentifier,
                                                  @RequestBody Map<String, Object> requestBody) {
         String pushToken = requestBody.get("pushToken").toString();
-        // TODO validate
+        if (!isValid(deviceLibraryIdentifier) || !isValid(pushToken)) {
+            LOG.warn("Attempt to register with invalid deviceLibraryIdentifier=[{}] or pushToken=[{}]", deviceLibraryIdentifier, pushToken);
+            return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
+        }
         LOG.info("Device with deviceLibraryIdentifier=[{}] registered for pass updates with pushToken=[{}]", deviceLibraryIdentifier, pushToken);
         deviceRegistrationService.addDeviceForClient(client, deviceLibraryIdentifier, pushToken);
         return new ResponseEntity<>("", HttpStatus.CREATED);
@@ -44,10 +47,18 @@ class DeviceRegistrationController {
      * Reference: https://developer.apple.com/library/ios/documentation/PassKit/Reference/PassKit_WebService/WebService.html#//apple_ref/doc/uid/TP40011988-CH0-SW5
      */
     @RequestMapping(value = "/wallet/v1/devices/{deviceLibraryIdentifier}/registrations/${wallet.pass.type.identifier}/citizenship", method = RequestMethod.DELETE)
-    public void unregisterDevice(@AuthenticationPrincipal Client client,
-                                 @PathVariable String deviceLibraryIdentifier) {
-        // TODO validate
+    public ResponseEntity<String> unregisterDevice(@AuthenticationPrincipal Client client,
+                                                   @PathVariable String deviceLibraryIdentifier) {
+        if (!isValid(deviceLibraryIdentifier)) {
+            LOG.warn("Attempt to unregister with invalid deviceLibraryIdentifier=[{}]", deviceLibraryIdentifier);
+            return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
+        }
         LOG.info("Device with deviceLibraryIdentifier=[{}] unregistered for pass updates", deviceLibraryIdentifier);
         deviceRegistrationService.removeDeviceForClient(client, deviceLibraryIdentifier);
+        return new ResponseEntity<>("", HttpStatus.OK);
+    }
+
+    private boolean isValid(String argument) {
+        return argument != null && argument.length() <= 500 && argument.matches("^\\w+$");
     }
 }

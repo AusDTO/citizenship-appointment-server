@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -26,11 +27,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Controller
 class PassController {
@@ -56,7 +60,7 @@ class PassController {
         String userAgentHeader = request.getHeader("user-agent");
         if (!isSupportedDevice(userAgentHeader)) {
             LOG.info("Redirecting unsupported Wallet device, User-Agent=[{}]", userAgentHeader);
-            response.sendRedirect("/wallet/barcode.html");
+            response.sendRedirect("/wallet/pass/barcode.html");
             return;
         }
         response.sendRedirect(String.format("/wallet/v1/passes/%s/citizenship?id=%s&otherid=%s", passTypeIdentifier, client.getClientId(), client.getCustomerId()));
@@ -70,13 +74,21 @@ class PassController {
                                                HttpServletRequest request) throws IOException, URISyntaxException {
         LOG.info("Creating pass for clientId=[{}]", client.getClientId());
         AppointmentDetails appointment = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
-        // TODO validate appointment is not in the past
+        if (!isValid(appointment)) {
+            return new ResponseEntity<>(new ByteArrayResource(new byte[0]), HttpStatus.BAD_REQUEST);
+        }
         URL walletWebServiceUrl = getWalletWebServiceUrl(request);
         Pass pass = passBuilder.createAppointmentPassForClient(client, appointment, walletWebServiceUrl);
+        byte[] passAsBytes = pass.getBytes();
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentLength(passAsBytes.length);
         responseHeaders.setContentType(new MediaType("application", "vnd.apple.pkpass"));
         responseHeaders.setContentDispositionFormData("attachment", "appointment.pkpass");
-        return new ResponseEntity<>(new InputStreamResource(pass.getInputStream()), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(new InputStreamResource(new ByteArrayInputStream(passAsBytes)), responseHeaders, HttpStatus.OK);
+    }
+
+    private boolean isValid(AppointmentDetails appointment) {
+        return appointment.getDateTimeWithTimeZone().plus(12L, ChronoUnit.HOURS).isAfter(ZonedDateTime.now());
     }
 
     private boolean isSupportedDevice(String userAgentValue) {

@@ -6,9 +6,6 @@ import de.brendamour.jpasskit.signing.IPKSigningUtil;
 import de.brendamour.jpasskit.signing.PKSigningException;
 import de.brendamour.jpasskit.signing.PKSigningInformation;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 public class Pass {
     private final PKPass pkPass;
     private final PKSigningInformation pkSigningInformation;
@@ -25,10 +22,9 @@ public class Pass {
         this.signingUtil = signingUtil;
     }
 
-    public InputStream getInputStream() {
+    public byte[] getBytes() {
         try {
-            byte[] passArchive = signingUtil.createSignedAndZippedPkPassArchive(pkPass, passTemplate, pkSigningInformation);
-            return new ByteArrayInputStream(passArchive);
+            return signingUtil.createSignedAndZippedPkPassArchive(pkPass, passTemplate, pkSigningInformation);
         } catch (PKSigningException e) {
             throw new RuntimeException("Problem creating signed and zipped pass archive", e);
         }

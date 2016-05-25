@@ -32,7 +32,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -95,7 +94,7 @@ class PassBuilder {
         pkPass.setSerialNumber("citizenship");
         pkPass.setTeamIdentifier(teamIdentifier);
 
-        ZonedDateTime appointmentDateTime = appointment.getAppointmentDate().atZone(ZoneId.of(appointment.getUnitTimeZoneIANA()));
+        ZonedDateTime appointmentDateTime = appointment.getDateTimeWithTimeZone();
         pkPass.setRelevantDate(Date.from(appointmentDateTime.toInstant()));
 
         PKField appointmentField = new PKField("appointment", "APPOINTMENT", "Australian citizenship");
