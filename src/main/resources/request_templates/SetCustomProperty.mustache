@@ -1,0 +1,20 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+               xmlns:a="http://www.w3.org/2005/08/addressing"
+               xmlns:ser="http://www.qnomy.com/Services">
+    <soap:Header>
+        <a:MessageID>urn:uuid:{{messageUUID}}</a:MessageID>
+        <a:Action>http://www.qnomy.com/Services/IsvcCustomer/SetCustomProperty</a:Action>
+        <a:ReplyTo>
+            <a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
+        </a:ReplyTo>
+        <a:To>{{serviceAddress}}</a:To>
+    </soap:Header>
+    <soap:Body>
+        <ser:SetCustomProperty>
+            <ser:apiSessionId>{{apiSessionId}}</ser:apiSessionId>
+            <ser:customerId>{{customerId}}</ser:customerId>
+            <ser:propertyName>{{propertyName}}</ser:propertyName>
+            <ser:propertyValue>{{propertyValue}}</ser:propertyValue>
+        </ser:SetCustomProperty>
+    </soap:Body>
+</soap:Envelope>

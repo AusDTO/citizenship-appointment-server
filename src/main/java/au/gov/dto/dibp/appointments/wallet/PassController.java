@@ -11,6 +11,7 @@ import eu.bitwalker.useragentutils.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +22,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,47 +31,52 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 class PassController {
     private static final Logger LOG = LoggerFactory.getLogger(PassController.class);
 
-    private final AppointmentDetailsService appointmentDetailsService;
     private final PassBuilder passBuilder;
+    private final AppointmentDetailsService appointmentDetailsService;
+    private final String passTypeIdentifier;
 
     @Autowired
-    public PassController(PassBuilder passBuilder, AppointmentDetailsService appointmentDetailsService) {
+    public PassController(PassBuilder passBuilder,
+                          AppointmentDetailsService appointmentDetailsService,
+                          @Value("${wallet.pass.type.identifier}") String passTypeIdentifier) {
         this.passBuilder = passBuilder;
         this.appointmentDetailsService = appointmentDetailsService;
+        this.passTypeIdentifier = passTypeIdentifier;
     }
 
-    @RequestMapping(value = "/wallet/pass", method = RequestMethod.GET, produces = "application/vnd.apple.pkpass")
-    public ResponseEntity<Resource> createPass(@AuthenticationPrincipal Client client,
-                                               HttpServletRequest request,
-                                               HttpServletResponse response) throws IOException, URISyntaxException {
-        if (!isSupportedDevice(request.getHeader("user-agent"))) {
+    @RequestMapping(value = "/wallet/pass", method = RequestMethod.GET)
+    public void retrievePass(@AuthenticationPrincipal Client client,
+                             HttpServletRequest request,
+                             HttpServletResponse response) throws IOException, URISyntaxException {
+        String userAgentHeader = request.getHeader("user-agent");
+        if (!isSupportedDevice(userAgentHeader)) {
+            LOG.info("Redirecting unsupported Wallet device, User-Agent=[{}]", userAgentHeader);
             response.sendRedirect("/wallet/barcode.html");
-            return null;
+            return;
         }
+        response.sendRedirect(String.format("/wallet/v1/passes/%s/citizenship?id=%s&otherid=%s", passTypeIdentifier, client.getClientId(), client.getCustomerId()));
+    }
+
+    /**
+     * Reference: https://developer.apple.com/library/ios/documentation/PassKit/Reference/PassKit_WebService/WebService.html#//apple_ref/doc/uid/TP40011988-CH0-SW6
+     */
+    @RequestMapping(value = "/wallet/v1/passes/${wallet.pass.type.identifier}/citizenship", method = RequestMethod.GET, produces = "application/vnd.apple.pkpass")
+    public ResponseEntity<Resource> createPass(@AuthenticationPrincipal Client client,
+                                               HttpServletRequest request) throws IOException, URISyntaxException {
+        LOG.info("Creating pass for clientId=[{}]", client.getClientId());
         AppointmentDetails appointment = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
+        // TODO validate appointment is not in the past
         URL walletWebServiceUrl = getWalletWebServiceUrl(request);
         Pass pass = passBuilder.createAppointmentPassForClient(client, appointment, walletWebServiceUrl);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(new MediaType("application", "vnd.apple.pkpass"));
         responseHeaders.setContentDispositionFormData("attachment", "appointment.pkpass");
-
         return new ResponseEntity<>(new InputStreamResource(pass.getInputStream()), responseHeaders, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/wallet/v1/passes/test", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public Map<String, Object> test(@AuthenticationPrincipal Client client) {
-        return new HashMap<String, Object>() {{
-            put("id", client.getClientId());
-            put("otherid", client.getCustomerId());
-        }};
     }
 
     private boolean isSupportedDevice(String userAgentValue) {

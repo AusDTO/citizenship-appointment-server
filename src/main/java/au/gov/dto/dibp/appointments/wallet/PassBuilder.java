@@ -105,9 +105,8 @@ class PassBuilder {
         dateField.setTimeStyle(PKDateStyle.PKDateStyleShort);
         dateField.setChangeMessage("Your appointment is on %@");
 
-        String venueSuburb = appointment.getUnitName();
         String venueStreetAddress = appointment.getUnitAddress();
-        String venueNameAndAddress = String.format("%s Visa and Citizenship Office, %s", venueSuburb, venueStreetAddress);
+        String venueNameAndAddress = String.format("Visa and Citizenship Office, %s", venueStreetAddress);
 
         PKField locationField = new PKField("where", "WHERE", venueNameAndAddress);
 
@@ -120,12 +119,6 @@ class PassBuilder {
             throw new RuntimeException("Problem creating reschedule URI", e);
         }
         PKField rescheduleField = new PKField("reschedule", "CHANGE YOUR APPOINTMENT",  rescheduleUri.toASCIIString());
-
-        PKField whatToBringField = new PKField("documents", "WHAT TO BRING",
-                "• All original documents you submitted with your application, for all applicants including children.\n" +
-                        "• Any extra documents that you may have been asked to bring.\n" +
-                        "• Form 1195 Identity declaration with an endorsed recent passport sized photo (on-line applicants only).\n\n" +
-                        "Please consult your appointment email or letter for full details.");
 
         PKEventTicket eventTicket = new PKEventTicket();
         eventTicket.setPrimaryFields(Collections.singletonList(appointmentField));
