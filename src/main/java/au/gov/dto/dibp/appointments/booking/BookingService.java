@@ -11,6 +11,7 @@ import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiResponseNotSuccessfulException;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import au.gov.dto.dibp.appointments.util.TemplateLoader;
+import au.gov.dto.dibp.appointments.wallet.PassUpdateService;
 import com.samskivert.mustache.Template;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,26 +27,26 @@ import java.util.Map;
 
 @Service
 public class BookingService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
 
-    private final ApiCallsSenderService senderService;
+    private final ApiCallsSenderService apiService;
     private final AppointmentDetailsService appointmentDetailsService;
-
-    private final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
-
+    private final PassUpdateService passUpdateService;
     private final String serviceAddressService;
     private final String serviceAddressProcess;
-
     private final Template setAppointmentTemplate;
     private final Template rescheduleAppointmentTemplate;
 
     @Autowired
     public BookingService(ApiCallsSenderService apiService,
                           AppointmentDetailsService appointmentDetailsService,
+                          PassUpdateService passUpdateService,
                           TemplateLoader templateLoader,
                           @Value("${service.address.service}") String serviceAddressService,
                           @Value("${service.address.process}") String serviceAddressProcess) {
-        this.senderService = apiService;
+        this.apiService = apiService;
         this.appointmentDetailsService = appointmentDetailsService;
+        this.passUpdateService = passUpdateService;
         this.serviceAddressService = serviceAddressService;
         this.serviceAddressProcess = serviceAddressProcess;
         this.setAppointmentTemplate = templateLoader.loadRequestTemplate(SetAppointment.REQUEST_TEMPLATE_PATH);
@@ -62,7 +63,7 @@ public class BookingService {
             LOGGER.info("Client with clientId=[{}] has no existing appointment. Booking the appointment for appointmentDate=[{}]", client.getClientId(), newAppointmentDateTime.toString());
             scheduledAppointmentDateTime = bookInitialAppointment(client, newAppointmentDateTime);
         }
-
+        passUpdateService.sendPassUpdatesInBackground(client);
         return scheduledAppointmentDateTime;
     }
 
@@ -90,7 +91,7 @@ public class BookingService {
 
     private String setScheduledAppointmentTime(Template template, Map<String, String> data, String serviceAddress, String appointmentDatePath) {
         try {
-            ResponseWrapper response = senderService.sendRequest(template, data, serviceAddress);
+            ResponseWrapper response = apiService.sendRequest(template, data, serviceAddress);
             String scheduledAppointmentTime = response.getStringAttribute(appointmentDatePath);
             if (StringUtils.isBlank(scheduledAppointmentTime)) {
                 checkForUserNotEligibleException(response);
