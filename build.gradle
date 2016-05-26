@@ -130,6 +130,9 @@ def nimbusJoseJwtVersion = '4.12'
 def casperjsJunitVersion = '0.4.0'
 def userAgentUtilsVersion = '1.19'
 def jpasskitVersion = '0.0.8'
+def pushyVersion = '0.7.2'
+def nettyTcnativeVersion = '1.1.33.Fork17'
+def alpnApiVersion = '1.1.2.v20150522'
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
@@ -152,9 +155,12 @@ dependencies {
             "com.google.zxing:javase:${zxingVersion}",
             "com.nimbusds:nimbus-jose-jwt:${nimbusJoseJwtVersion}",
             "eu.bitwalker:UserAgentUtils:${userAgentUtilsVersion}",
-            "de.brendamour:jpasskit:${jpasskitVersion}"
+            "de.brendamour:jpasskit:${jpasskitVersion}",
+            "com.relayrides:pushy:${pushyVersion}",
+            "io.netty:netty-tcnative-boringssl-static:${nettyTcnativeVersion}",
+            "org.eclipse.jetty.alpn:alpn-api:${alpnApiVersion}"
 
-            testCompile "junit:junit:${junitVersion}",
+    testCompile "junit:junit:${junitVersion}",
             "org.hamcrest:hamcrest-library:${hamcrestVersion}",
             "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
             "com.squareup.okhttp3:mockwebserver:${okhttpVersion}",

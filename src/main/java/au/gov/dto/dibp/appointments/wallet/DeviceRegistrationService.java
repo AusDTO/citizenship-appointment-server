@@ -52,7 +52,7 @@ class DeviceRegistrationService {
         setDevicesForClient(client, deviceRegistrations);
     }
 
-    Map<String, String> getDevicesForClient(Client client) {
+    public Map<String, String> getDevicesForClient(Client client) {
         ResponseWrapper response = apiService.sendRequest(templateGetCustomPropertyByName, new HashMap<String, String>() {{
             put("customerId", client.getCustomerId());
             put("propertyName", PROPERTY_NAME);
