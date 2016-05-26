@@ -20,12 +20,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class BookingServiceTest {
-
-    private BookingService service;
-
     @Test
     public void test_bookAnAppointment_when_userHasNoAppointmentsYet_should_returnAppointmentDateIfBookingSuccessful(){
-        service = new BookingService( getApiCallsSenderService(),
+        BookingService service = new BookingService( getApiCallsSenderService(),
                 getAppointmentDetailsServiceRespondingWithNoAppointment(),
                 new FakeTemplateLoader(),
                 "serviceUrl", "processUrl");
@@ -37,7 +34,7 @@ public class BookingServiceTest {
 
     @Test
     public void test_bookAnAppointment_when_userHasAnAppointmentSet_should_returnNewAppointmentDateIfBookingSuccessful(){
-        service = new BookingService( getApiCallsSenderService(),
+        BookingService service = new BookingService( getApiCallsSenderService(),
                 getAppointmentDetailsServiceRespondingWithAppointmentDetails(),
                 new FakeTemplateLoader(),
                 "serviceUrl", "processUrl");
@@ -49,7 +46,7 @@ public class BookingServiceTest {
 
     @Test(expected = SlotAlreadyTakenException.class)
     public void test_bookAnAppointment_when_slotIsTakenInTheMeantime_should_throwSlotAlreadyTakenException(){
-        service = new BookingService( getApiCallsSenderServiceReturningFaults(),
+        BookingService service = new BookingService( getApiCallsSenderServiceReturningFaults(),
                 getAppointmentDetailsServiceRespondingWithAppointmentDetails(),
                 new FakeTemplateLoader(),
                 "serviceUrl", "processUrl");
@@ -60,7 +57,7 @@ public class BookingServiceTest {
 
     @Test(expected = NoCalendarExistsException.class)
     public void test_bookAnAppointment_when_calendarIsClosed_should_throwNoCalendarExistsException() {
-        service = new BookingService(getApiCallsSenderServiceReturningFaults(),
+        BookingService service = new BookingService(getApiCallsSenderServiceReturningFaults(),
                 getAppointmentDetailsServiceRespondingWithNoAppointment(),
                 new FakeTemplateLoader(),
                 "serviceUrl", "processUrl");
@@ -71,7 +68,7 @@ public class BookingServiceTest {
 
     @Test(expected = UserNotEligibleToBookException.class)
     public void test_bookAnAppointment_when_userIsNotEligibleToBook_should_throwUserNotEligibleToBookException() {
-        service = new BookingService(getApiCallsSenderServiceReturningUserNotEligibleToBook(),
+        BookingService service = new BookingService(getApiCallsSenderServiceReturningUserNotEligibleToBook(),
                 getAppointmentDetailsServiceRespondingWithNoAppointment(),
                 new FakeTemplateLoader(),
                 "serviceUrl", "processUrl");
@@ -82,7 +79,7 @@ public class BookingServiceTest {
 
     @Test(expected = UserNotEligibleToBookException.class)
     public void test_bookAnAppointment_when_userIsNotEligibleToReschedule_should_throwUserNotEligibleToBookException() {
-        service = new BookingService(getApiCallsSenderServiceReturningUserNotEligibleToBook(),
+        BookingService service = new BookingService(getApiCallsSenderServiceReturningUserNotEligibleToBook(),
                 getAppointmentDetailsServiceRespondingWithAppointmentDetails(),
                 new FakeTemplateLoader(),
                 "serviceUrl", "processUrl");

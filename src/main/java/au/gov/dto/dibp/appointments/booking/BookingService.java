@@ -32,45 +32,43 @@ public class BookingService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
 
-    private final String serviceAddress;
+    private final String serviceAddressService;
     private final String serviceAddressProcess;
 
     private final Template setAppointmentTemplate;
     private final Template rescheduleAppointmentTemplate;
 
     @Autowired
-    public BookingService(ApiCallsSenderService senderService,
+    public BookingService(ApiCallsSenderService apiService,
                           AppointmentDetailsService appointmentDetailsService,
                           TemplateLoader templateLoader,
-                          @Value("${SERVICE.ADDRESS.SERVICE}") String serviceAddress,
-                          @Value("${SERVICE.ADDRESS.PROCESS}") String serviceAddressProcess) {
-        this.senderService = senderService;
+                          @Value("${service.address.service}") String serviceAddressService,
+                          @Value("${service.address.process}") String serviceAddressProcess) {
+        this.senderService = apiService;
         this.appointmentDetailsService = appointmentDetailsService;
-        this.serviceAddress = serviceAddress;
+        this.serviceAddressService = serviceAddressService;
         this.serviceAddressProcess = serviceAddressProcess;
-
-        setAppointmentTemplate = templateLoader.loadRequestTemplate(SetAppointment.REQUEST_TEMPLATE_PATH);
-        rescheduleAppointmentTemplate = templateLoader.loadRequestTemplate(RescheduleAppointment.REQUEST_TEMPLATE_PATH);
+        this.setAppointmentTemplate = templateLoader.loadRequestTemplate(SetAppointment.REQUEST_TEMPLATE_PATH);
+        this.rescheduleAppointmentTemplate = templateLoader.loadRequestTemplate(RescheduleAppointment.REQUEST_TEMPLATE_PATH);
     }
 
-    public String bookAnAppointment(Client client, LocalDateTime appointmentTime) {
-        final AppointmentDetails appointment = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
+    public String bookAnAppointment(Client client, LocalDateTime newAppointmentDateTime) {
+        AppointmentDetails existingAppointment = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
+        String scheduledAppointmentDateTime;
+        if (existingAppointment != null) {
+            LOGGER.info("Client with clientId=[{}] has an existing appointment for oldAppointmentDate=[{}], rescheduling the appointment to new appointmentDate=[{}]", client.getClientId(), existingAppointment.getAppointmentDate().toString(), newAppointmentDateTime.toString());
+            scheduledAppointmentDateTime = rescheduleAppointment(client, newAppointmentDateTime, existingAppointment);
+        } else {
+            LOGGER.info("Client with clientId=[{}] has no existing appointment. Booking the appointment for appointmentDate=[{}]", client.getClientId(), newAppointmentDateTime.toString());
+            scheduledAppointmentDateTime = bookInitialAppointment(client, newAppointmentDateTime);
+        }
 
-        if(appointment!=null){
-            LOGGER.info("Client "+ client.getClientId()+ " has an appointment set for "+ appointment.getAppointmentDate().toString()
-                    +" \nRescheduling the appointment to "+ appointmentTime.toString());
-            return rescheduleAppointment(client, appointmentTime, appointment);
-        }
-        else{
-            LOGGER.info("Client "+ client.getClientId()+ " has no appointment set"
-                    +" \nBooking the appointment for "+ appointmentTime.toString());
-            return bookInitialAppointment(client, appointmentTime);
-        }
+        return scheduledAppointmentDateTime;
     }
 
-    private String rescheduleAppointment(Client client, LocalDateTime newAppointmentTime, AppointmentDetails appointment) {
+    private String rescheduleAppointment(Client client, LocalDateTime newAppointmentTime, AppointmentDetails existingAppointment) {
         Map<String, String> data = new HashMap<>();
-        data.put("processId", appointment.getProcessId());
+        data.put("processId", existingAppointment.getProcessId());
         data.put("serviceId", client.getServiceId());
         data.put("appointmentDateTime", newAppointmentTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         data.put("appointmentTypeId", client.getAppointmentTypeId());
@@ -87,50 +85,51 @@ public class BookingService {
         data.put("serviceId", client.getServiceId());
         data.put("appointmentTypeId", client.getAppointmentTypeId());
 
-        return setScheduledAppointmentTime(setAppointmentTemplate, data, serviceAddress, SetAppointment.APPOINTMENT_DATE);
+        return setScheduledAppointmentTime(setAppointmentTemplate, data, serviceAddressService, SetAppointment.APPOINTMENT_DATE);
     }
 
-    private String setScheduledAppointmentTime(Template template, Map<String, String> data, String serviceAddress, String appointmentDatePath){
+    private String setScheduledAppointmentTime(Template template, Map<String, String> data, String serviceAddress, String appointmentDatePath) {
         try {
             ResponseWrapper response = senderService.sendRequest(template, data, serviceAddress);
             String scheduledAppointmentTime = response.getStringAttribute(appointmentDatePath);
-            if(StringUtils.isBlank(scheduledAppointmentTime)){
+            if (StringUtils.isBlank(scheduledAppointmentTime)) {
                 checkForUserNotEligibleException(response);
             }
             return scheduledAppointmentTime;
-        } catch (ApiResponseNotSuccessfulException e){
+        } catch (ApiResponseNotSuccessfulException e) {
             throw getMeaningfulExceptionFromFault(e);
         }
     }
 
-    private RuntimeException getMeaningfulExceptionFromFault(ApiResponseNotSuccessfulException exception){
+    private RuntimeException getMeaningfulExceptionFromFault(ApiResponseNotSuccessfulException exception) {
         ResponseWrapper response = exception.getResponse();
 
         String errorCode = response.getErrorCode();
-        if("58725".equals(errorCode)) {
+        if ("58725".equals(errorCode)) {
             return new SlotAlreadyTakenException("The slot was already taken.", exception);
-        } else if("58710".equals(errorCode)) {
+        } else if ("58710".equals(errorCode)) {
             return new NoCalendarExistsException("The calendar does not exist for the selected date and service.", exception);
         }
         return new BookingResponseInvalidException("Unknown fault occurred. " + response.getMessage(), exception);
     }
 
-    private void checkForUserNotEligibleException(ResponseWrapper response){
+    private void checkForUserNotEligibleException(ResponseWrapper response) {
         final String exceptionMessage = response.getStringAttribute(EXCEPTION_MESSAGE);
-        if(exceptionMessage.contains("The appointment cannot be set or rescheduled")) {
-            throw new UserNotEligibleToBookException("The user is not eligible to book an appointment. "+ exceptionMessage);
+        if (exceptionMessage.contains("The appointment cannot be set or rescheduled")) {
+            throw new UserNotEligibleToBookException("The user is not eligible to book an appointment. " + exceptionMessage);
         }
         throw new BookingResponseInvalidException("Unknown fault occurred while parsing response. Error message provided: " + exceptionMessage);
     }
 
     private class SetAppointment {
-        public static final String REQUEST_TEMPLATE_PATH = "SetAppointment.mustache";
-        public static final String APPOINTMENT_DATE = "//SetAppointmentResponse/SetAppointmentResult/SetAppointmentData/DateAndTime";
+        static final String REQUEST_TEMPLATE_PATH = "SetAppointment.mustache";
+        static final String APPOINTMENT_DATE = "//SetAppointmentResponse/SetAppointmentResult/SetAppointmentData/DateAndTime";
     }
+
     private static final String EXCEPTION_MESSAGE = "//ScriptResults/Messages/ScriptMessage/Message";
 
     private class RescheduleAppointment {
-        public static final String REQUEST_TEMPLATE_PATH = "RescheduleAppointment.mustache";
-        public static final String APPOINTMENT_DATE = "//RescheduleAppointmentResponse/RescheduleAppointmentResult/RescheduleAppointmentData/DateAndTime";
+        static final String REQUEST_TEMPLATE_PATH = "RescheduleAppointment.mustache";
+        static final String APPOINTMENT_DATE = "//RescheduleAppointmentResponse/RescheduleAppointmentResult/RescheduleAppointmentData/DateAndTime";
     }
 }
