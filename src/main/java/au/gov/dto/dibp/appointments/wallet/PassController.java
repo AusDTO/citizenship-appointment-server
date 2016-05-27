@@ -60,7 +60,7 @@ class PassController {
         String userAgentHeader = request.getHeader("user-agent");
         if (!isSupportedDevice(userAgentHeader)) {
             LOG.info("Redirecting unsupported Wallet device, User-Agent=[{}]", userAgentHeader);
-            response.sendRedirect("/wallet/pass/barcode.html");
+            response.sendRedirect(String.format("/wallet/pass/barcode?id=%s&otherid=%s", client.getClientId(), client.getCustomerId()));
             return;
         }
         response.sendRedirect(String.format("/wallet/v1/passes/%s/citizenship?id=%s&otherid=%s", passTypeIdentifier, client.getClientId(), client.getCustomerId()));

@@ -27,10 +27,11 @@ public class PassControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("user-agent", USER_AGENT_CHROME_ON_MAC);
         MockHttpServletResponse response = new MockHttpServletResponse();
+        Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
 
-        new PassController(null, null, "passTypeIdentifier").retrievePass(null, request, response);
+        new PassController(null, null, "passTypeIdentifier").retrievePass(client, request, response);
 
-        assertThat(response.getRedirectedUrl(), equalTo("/wallet/pass/barcode.html"));
+        assertThat(response.getRedirectedUrl(), equalTo("/wallet/pass/barcode?id=clientId&otherid=customerId"));
     }
 
     @Test
