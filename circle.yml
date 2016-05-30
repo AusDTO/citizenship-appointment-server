@@ -39,7 +39,7 @@ deployment:
       - cf target -s $CF_SPACE_PWS &> /dev/null
       - ./bin/cideploy-pws.sh &> /dev/null
       # deploy to Cloud Foundry
-      - cf api $CF_API_DEV --skip-ssl-validation &> /dev/null
+      - cf api $CF_API_DEV &> /dev/null
       - cf auth $CF_USER_DEV $CF_PASSWORD_DEV &> /dev/null
       - cf target -o $CF_ORG_DEV &> /dev/null
       - cf target -s $CF_SPACE_DEV &> /dev/null
@@ -50,7 +50,7 @@ deployment:
     tag: /release-.*/
     owner: AusDTO
     commands:
-      - cf api $CF_API_PROD --skip-ssl-validation &> /dev/null
+      - cf api $CF_API_PROD &> /dev/null
       - cf auth $CF_USER_PROD $CF_PASSWORD_PROD &> /dev/null
       - cf target -o $CF_ORG_PROD &> /dev/null
       - cf target -s $CF_SPACE_PROD &> /dev/null
