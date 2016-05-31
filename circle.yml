@@ -23,7 +23,9 @@ dependencies:
     - ./go dependencies
 test:
   override:
-    - ./go silentTests &> /dev/null
+    - ./go clean
+    - ./go test &> /dev/null
+    - ./go integrationTest &> /dev/null
     - ./go assemble
     # build monitoring image
     - DOCKERFILE_PATH=./monitoring/Dockerfile DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au ./bin/ci-monitor-build.sh &> /dev/null
