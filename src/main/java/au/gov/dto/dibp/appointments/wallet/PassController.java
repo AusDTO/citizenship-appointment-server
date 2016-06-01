@@ -3,11 +3,6 @@ package au.gov.dto.dibp.appointments.wallet;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetails;
 import au.gov.dto.dibp.appointments.appointmentdetails.AppointmentDetailsService;
 import au.gov.dto.dibp.appointments.client.Client;
-import eu.bitwalker.useragentutils.Browser;
-import eu.bitwalker.useragentutils.DeviceType;
-import eu.bitwalker.useragentutils.OperatingSystem;
-import eu.bitwalker.useragentutils.UserAgent;
-import eu.bitwalker.useragentutils.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +36,17 @@ class PassController {
     private static final Logger LOG = LoggerFactory.getLogger(PassController.class);
 
     private final PassBuilder passBuilder;
+    private final WalletSupportService walletSupportService;
     private final AppointmentDetailsService appointmentDetailsService;
     private final String passTypeIdentifier;
 
     @Autowired
     public PassController(PassBuilder passBuilder,
+                          WalletSupportService walletSupportService,
                           AppointmentDetailsService appointmentDetailsService,
                           @Value("${wallet.pass.type.identifier}") String passTypeIdentifier) {
         this.passBuilder = passBuilder;
+        this.walletSupportService = walletSupportService;
         this.appointmentDetailsService = appointmentDetailsService;
         this.passTypeIdentifier = passTypeIdentifier;
     }
@@ -91,20 +89,8 @@ class PassController {
         return appointment.getDateTimeWithTimeZone().plus(12L, ChronoUnit.HOURS).isAfter(ZonedDateTime.now());
     }
 
-    private boolean isSupportedDevice(String userAgentValue) {
-        UserAgent userAgent = new UserAgent(userAgentValue);
-        if (userAgent.getOperatingSystem().getDeviceType() == DeviceType.MOBILE
-                && userAgent.getOperatingSystem().getGroup() == OperatingSystem.IOS
-                && userAgent.getOperatingSystem().getId() >= OperatingSystem.iOS6_IPHONE.getId()) {
-            return true;
-        }
-        Version oldestSafariVersionWithGuaranteedSupport = new Version("6.2", "6", "2"); // Mac OS X 10.8.2 or later required to install this Safari version
-        if (userAgent.getOperatingSystem() == OperatingSystem.MAC_OS_X
-                && userAgent.getBrowser().getGroup() == Browser.SAFARI
-                && userAgent.getBrowserVersion().compareTo(oldestSafariVersionWithGuaranteedSupport) >= 0) {
-            return true;
-        }
-        return false;
+    private boolean isSupportedDevice(String userAgentHeaderValue) {
+        return walletSupportService.supportsWallet(userAgentHeaderValue);
     }
 
     URL getWalletWebServiceUrl(HttpServletRequest request) throws URISyntaxException, MalformedURLException {

@@ -12,7 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 @Controller
 class WalletBarcodeController {
@@ -33,14 +31,6 @@ class WalletBarcodeController {
     @Autowired
     public WalletBarcodeController(@Value("${wallet.team.identifier}") String teamIdentifier) {
         this.teamIdentifier = teamIdentifier;
-    }
-
-    @RequestMapping(value = "/wallet/pass/barcode", method = RequestMethod.GET, produces = "text/html")
-    public ModelAndView walletBarcodePage(@AuthenticationPrincipal Client client) {
-        return new ModelAndView("wallet_barcode_page", new HashMap<String, Object>() {{
-            put("clientId", client.getClientId());
-            put("customerId", client.getCustomerId());
-        }});
     }
 
     @RequestMapping(value = "/wallet/pass/barcode.png", method = RequestMethod.GET, produces = IMAGE_PNG)

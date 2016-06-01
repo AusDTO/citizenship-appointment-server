@@ -29,7 +29,7 @@ public class PassControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
 
-        new PassController(null, null, "passTypeIdentifier").retrievePass(client, request, response);
+        new PassController(null, new WalletSupportService(), null, "passTypeIdentifier").retrievePass(client, request, response);
 
         assertThat(response.getRedirectedUrl(), equalTo("/wallet/pass/barcode?id=clientId&otherid=customerId"));
     }
@@ -41,7 +41,7 @@ public class PassControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
-        new PassController(stubPassBuilder(), stubAppointmentDetailsService(), "passTypeIdentifier").retrievePass(client, request, response);
+        new PassController(stubPassBuilder(), new WalletSupportService(), stubAppointmentDetailsService(), "passTypeIdentifier").retrievePass(client, request, response);
 
         assertThat(response.getRedirectedUrl(), equalTo("/wallet/v1/passes/passTypeIdentifier/citizenship?id=clientId&otherid=customerId"));
     }
@@ -52,7 +52,7 @@ public class PassControllerTest {
         request.addHeader("user-agent", USER_AGENT_SAFARI_ON_MAC);
 
         Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
-        ResponseEntity<Resource> responseEntity = new PassController(stubPassBuilder(), new AppointmentDetailsService(null, null, new FakeTemplateLoader(), "") {
+        ResponseEntity<Resource> responseEntity = new PassController(stubPassBuilder(), new WalletSupportService(), new AppointmentDetailsService(null, null, new FakeTemplateLoader(), "") {
             @Override
             public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client1) {
                 return new AppointmentDetails(LocalDateTime.of(2016, 5, 22, 0, 0).minus(13L, ChronoUnit.HOURS), 20, "1", "1", "11111", "Some unit", "3939 Street, Place", "UTC");
@@ -68,7 +68,7 @@ public class PassControllerTest {
         request.addHeader("user-agent", USER_AGENT_SAFARI_ON_MAC);
 
         Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
-        ResponseEntity<Resource> responseEntity = new PassController(stubPassBuilder(), new AppointmentDetailsService(null, null, new FakeTemplateLoader(), "") {
+        ResponseEntity<Resource> responseEntity = new PassController(stubPassBuilder(), new WalletSupportService(), new AppointmentDetailsService(null, null, new FakeTemplateLoader(), "") {
             @Override
             public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client1) {
                 return new AppointmentDetails(LocalDateTime.now().minus(11L, ChronoUnit.HOURS), 20, "1", "1", "11111", "Some unit", "3939 Street, Place", "UTC");
@@ -84,7 +84,7 @@ public class PassControllerTest {
         request.addHeader("user-agent", USER_AGENT_SAFARI_ON_MAC);
 
         Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
-        ResponseEntity<Resource> responseEntity = new PassController(stubPassBuilder(), new AppointmentDetailsService(null, null, new FakeTemplateLoader(), "") {
+        ResponseEntity<Resource> responseEntity = new PassController(stubPassBuilder(), new WalletSupportService(), new AppointmentDetailsService(null, null, new FakeTemplateLoader(), "") {
             @Override
             public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client1) {
                 return new AppointmentDetails(LocalDateTime.now().plus(13L, ChronoUnit.HOURS), 20, "1", "1", "11111", "Some unit", "3939 Street, Place", "UTC");
@@ -103,7 +103,7 @@ public class PassControllerTest {
         request.setPathInfo("/path/morepath");
         request.setQueryString("a=b&c=d");
 
-        URL url = new PassController(null, null, "passTypeIdentifier").getWalletWebServiceUrl(request);
+        URL url = new PassController(null, new WalletSupportService(), null, "passTypeIdentifier").getWalletWebServiceUrl(request);
 
         assertThat(url.toString(), equalTo("https://example.com/wallet"));
     }

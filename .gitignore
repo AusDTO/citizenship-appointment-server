@@ -33,6 +33,7 @@ tmp
 *.swp
 
 node_modules/
+private/
 src/main/resources/templates/
 src/main/resources/public/
 

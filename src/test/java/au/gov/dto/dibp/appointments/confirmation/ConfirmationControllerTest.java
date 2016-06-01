@@ -10,9 +10,11 @@ import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
 import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import au.gov.dto.dibp.appointments.util.TemplateLoader;
+import au.gov.dto.dibp.appointments.wallet.WalletSupportService;
 import com.samskivert.mustache.Template;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
@@ -43,54 +45,54 @@ public class ConfirmationControllerTest {
         ServiceDetailsService serviceDetailsService = new ServiceDetailsService(senderService, templateLoader, "someUrl");
         UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, new TimeZoneDictionaryForTests(), templateLoader, "someUrl");
 
-        controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"));
+        controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"), new WalletSupportService());
     }
 
     @Test
     public void test_getConfirmationPage_should_passTheLocationToTheModel(){
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient(), new MockHttpServletRequest());
 
         assertThat(result.getModel().get("location"), is(UNIT_ADDRESS));
     }
 
     @Test
     public void test_getConfirmationPage_should_passTheClientIdToTheModel(){
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient(), new MockHttpServletRequest());
 
         assertThat(result.getModel().get("clientId"), is(CLIENT_ID));
     }
 
     @Test
     public void test_getConfirmationPage_should_passIfUserHasEmailToTheModel(){
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient(), new MockHttpServletRequest());
 
         assertThat(result.getModel().get("hasEmail"), is(HAS_EMAIL));
     }
 
     @Test
     public void test_getConfirmationPage_should_passIfUserHasMobileToTheModel(){
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient(), new MockHttpServletRequest());
 
         assertThat(result.getModel().get("hasMobile"), is(HAS_MOBILE));
     }
 
     @Test
     public void test_getConfirmationPage_should_passTheAppointmentDateToTheModel(){
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient(), new MockHttpServletRequest());
 
         assertThat(result.getModel().get("appointment_date"), is("Monday 18 January 2016"));
     }
 
     @Test
     public void test_getConfirmationPage_should_passTheAppointmentTimeToTheModel(){
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient(), new MockHttpServletRequest());
 
         assertThat(result.getModel().get("appointment_time"), is("1:20 PM"));
     }
 
     @Test
     public void test_getConfirmationPage_should_setConfirmationPageAsTheView(){
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient(), new MockHttpServletRequest());
 
         assertThat(result.getViewName(), is("confirmation_page"));
     }
@@ -105,7 +107,7 @@ public class ConfirmationControllerTest {
         ServiceDetailsService serviceDetailsService = new ServiceDetailsService(senderService, templateLoader, "someUrl");
         UnitDetailsService unitDetailsService = new UnitDetailsService(serviceDetailsService, senderService, new TimeZoneDictionaryForTests(), templateLoader, "someUrl");
 
-        controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"));
+        controller = new ConfirmationController(new AppointmentDetailsService(senderService, unitDetailsService, templateLoader, "SomeUrl"), new WalletSupportService());
 
 
 
@@ -114,9 +116,9 @@ public class ConfirmationControllerTest {
             public AppointmentDetails getExpectedAppointmentForClientForNextYear(Client client) {
                 return null;
             }
-        });
+        }, new WalletSupportService());
 
-        final ModelAndView result = controller.getConfirmationPage(getStandardClient());
+        final ModelAndView result = controller.getConfirmationPage(getStandardClient(), new MockHttpServletRequest());
 
         assertThat(result.getViewName(), is("redirect:/calendar?error"));
     }
