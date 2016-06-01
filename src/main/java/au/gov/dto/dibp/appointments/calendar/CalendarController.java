@@ -38,18 +38,13 @@ public class CalendarController {
                                     @RequestParam(value = "error", required = false) String error,
                                     @RequestParam(value = "unavailable", required = false) String unavailable,
                                     @RequestParam(value = "not_eligible", required = false) String notEligible,
-                                    HttpServletRequest request) {
+                                    HttpServletRequest request) throws UnsupportedEncodingException {
 
         Map<String, Object> model = new HashMap<>();
 
         String unitAddress = getUnitLocation(client);
         model.put("location", unitAddress);
-        try {
-            model.put("locationURL", URLEncoder.encode(unitAddress, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            //should never happen as UTF-8 is supported
-            throw new RuntimeException("UTF-8 encoding not supported", e);
-        }
+        model.put("locationURL", URLEncoder.encode("Visa and Citizenship Office, " + unitAddress, "UTF-8"));
         model.put("today_date", getUnitCurrentDate(client));
         model.put("current_appointment", getCurrentAppointmentDetails(client));
 

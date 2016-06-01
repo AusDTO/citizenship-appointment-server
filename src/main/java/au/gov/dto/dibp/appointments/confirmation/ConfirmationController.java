@@ -39,7 +39,7 @@ public class ConfirmationController {
 
     @RequestMapping(value = "/confirmation", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView getConfirmationPage(@AuthenticationPrincipal Client client,
-                                            HttpServletRequest request) {
+                                            HttpServletRequest request) throws UnsupportedEncodingException {
         AppointmentDetails appointmentDetails = appointmentDetailsService.getExpectedAppointmentForClientForNextYear(client);
 
         if(appointmentDetails == null){
@@ -50,12 +50,7 @@ public class ConfirmationController {
 
         String unitAddress = appointmentDetails.getUnitAddress();
         model.put("location", unitAddress);
-        try {
-            model.put("locationURL", URLEncoder.encode(unitAddress, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            //should never happen as UTF-8 is supported
-            throw new RuntimeException("UTF-8 encoding not supported", e);
-        }
+        model.put("locationURL", URLEncoder.encode("Visa and Citizenship Office, " + unitAddress, "UTF-8"));
         model.put("clientId", client.getClientId());
         model.put("customerId", client.getCustomerId());
         model.put("hasEmail", client.isEmail());
