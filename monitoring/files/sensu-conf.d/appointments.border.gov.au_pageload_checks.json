@@ -5,8 +5,8 @@
       "slack": {
         "channels": [ "#webops", "#citizenship-bookings" ]
       },
-      "command": "/opt/sensu/embedded/bin/check-http.rb --timeout 5 --url ${URL}${PAGELOAD_URI} --response-code 200",
-      "interval": 10,
+      "command": "/opt/sensu/embedded/bin/check-http.rb --timeout 10 --url ${URL}${PAGELOAD_URI} --response-code 200",
+      "interval": 30,
       "standalone": true
     },
     "appointments.border.gov.au_pageload-title": {
@@ -14,7 +14,7 @@
       "slack": {
         "channels": [ "#webops", "#citizenship-bookings" ]
       },
-      "command": "/opt/sensu/embedded/bin/check-http.rb --timeout 5 --url ${URL}${PAGELOAD_URI} --query '<title>Australian Government - Citizenship Appointment Booking</title>'",
+      "command": "/opt/sensu/embedded/bin/check-http.rb --timeout 10 --url ${URL}${PAGELOAD_URI} --query '<title>Australian Government - Citizenship Appointment Booking</title>'",
       "interval": 60,
       "standalone": true
     },
@@ -23,7 +23,7 @@
       "slack": {
         "channels": [ "#webops", "#citizenship-bookings" ]
       },
-      "command": "/opt/sensu/embedded/bin/check-http.rb --timeout 5 --url ${URL} --redirect-to ${URL}${PAGELOAD_URI}",
+      "command": "/opt/sensu/embedded/bin/check-http.rb --timeout 15 --url ${URL} --redirect-to ${URL}${PAGELOAD_URI}",
       "interval": 120,
       "standalone": true
     }
