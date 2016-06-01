@@ -4,7 +4,7 @@ set -ef -o pipefail
 
 case "$1" in
         help)
-            echo $"Usage: $0 {fullBuild | test | integrationTest | allTests | startApp }"
+            echo $"Usage: $0 {fullBuild | test | integrationTest | allTests | startApp | fetchClient }"
             echo $"Any other command: $0 *something* will execute ./gradlew *something* "
             exit 1
             ;;
@@ -24,10 +24,13 @@ case "$1" in
             ./gradlew integrationTest
             ;;
         allTests)
-            ./gradlew check
+            ./gradlew clean check
             ;;
         startApp)
             ./gradlew run
+            ;;
+        fetchClient)
+            ./gradlew clean processResources
             ;;
         *)
             ./gradlew $@
