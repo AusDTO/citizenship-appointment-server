@@ -9,6 +9,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Component
@@ -22,7 +23,7 @@ public class LogClientIdFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            MDC.put(MDC_KEY_CLIENT_ID, UsernameExtractor.getAuthenticatedUsername());
+            MDC.put(MDC_KEY_CLIENT_ID, UsernameExtractor.getUsername((HttpServletRequest) request));
             filterChain.doFilter(request, response);
         } finally {
             MDC.remove(MDC_KEY_CLIENT_ID);
