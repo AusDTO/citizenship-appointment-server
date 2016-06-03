@@ -92,4 +92,15 @@ public class ResponseWrapper {
     public String getMessage() {
         return message;
     }
+
+    public boolean isInvalidSessionId() {
+        String expression = "//ErrorType";
+        try {
+            XPathExpression expr = getXpath().compile(expression);
+            String errorType = (String) expr.evaluate(this.responseBody, XPathConstants.STRING);
+            return "InvalidAPISessionId".equalsIgnoreCase(errorType);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error evaluating Xpath: " + expression, e);
+        }
+    }
 }
