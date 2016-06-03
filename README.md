@@ -39,7 +39,8 @@ These environment variables are used for the Apple Wallet implementation:
 - `WALLET_PASS_TYPE_IDENTIFIER`: Use the same value supplied when setting up your Pass Type ID. It should start with `pass.`, e.g. `pass.com.apple.devpubs.example`
 - `WALLET_TEAM_IDENTIFIER`: Your iOS developer account team identifier, e.g., `A93A5CM278`
 - `WALLET_PRIVATE_KEY_P12_BASE64`: The Base64 encoded contents of a PKCS #12 file containing your Pass Type ID private key and certificate. See below for instructions on how to obtain this. 
-- `WALLET_PRIVATE_KEY_PASSPHRASE`: The passphrase required to access the contents of the PKCS #12 file containing your Pass Type ID private key and certificate. 
+- `WALLET_PRIVATE_KEY_PASSPHRASE`: The passphrase required to access the contents of the PKCS #12 file containing your Pass Type ID private key and certificate.
+- `WALLET_PUSH_NOTIFICATIONS_ENABLED`: Optional. Set to `false` to prevent the application from connecting to the APNs service. This can be useful for suppressing connecting failure exceptions when running unit tests with dummy values. If this value is missing or has any value other than `false` (case insensitive), the application will attempt to connect to APNs on startup. 
 
 To obtain the value for WALLET_PRIVATE_KEY_P12_BASE64, export your Pass Type ID certificate and corresponding private key as a `.p12` file.
 
@@ -50,6 +51,8 @@ Run this command to extract the value to set as the `WALLET_PRIVATE_KEY_P12_BASE
     base64 -i export.p12 -o -
     
 On Mac OS you can optionally pipe the output of this command to `pbcopy` to add the result to your clipboard.
+
+If you need dummy values for unit testing purposes, you may use the values from the test class `au.gov.dto.dibp.appointments.wallet.PassBuilderTest`.
 
 #### Other
 

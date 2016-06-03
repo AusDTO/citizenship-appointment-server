@@ -37,7 +37,8 @@ public class PassUpdateServiceTest {
         return new PushNotificationClient(
                 "passTypeIdentifier",
                 IOUtils.toString(new Base64InputStream(getClass().getClassLoader().getResourceAsStream("wallet/test.p12"), true)),
-                "test") {
+                "test",
+                "true") {
             @Override
             public void connect() {
             }
