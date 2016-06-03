@@ -15,7 +15,7 @@ public class PassBuilderTest {
     @Test
     public void testPassInformationNonDaylightSavingsTime() throws Exception {
         PassBuilder passBuilder = createPassBuilder();
-        Client client = new Client("11111111111", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
+        Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
         LocalDateTime appointmentDate = LocalDateTime.of(2016, 5, 20, 15, 20, 0);
         AppointmentDetails appointment = new AppointmentDetails(appointmentDate, 1, "processId", "serviceId", "customerId", "unitName", "unitAddress", "Australia/Melbourne");
         URL walletWebServiceUrl = new URL("http://localhost:8083/wallet");
@@ -29,7 +29,7 @@ public class PassBuilderTest {
     @Test
     public void testPassInformationDaylightSavingsTime() throws Exception {
         PassBuilder passBuilder = createPassBuilder();
-        Client client = new Client("11111111111", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
+        Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
         LocalDateTime appointmentDate = LocalDateTime.of(2016, 1, 31, 9, 0, 0);
         AppointmentDetails appointment = new AppointmentDetails(appointmentDate, 1, "processId", "serviceId", "customerId", "unitName", "unitAddress", "Australia/Melbourne");
         URL walletWebServiceUrl = new URL("http://localhost:8083/wallet");
