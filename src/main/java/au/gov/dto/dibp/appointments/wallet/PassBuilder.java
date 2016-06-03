@@ -134,7 +134,12 @@ class PassBuilder {
         pdf417Barcode.setAltText("Client ID: " + client.getClientId());
         //noinspection deprecation
         pkPass.setBarcode(pdf417Barcode); // required for iOS 6-8
-        pkPass.setBarcodes(Collections.singletonList(pdf417Barcode)); // used by iOS 9+
+        PKBarcode qrCode = new PKBarcode();
+        qrCode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
+        qrCode.setMessageEncoding(StandardCharsets.ISO_8859_1); // recommended character set for most barcode readers
+        qrCode.setMessage(client.getClientId());
+        qrCode.setAltText("Client ID: " + client.getClientId());
+        pkPass.setBarcodes(Arrays.asList(pdf417Barcode, qrCode)); // used by iOS 9+
 
         pkPass.setBackgroundColor("rgb(0, 74, 164)");
         pkPass.setForegroundColor("rgb(255, 255, 255)");
