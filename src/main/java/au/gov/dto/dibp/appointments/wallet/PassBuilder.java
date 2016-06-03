@@ -106,6 +106,7 @@ class PassBuilder {
 
         String venueStreetAddress = appointment.getUnitAddress();
         String venueNameAndAddress = String.format("Visa and Citizenship Office, %s", venueStreetAddress);
+        LOG.info("Setting venue in pass: [{}]", venueNameAndAddress);
 
         PKField locationField = new PKField("where", "WHERE", venueNameAndAddress);
 
