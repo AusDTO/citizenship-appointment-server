@@ -8,6 +8,7 @@ You will need to:
 
 * have git to checkout this repo ([how to install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
 * have Java 8 installed ([how to install Java?](https://java.com/en/download/help/download_options.xml))
+* add the [Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html) to your JDK installation
 
 An essential part of the system is integration with a booking service that stores all the data about users, appointments etc. In order to be able to run this application without an integration to a real system, we created a dummy version of it, so this server application can be run without being dependent on the licence we have. The address of the stub is:
         
