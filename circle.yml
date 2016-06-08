@@ -24,7 +24,7 @@ dependencies:
 test:
   override:
     - ./go clean
-    - ./go test &> /dev/null
+    - ./go test
     - ./go integrationTest &> /dev/null
     - ./go assemble
     # build monitoring image
