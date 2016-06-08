@@ -21,8 +21,8 @@ apply plugin: 'spring-boot'                  // http://docs.spring.io/spring-boo
 apply plugin: "jacoco"                       // https://docs.gradle.org/current/userguide/jacoco_plugin.html
 
 node {
-    version = '4.2.6'
-    npmVersion = '2.14.12'
+    version = '6.2.1'
+    npmVersion = '3.9.3'
     // Base URL for fetching node distributions (change if you have a mirror).
     distBaseUrl = 'https://nodejs.org/dist'
     // If true, it will download node using above parameters.
