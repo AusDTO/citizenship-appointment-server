@@ -26,11 +26,11 @@ class WalletBarcodeController {
     private static final String IMAGE_PNG = "image/png";
     private static final int SIZE_PIXELS = 250;
 
-    private final String teamIdentifier;
+    private final String passTypeIdentifier;
 
     @Autowired
-    public WalletBarcodeController(@Value("${wallet.team.identifier}") String teamIdentifier) {
-        this.teamIdentifier = teamIdentifier;
+    public WalletBarcodeController(@Value("${wallet.pass.type.identifier}") String passTypeIdentifier) {
+        this.passTypeIdentifier = passTypeIdentifier;
     }
 
     @RequestMapping(value = "/wallet/pass/barcode.png", method = RequestMethod.GET, produces = IMAGE_PNG)
@@ -38,7 +38,7 @@ class WalletBarcodeController {
                             HttpServletRequest request,
                             HttpServletResponse response) throws WriterException, IOException, URISyntaxException {
         response.setContentType("image/png");
-        String passUrlPath = String.format("/wallet/v1/passes/%s/citizenship?id=%s&otherid=%s", teamIdentifier, client.getClientId(), client.getCustomerId());
+        String passUrlPath = String.format("/wallet/v1/passes/%s/citizenship?id=%s&otherid=%s", passTypeIdentifier, client.getClientId(), client.getCustomerId());
         String passUrl = new URI(request.getRequestURL().toString()).resolve(passUrlPath).toASCIIString();
         BitMatrix bitMatrix = new MultiFormatWriter().encode(passUrl, BarcodeFormat.QR_CODE, SIZE_PIXELS, SIZE_PIXELS);
         BufferedImage barcodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
