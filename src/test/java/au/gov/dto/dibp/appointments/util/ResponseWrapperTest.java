@@ -68,6 +68,18 @@ public class ResponseWrapperTest {
     }
 
     @Test
+    public void getStringAttribute_shouldReturnStringValueOfXpathWithoutNewlines() {
+        ResponseWrapper parser = new ResponseWrapper(0, getBasicResponseBody());
+        assertThat(parser.getStringAttribute("//f"), is("Some Unit Address With Newline"));
+    }
+
+    @Test
+    public void getStringAttribute_shouldReturnStringValueOfXpathWithoutCarriageReturns() {
+        ResponseWrapper parser = new ResponseWrapper(0, getBasicResponseBody());
+        assertThat(parser.getStringAttribute("//g"), is("Some Unit Address With Carriage Return"));
+    }
+
+    @Test
     public void getNodeAttribute_shouldReturnNodeMatchingXpath() {
         ResponseWrapper parser = new ResponseWrapper(0, getBasicResponseBody());
         Node nodeB = parser.getNodeAttribute("//b");
@@ -107,6 +119,8 @@ public class ResponseWrapperTest {
                         "<e>List Elem 2</e>" +
                         "<e>List Elem 3</e>" +
                         "</d>" +
+                        "<f>Some Unit\nAddress With\nNewline</f>" +
+                        "<g>Some Unit\rAddress With\rCarriage Return</g>" +
                         "</a>";
     }
 }

@@ -57,7 +57,8 @@ public class ResponseWrapper {
     public String getStringAttribute(String thepath) {
         try {
             XPathExpression expr = getXpath().compile(thepath);
-            return (String) expr.evaluate(this.responseBody, XPathConstants.STRING);
+            String stringValue = (String) expr.evaluate(this.responseBody, XPathConstants.STRING);
+            return stringValue.replaceAll("(\\n|\\r)", " ");
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Error evaluating Xpath: " + thepath, e);
         }

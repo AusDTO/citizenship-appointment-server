@@ -14,7 +14,8 @@ public class NodeParser {
 
     public String getStringAttribute(String thepath) {
         try {
-            return getXpath().evaluate(thepath, this.node);
+            String nodeValue = getXpath().evaluate(thepath, this.node);
+            return nodeValue.replaceAll("\\n"," ");
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Error evaluating Xpath: " + thepath, e);
         }
