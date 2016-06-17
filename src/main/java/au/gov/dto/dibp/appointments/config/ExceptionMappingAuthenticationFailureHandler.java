@@ -1,5 +1,6 @@
 package au.gov.dto.dibp.appointments.config;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.UrlUtils;
@@ -26,13 +27,19 @@ public class ExceptionMappingAuthenticationFailureHandler extends
             exceptionClass = exception.getCause().getClass().getName();
         }
 
-        String url = failureUrlMap.get(exceptionClass);
-
-        if (url != null) {
-            getRedirectStrategy().sendRedirect(request, response, url);
+        String clientId = request.getParameter("username");
+        if (clientId != null && exception instanceof BadCredentialsException) {
+            getRedirectStrategy().sendRedirect(request, response, "/login?error&id=" + clientId);
         }
         else {
-            super.onAuthenticationFailure(request, response, exception);
+            String url = failureUrlMap.get(exceptionClass);
+
+            if (url != null) {
+                getRedirectStrategy().sendRedirect(request, response, url);
+            }
+            else {
+                super.onAuthenticationFailure(request, response, exception);
+            }
         }
     }
 
