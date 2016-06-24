@@ -2,6 +2,7 @@ package au.gov.dto.dibp.appointments.wallet;
 
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiResponseNotSuccessfulException;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import au.gov.dto.dibp.appointments.util.TemplateLoader;
 import com.samskivert.mustache.Template;
@@ -63,11 +64,15 @@ class DeviceRegistrationService {
 
     void setDevicesForClient(Client client, Map<String, String> deviceRegistrations) {
         String propertyValue = serialiseDeviceRegistrations(deviceRegistrations);
-        apiService.sendRequest(templateSetCustomProperty, new HashMap<String, String>() {{
-            put("customerId", client.getCustomerId());
-            put("propertyName", PROPERTY_NAME);
-            put("propertyValue", propertyValue);
-        }}, serviceAddressCustomer);
+        try {
+            apiService.sendRequest(templateSetCustomProperty, new HashMap<String, String>() {{
+                put("customerId", client.getCustomerId());
+                put("propertyName", PROPERTY_NAME);
+                put("propertyValue", propertyValue);
+            }}, serviceAddressCustomer);
+        } catch (ApiResponseNotSuccessfulException e) {
+            LOG.warn("Could not update device registrations for client due to API error");
+        }
     }
 
     Map<String, String> deserialiseDeviceRegistrations(String deviceRegistrations) {

@@ -2,6 +2,7 @@ package au.gov.dto.dibp.appointments.wallet;
 
 import au.gov.dto.dibp.appointments.client.Client;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiCallsSenderService;
+import au.gov.dto.dibp.appointments.qflowintegration.ApiResponseNotSuccessfulException;
 import au.gov.dto.dibp.appointments.util.FakeTemplateLoader;
 import au.gov.dto.dibp.appointments.util.ResponseWrapper;
 import com.samskivert.mustache.Template;
@@ -107,6 +108,14 @@ public class DeviceRegistrationServiceTest {
         assertThat(deserialisedDeviceRegistrations.get("deviceLibraryIdentifier2"), equalTo("pushToken2"));
     }
 
+    @Test
+    public void testAddDeviceForClientFailingOnApiErrorDoesNotThrowException() throws Exception {
+        DeviceRegistrationService service = new DeviceRegistrationService(getApiServiceThrowingApiResponseNotSuccessfulException(), new FakeTemplateLoader(), null);
+        Client client = new Client("clientId", "familyName", "customerId", true, true, "unitId", "serviceId", "appointmentTypeId", true);
+
+        service.addDeviceForClient(client, "deviceLibraryIdentifier", "pushToken");
+    }
+
     private ApiCallsSenderService getApiServiceReturningSuccessfulPropertyValueSave(){
         return (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> {
             String responseWithEmptyPropertyValue =
@@ -117,9 +126,67 @@ public class DeviceRegistrationServiceTest {
         };
     }
 
+    private ApiCallsSenderService getApiServiceThrowingApiResponseNotSuccessfulException(){
+        return (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> {
+            if (messageParams.containsKey("propertyValue")) {
+                throw new ApiResponseNotSuccessfulException(
+                        "Invalid server response with statusCode=500 for messageId=[123]",
+                        new ResponseWrapper(500,
+                                "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://www.w3.org/2005/08/addressing\">\n" +
+                                        "   <s:Header>\n" +
+                                        "      <a:Action s:mustUnderstand=\"1\">http://www.qnomy.com/Services/IsvcCustomer/SetCustomPropertyQFlowAPIApplicationExceptionFault</a:Action>\n" +
+                                        "      <a:RelatesTo>uuid:71e11a91-5538-4ab9-8692-09ccf02782d1</a:RelatesTo>\n" +
+                                        "   </s:Header>\n" +
+                                        "   <s:Body>\n" +
+                                        "      <s:Fault>\n" +
+                                        "         <s:Code>\n" +
+                                        "            <s:Value>s:Sender</s:Value>\n" +
+                                        "         </s:Code>\n" +
+                                        "         <s:Reason>\n" +
+                                        "            <s:Text xml:lang=\"en-US\">Invalid user name was specified for the 'Invoked By' parameter</s:Text>\n" +
+                                        "         </s:Reason>\n" +
+                                        "         <s:Detail>\n" +
+                                        "            <QFlowAPIApplicationException xmlns=\"http://schemas.datacontract.org/2004/07/QFlow.Web.API\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+                                        "               <ErrorNumber>55009</ErrorNumber>\n" +
+                                        "            </QFlowAPIApplicationException>\n" +
+                                        "         </s:Detail>\n" +
+                                        "      </s:Fault>\n" +
+                                        "   </s:Body>\n" +
+                                        "</s:Envelope>"));
+            } else {
+                String responseWithSingleDeviceRegistration =
+                        "   <s:Body>\n" +
+                        "      <GetCustomPropertyByNameResponse xmlns=\"http://www.qnomy.com/Services\">\n" +
+                        "         <GetCustomPropertyByNameResult xmlns:b=\"http://schemas.datacontract.org/2004/07/QFlow.Library\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+                        "            <b:AccessType>0</b:AccessType>\n" +
+                        "            <b:Active>false</b:Active>\n" +
+                        "            <b:ActiveDirectoryName i:nil=\"true\"/>\n" +
+                        "            <b:DefaultValue i:nil=\"true\"/>\n" +
+                        "            <b:Description i:nil=\"true\"/>\n" +
+                        "            <b:ExtRef i:nil=\"true\"/>\n" +
+                        "            <b:FunctionName i:nil=\"true\"/>\n" +
+                        "            <b:GroupIds i:nil=\"true\" xmlns:c=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\"/>\n" +
+                        "            <b:HideFromAgents>false</b:HideFromAgents>\n" +
+                        "            <b:Id>10</b:Id>\n" +
+                        "            <b:ImageSource i:nil=\"true\"/>\n" +
+                        "            <b:Mandatory>false</b:Mandatory>\n" +
+                        "            <b:Name>IOSDEVICELIBID</b:Name>\n" +
+                        "            <b:ObjectType>User</b:ObjectType>\n" +
+                        "            <b:PropertyValue>deviceLibraryIdentifier:pushToken</b:PropertyValue>\n" +
+                        "            <b:ValueList i:nil=\"true\"/>\n" +
+                        "            <b:ValueType>Text</b:ValueType>\n" +
+                        "            <b:ValuesFunction i:nil=\"true\" xmlns:c=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\"/>\n" +
+                        "         </GetCustomPropertyByNameResult>\n" +
+                        "      </GetCustomPropertyByNameResponse>\n" +
+                        "   </s:Body>";
+                return new ResponseWrapper(200, responseWithSingleDeviceRegistration);
+            }
+        };
+    }
+
     private ApiCallsSenderService getApiServiceReturningFailedPropertyValueSaveDueToExceedsLength(){
         return (Template requestTemplate, Map<String, String> messageParams, String serviceAddress) -> {
-            String responseWithEmptyPropertyValue =
+            String responseWithErrorDueToExceedsLength =
                     "   <s:Body>\n" +
                     "      <s:Fault>\n" +
                     "         <s:Code>\n" +
@@ -135,7 +202,7 @@ public class DeviceRegistrationServiceTest {
                     "         </s:Detail>\n" +
                     "      </s:Fault>\n" +
                     "   </s:Body>";
-            return new ResponseWrapper(500, responseWithEmptyPropertyValue);
+            return new ResponseWrapper(500, responseWithErrorDueToExceedsLength);
         };
     }
 
