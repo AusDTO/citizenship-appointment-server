@@ -8,7 +8,7 @@
     },
     "appointments.border.gov.au_pageload-title": {
       "handlers": ["default", "slack"],
-      "command": "/opt/sensu/embedded/bin/check-http.rb --timeout 10 --url ${URL}${PAGELOAD_URI} --query '<title>Australian Government - Citizenship Appointment Booking</title>'",
+      "command": "/opt/sensu/embedded/bin/check-http.rb --timeout 10 --url ${URL}${PAGELOAD_URI} --query '<title>Australian Government - Citizenship Appointment Booking - Login</title>'",
       "interval": 60,
       "standalone": true
     },
