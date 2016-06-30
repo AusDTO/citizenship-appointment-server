@@ -23,6 +23,7 @@ import java.util.Map;
 public class CalendarController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CalendarController.class);
+    private static final String CALENDAR_PAGE_NAME = "Calendar";
     private final AppointmentDetailsService appointmentDetailsService;
     private final UnitDetailsService unitDetailsService;
 
@@ -41,6 +42,9 @@ public class CalendarController {
                                     HttpServletRequest request) throws UnsupportedEncodingException {
 
         Map<String, Object> model = new HashMap<>();
+
+        model.put("page_name", CALENDAR_PAGE_NAME);
+        model.put("is_logged_in", true);
 
         String unitAddress = getUnitLocation(client);
         model.put("location", unitAddress);

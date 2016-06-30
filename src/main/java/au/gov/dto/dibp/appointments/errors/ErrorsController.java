@@ -10,19 +10,26 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class ErrorsController implements ErrorController {
     private static final String ERROR_PATH = "/error";
+    private static final String ERROR_PAGE_NAME = "Error";
 
     @RequestMapping(value = ERROR_PATH, method = RequestMethod.GET, produces = "text/html")
     public ModelAndView getErrorPage(HttpServletRequest request, HttpServletResponse response) {
+
+        Map<String, Object> model = new HashMap<>();
+
+        model.put("page_name", ERROR_PAGE_NAME);
+
         if (response.getStatus() == 200) {
             response.setStatus(500);
         }
 
         response.addCookie(LogoutCookieService.getLogoutCookie(request));
-        return new ModelAndView("error_page", new HashMap<>());
+        return new ModelAndView("error_page", model);
     }
 
     @Override

@@ -30,6 +30,9 @@ import java.util.Map;
 public class PlaintextCalendarController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaintextCalendarController.class);
+    private static final String CALENDAR_NOJS_PAGE_NAME = "Select Date";
+    private static final String DAYTIME_NOJS_PAGE_NAME = "Select Time";
+    private static final String SELECTION_NOJS_PAGE_NAME = "Confirm Selection";
     private final AvailableDatesController availableDatesController;
     private final AvailableTimesController availableTimesController;
     private final AppointmentDetailsService appointmentDetailsService;
@@ -55,6 +58,10 @@ public class PlaintextCalendarController {
                                     HttpServletRequest request) {
 
         Map<String, Object> model = getCommonModelData(client, error);
+
+        model.put("page_name", CALENDAR_NOJS_PAGE_NAME);
+        model.put("is_logged_in", true);
+
         final List availableDates = availableDatesController.getAvailableDatesForPlaintext(client);
         if(availableDates != null && !availableDates.isEmpty()){
             model.put("available_dates", availableDates);
@@ -72,6 +79,8 @@ public class PlaintextCalendarController {
         }
 
         Map<String, Object> model = getCommonModelData(client, error);
+        model.put("page_name", DAYTIME_NOJS_PAGE_NAME);
+        model.put("is_logged_in", true);
 
         final Map<String, Object> availableTimesWithLabel = availableTimesController.getAvailableTimesWithLabel(client, calendarId);
         model.put("available_times", availableTimesWithLabel.get("times"));
@@ -91,6 +100,9 @@ public class PlaintextCalendarController {
                                           HttpServletRequest request) {
 
         Map<String, Object> model = getCommonModelData(client, error);
+
+        model.put("page_name", SELECTION_NOJS_PAGE_NAME);
+        model.put("is_logged_in", true);
 
         LocalDate selectedAppointmentDate = LocalDate.parse(dateString);
         LocalTime selectedAppointmentTime = LocalTime.parse(timeString);

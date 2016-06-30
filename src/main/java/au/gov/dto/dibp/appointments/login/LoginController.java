@@ -17,6 +17,8 @@ import java.util.Map;
 public class LoginController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
+    private static final String LOGIN_PAGE_NAME = "Login";
+    private static final String SESSION_TIMEOUT_PAGE_NAME = "Session Timeout";
     private final ClientIdValidator clientIdValidator;
 
     @Autowired
@@ -33,6 +35,10 @@ public class LoginController {
             HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> model = new HashMap<>();
+
+        model.put("page_name", LOGIN_PAGE_NAME);
+        model.put("is_login_page", true);
+
         if (error != null) {
             model.put("error", true);
         }
@@ -57,7 +63,9 @@ public class LoginController {
     @RequestMapping(value = "/session_timeout", method = RequestMethod.GET, produces = "text/html")
     public ModelAndView sessionTimeoutHtml(HttpServletRequest request, HttpServletResponse response) {
         response.addCookie(LogoutCookieService.getLogoutCookie(request));
-        return new ModelAndView("session_timeout", new HashMap<>());
+        Map<String, Object> model = new HashMap<>();
+        model.put("page_name", SESSION_TIMEOUT_PAGE_NAME);
+        return new ModelAndView("session_timeout", model);
     }
 
     @ExceptionHandler(RuntimeException.class)

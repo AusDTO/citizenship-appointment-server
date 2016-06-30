@@ -26,6 +26,7 @@ public class ConfirmationController {
 
     private static final DateTimeFormatter APPOINTMENT_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy");
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
+    private static final String CONFIRMATION_PAGE_NAME = "Appointment Confirmation";
 
     private final AppointmentDetailsService appointmentDetailsService;
     private final WalletSupportService walletSupportService;
@@ -47,6 +48,9 @@ public class ConfirmationController {
         }
 
         HashMap<String, Object> model = new HashMap<>();
+
+        model.put("page_name", CONFIRMATION_PAGE_NAME);
+        model.put("is_logged_in", true);
 
         String unitAddress = appointmentDetails.getUnitAddress();
         model.put("location", unitAddress);
