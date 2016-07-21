@@ -60,8 +60,13 @@ public class BookingService {
             LOGGER.info("Client with clientId=[{}] has an existing appointment for oldAppointmentDate=[{}], rescheduling the appointment to new appointmentDate=[{}]", client.getClientId(), existingAppointment.getAppointmentDate().toString(), newAppointmentDateTime.toString());
             scheduledAppointmentDateTime = rescheduleAppointment(client, newAppointmentDateTime, existingAppointment);
         } else {
-            LOGGER.info("Client with clientId=[{}] has no existing appointment. Booking the appointment for appointmentDate=[{}]", client.getClientId(), newAppointmentDateTime.toString());
-            scheduledAppointmentDateTime = bookInitialAppointment(client, newAppointmentDateTime);
+            //LOGGER.info("Client with clientId=[{}] has no existing appointment. Booking the appointment for appointmentDate=[{}]", client.getClientId(), newAppointmentDateTime.toString());
+            //scheduledAppointmentDateTime = bookInitialAppointment(client, newAppointmentDateTime);
+            
+            // Changed at the request of Nexa/q-flow to prevent clients from creating arbitrary appointments themselves, 
+            // but rather have them created by a departmental officer.
+            LOGGER.info("Client with clientId=[{}] has no existing appointment. Not booking an appointment", client.getClientId());
+            throw new UserNotEligibleToBookException("Client has no prior appointment booked.");
         }
         passUpdateService.sendPassUpdatesInBackground(client);
         return scheduledAppointmentDateTime;
