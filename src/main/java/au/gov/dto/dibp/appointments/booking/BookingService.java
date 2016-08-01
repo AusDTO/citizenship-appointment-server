@@ -59,10 +59,10 @@ public class BookingService {
         if (existingAppointment != null) {
             LOGGER.info("Client with clientId=[{}] has an existing appointment for oldAppointmentDate=[{}], rescheduling the appointment to new appointmentDate=[{}]", client.getClientId(), existingAppointment.getAppointmentDate().toString(), newAppointmentDateTime.toString());
             scheduledAppointmentDateTime = rescheduleAppointment(client, newAppointmentDateTime, existingAppointment);
+        } else if (client.getClientId().startsWith("01")) { // Test users begin with 01, e.g. 01919191919
+            LOGGER.info("Client with clientId=[{}] has no existing appointment. Booking the appointment for appointmentDate=[{}]", client.getClientId(), newAppointmentDateTime.toString());
+            scheduledAppointmentDateTime = bookInitialAppointment(client, newAppointmentDateTime);
         } else {
-            //LOGGER.info("Client with clientId=[{}] has no existing appointment. Booking the appointment for appointmentDate=[{}]", client.getClientId(), newAppointmentDateTime.toString());
-            //scheduledAppointmentDateTime = bookInitialAppointment(client, newAppointmentDateTime);
-            
             // Changed at the request of Nexa/q-flow to prevent clients from creating arbitrary appointments themselves, 
             // but rather have them created by a departmental officer.
             LOGGER.info("Client with clientId=[{}] has no existing appointment. Not booking an appointment", client.getClientId());

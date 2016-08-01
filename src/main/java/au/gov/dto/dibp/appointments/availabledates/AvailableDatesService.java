@@ -77,7 +77,10 @@ class AvailableDatesService {
 
         for(int i=0; i < calendarNodes.getLength(); i++) {
             AvailableDate newAvailableDate = getAvailableDateDetails(calendarNodes.item(i));
-            availableDates.put(newAvailableDate.getCalendarDate(), newAvailableDate);
+            // Change requested by Nexa, to prevent appointments on weekends.
+            if (!newAvailableDate.getDisplayDate().startsWith("Saturday") && !newAvailableDate.getDisplayDate().startsWith("Sunday")) {
+                availableDates.put(newAvailableDate.getCalendarDate(), newAvailableDate);
+            }
         }
 
         return availableDates;
