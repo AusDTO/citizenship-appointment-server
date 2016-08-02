@@ -3,6 +3,7 @@ package au.gov.dto.dibp.appointments.config;
 import au.gov.dto.dibp.appointments.initializer.CustomAuthenticationProvider;
 import au.gov.dto.dibp.appointments.login.LoginClientService;
 import au.gov.dto.dibp.appointments.qflowintegration.ApiLoginException;
+import au.gov.dto.dibp.appointments.qflowintegration.MaintenanceException;
 import au.gov.dto.dibp.appointments.security.context.CookieBasedSecurityContextRepository;
 import au.gov.dto.dibp.appointments.security.csrf.CookieBasedCsrfTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import java.util.Map;
 public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_FAILURE_URL = "/login?error";
     private static final String LOGIN_SYSTEM_ERROR_URL = "/login?system_error";
+    private static final String LOGIN_MAINTENANCE_URL = "/login?maintenance";
 
     @Autowired
     private LoginClientService loginClientService;
@@ -99,6 +101,7 @@ public class ClientSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
         Map<String, String> failureUrlMap = new HashMap<String, String>();
         failureUrlMap.put(ApiLoginException.class.getName(), LOGIN_SYSTEM_ERROR_URL);
+        failureUrlMap.put(MaintenanceException.class.getName(), LOGIN_MAINTENANCE_URL);
         authenticationFailureHandler.setExceptionMappings(failureUrlMap);
 
         return authenticationFailureHandler;

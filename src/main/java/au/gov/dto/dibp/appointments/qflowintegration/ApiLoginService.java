@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -48,7 +52,9 @@ class ApiLoginService {
         }
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         Template tmpl = Mustache.compiler().compile(inputStreamReader);
-
+        
+        checkMaintenance();
+        
         for (int attempts = 1 ; attempts <= MAX_ATTEMPTS; attempts++) {
             int index = new Random().nextInt(apiUsers.size());
             ResponseWrapper response = sendLoginRequest(tmpl, index);
@@ -63,6 +69,21 @@ class ApiLoginService {
             }
         }
         throw new ApiLoginException("Failed to authenticate to Q-Flow API. Exceeded max FormsSignIn attempts: " + MAX_ATTEMPTS);
+    }
+    
+    private void checkMaintenance() {
+        
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
+        
+        //ZonedDateTime start = LocalDateTime.of(2016, 8, 5, 5, 00).atZone(ZoneId.of("Australia/Sydney"));
+        //ZonedDateTime end = LocalDateTime.of(2016, 8, 5, 9, 00).atZone(ZoneId.of("Australia/Sydney"));
+        
+        ZonedDateTime start = LocalDateTime.of(2016, 8, 2, 10, 00).atZone(ZoneId.of("Australia/Sydney"));
+        ZonedDateTime end = LocalDateTime.of(2016, 8, 2, 14, 00).atZone(ZoneId.of("Australia/Sydney"));
+        
+        if (now.isAfter(start) && now.isBefore(end)) {
+            throw new MaintenanceException("This service is temporarily unavailable due to a scheduled maintenance period.");
+        }
     }
 
     private ResponseWrapper sendLoginRequest(Template tmpl, int index) {

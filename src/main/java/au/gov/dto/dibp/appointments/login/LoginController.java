@@ -30,6 +30,7 @@ public class LoginController {
     public ModelAndView loginHtml(
             @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "system_error", required = false) String system_error,
+            @RequestParam(value = "maintenance", required = false) String maintenance,
             @RequestParam(value = "expired", required = false) String expired,
             @RequestParam(value = "id", required = false) String clientId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -44,6 +45,9 @@ public class LoginController {
         }
         if (system_error != null) {
             model.put("system_error", true);
+        }
+        if (maintenance != null) {
+            model.put("maintenance", true);
         }
         if (expired != null) {
             model.put("expired", true);
