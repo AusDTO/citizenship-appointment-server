@@ -75,9 +75,6 @@ class ApiLoginService {
         
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
         
-        //ZonedDateTime start = LocalDateTime.of(2016, 8, 5, 5, 00).atZone(ZoneId.of("Australia/Sydney"));
-        //ZonedDateTime end = LocalDateTime.of(2016, 8, 5, 9, 00).atZone(ZoneId.of("Australia/Sydney"));
-        
         ZonedDateTime start = LocalDateTime.of(2016, 8, 2, 12, 00).atZone(ZoneId.of("Australia/Sydney"));
         ZonedDateTime end = LocalDateTime.of(2016, 8, 2, 14, 00).atZone(ZoneId.of("Australia/Sydney"));
         
