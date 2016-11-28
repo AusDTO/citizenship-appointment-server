@@ -117,3 +117,4 @@ Check dependencies against known publicly disclosed security vulnerabilities pub
 To view other build tasks:
 
     ./go tasks
+
