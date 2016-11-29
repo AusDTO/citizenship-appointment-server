@@ -35,11 +35,11 @@ deployment:
     owner: AusDTO
     commands:
       # deploy to PWS
-      - cf api api.run.pivotal.io &> /dev/null
-      - cf auth $CF_USER_PWS $CF_PASSWORD_PWS &> /dev/null
-      - cf target -o $CF_ORG_PWS &> /dev/null
-      - cf target -s $CF_SPACE_PWS &> /dev/null
-      - ./bin/cideploy-pws.sh &> /dev/null
+      #- cf api api.run.pivotal.io &> /dev/null
+      #- cf auth $CF_USER_PWS $CF_PASSWORD_PWS &> /dev/null
+      #- cf target -o $CF_ORG_PWS &> /dev/null
+      #- cf target -s $CF_SPACE_PWS &> /dev/null
+      #- ./bin/cideploy-pws.sh &> /dev/null
       # deploy to Cloud Foundry
       - cf api $CF_API_DEV &> /dev/null
       - cf auth $CF_USER_DEV $CF_PASSWORD_DEV &> /dev/null
