@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "citizenship-appointment-client": "AusDTO/citizenship-appointment-client#5e574d7"
+    "citizenship-appointment-client": "AusDTO/citizenship-appointment-client#7dabc2d"
   },
   "devDependencies": {
     "casperjs": "^1.1.0-beta5",
