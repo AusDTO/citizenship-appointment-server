@@ -49,7 +49,7 @@ public class CalendarController {
         String unitAddress = getUnitLocation(client);
         String currentAppointment = getCurrentAppointmentDetails(client);
         model.put("location", unitAddress);
-        model.put("locationURL", URLEncoder.encode("Visa and Citizenship Office, " + unitAddress, "UTF-8"));
+        model.put("locationURL", URLEncoder.encode("Department of Immigration and Border Protection, " + unitAddress, "UTF-8"));
         model.put("today_date", getUnitCurrentDate(client));
         model.put("current_appointment", currentAppointment == null ? "Not confirmed" : currentAppointment);
 
