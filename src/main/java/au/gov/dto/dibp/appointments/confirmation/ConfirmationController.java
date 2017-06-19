@@ -54,7 +54,7 @@ public class ConfirmationController {
 
         String unitAddress = appointmentDetails.getUnitAddress();
         model.put("location", unitAddress);
-        model.put("locationURL", URLEncoder.encode("Visa and Citizenship Office, " + unitAddress, "UTF-8"));
+        model.put("locationURL", URLEncoder.encode("Department of Immigration and Border Protection, " + unitAddress, "UTF-8"));
         model.put("clientId", client.getClientId());
         model.put("customerId", client.getCustomerId());
         model.put("hasEmail", client.isEmail());

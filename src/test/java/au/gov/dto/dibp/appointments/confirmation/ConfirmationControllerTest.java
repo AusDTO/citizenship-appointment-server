@@ -32,7 +32,7 @@ public class ConfirmationControllerTest {
     private static final String PROCESS_ID = "121212";
     private static final String SERVICE_ID = "AAA";
     private static final String UNIT_ADDRESS = "Some Street 12";
-    private static final String UNIT_ADDRESS_WITH_OFFICE = "Visa+and+Citizenship+Office%2C+Some+Street+12";
+    private static final String UNIT_ADDRESS_WITH_OFFICE = "Department+of+Immigration+and+Border+Protection%2C+Some+Street+12";
     private static final boolean HAS_EMAIL = true;
     private static final boolean HAS_MOBILE = true;
 
