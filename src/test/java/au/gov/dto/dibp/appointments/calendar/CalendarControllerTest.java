@@ -27,7 +27,7 @@ public class CalendarControllerTest {
     private static final String UNIT_ADDRESS = "Some Street 12, Melbourne";
     private static final String UNIT_LOCALTIME = "2016-01-10T11:20";
     private static final String CURRENT_APPOINTMENT_TIME = "2016-01-18T13:20:00";
-    private static final String UNIT_ADDRESS_WITH_OFFICE = "Visa+and+Citizenship+Office%2C+Some+Street+12%2C+Melbourne";
+    private static final String UNIT_ADDRESS_WITH_OFFICE = "Department+of+Immigration+and+Border+Protection%2C+Some+Street+12%2C+Melbourne";
 
     private CalendarController controller;
 
