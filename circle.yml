@@ -25,10 +25,10 @@ test:
   override:
     - ./go clean
     - ./go test
-    - ./go integrationTest &> /dev/null
+    - ./go integrationTest
     - ./go assemble
     # build monitoring image
-    - DOCKERFILE_PATH=./monitoring/Dockerfile DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au ./bin/ci-monitor-build.sh &> /dev/null
+    # - DOCKERFILE_PATH=./monitoring/Dockerfile DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au ./bin/ci-monitor-build.sh &> /dev/null
 deployment:
   staging:
     branch: master
@@ -47,7 +47,7 @@ deployment:
       - cf target -s $CF_SPACE_DEV &> /dev/null
       - URL=$CF_APP_URL_DEV ./bin/cideploy.sh &> /dev/null
       # deploy monitoring for staging to AWS
-      - URL=$STAGING_URL DOCKER_COMPOSE_TEMPLATE_PATH=./monitoring/docker-compose-ecs.yml.template DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au DOCKER_CONTAINER_NAME=staging-appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
+      # - URL=$STAGING_URL DOCKER_COMPOSE_TEMPLATE_PATH=./monitoring/docker-compose-ecs.yml.template DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au DOCKER_CONTAINER_NAME=staging-appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
   production:
     tag: /release-.*/
     owner: AusDTO
@@ -58,4 +58,4 @@ deployment:
       - cf target -s $CF_SPACE_PROD &> /dev/null
       - ./bin/cideploy-prod.sh &> /dev/null
       # deploy monitoring for production to AWS
-      - URL=$PRODUCTION_URL DOCKER_COMPOSE_TEMPLATE_PATH=./monitoring/docker-compose-ecs.yml.template DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au DOCKER_CONTAINER_NAME=appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
+      # - URL=$PRODUCTION_URL DOCKER_COMPOSE_TEMPLATE_PATH=./monitoring/docker-compose-ecs.yml.template DOCKER_IMAGE_NAME=ausdtomonitoring-appointments-border-gov-au DOCKER_CONTAINER_NAME=appointments-border-gov-au ./bin/ci-monitor-deploy.sh &> /dev/null
